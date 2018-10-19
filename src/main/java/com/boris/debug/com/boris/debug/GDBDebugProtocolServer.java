@@ -3,6 +3,7 @@ package com.boris.debug.com.boris.debug;
 import org.eclipse.lsp4j.debug.*;
 import org.eclipse.lsp4j.debug.services.IDebugProtocolServer;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -13,6 +14,9 @@ public class GDBDebugProtocolServer implements IDebugProtocolServer {
     * need to listen for gdb session "events" and do the right thing
     *
      */
+
+    private Process gdbProcess;
+
     @Override
     public CompletableFuture<RunInTerminalResponse> runInTerminal(RunInTerminalRequestArguments args) {
         return CompletableFuture.completedFuture(null);
@@ -31,8 +35,23 @@ public class GDBDebugProtocolServer implements IDebugProtocolServer {
     @Override
     public CompletableFuture<Void> launch(Map<String, Object> args) {
         // args: target: exe to run
+        // https://sourceware.org/gdb/onlinedocs/gdb/Mode-Options.html
         // cmd: gdb -q -nw -i mi2 [target]
         // -q: quiet, -nw: no windows i: interpreter (mi2 in our case)
+
+        final String gdbPath = "/usr/bin/gdb"; // TODO make this robust
+        final String[] cmdline = {gdbPath, "-q", "-nw", "-", "mi2"};
+
+        try {
+            gdbProcess = Runtime.getRuntime().exec(cmdline);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // TODO start listener to listen for MI output from process
+        // https://github.com/dlsniper/ideagdb/blob/master/src/uk/co/cwspencer/gdb/Gdb.java
+
+        // TODO start thread to send commands to process
 
         return CompletableFuture.completedFuture(null);
     }
