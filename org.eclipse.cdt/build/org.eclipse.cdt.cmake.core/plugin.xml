@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="toolChainProvider" name="CMake ToolChain File Provider" schema="schema/toolChainProvider.exsd"/>
+   <extension
+         id="cmakeNature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.eclipse.cdt.cmake.core.CMakeNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         point="org.eclipse.cdt.core.buildConfigProvider">
+      <provider
+            class="org.eclipse.cdt.cmake.core.internal.CMakeBuildConfigurationProvider"
+            id="org.eclipse.cdt.cmake.core.provider"
+            natureId="org.eclipse.cdt.cmake.core.cmakeNature">
+      </provider>
+   </extension>
+</plugin>

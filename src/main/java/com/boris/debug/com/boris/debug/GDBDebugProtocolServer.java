@@ -7,178 +7,188 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class GDBDebugProtocolServer implements IDebugProtocolServer {
+
+    /*
+    * need to track active gdb session
+    * need to listen for gdb session "events" and do the right thing
+    *
+     */
     @Override
     public CompletableFuture<RunInTerminalResponse> runInTerminal(RunInTerminalRequestArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Capabilities> initialize(InitializeRequestArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> configurationDone(ConfigurationDoneArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> launch(Map<String, Object> args) {
-        return null;
+        // args: target: exe to run
+        // cmd: gdb -q -nw -i mi2 [target]
+        // -q: quiet, -nw: no windows i: interpreter (mi2 in our case)
+
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> attach(Map<String, Object> args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> restart(RestartArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> disconnect(DisconnectArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> terminate(TerminateArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<SetBreakpointsResponse> setBreakpoints(SetBreakpointsArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<SetFunctionBreakpointsResponse> setFunctionBreakpoints(SetFunctionBreakpointsArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> setExceptionBreakpoints(SetExceptionBreakpointsArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<ContinueResponse> continue_(ContinueArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> next(NextArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> stepIn(StepInArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> stepOut(StepOutArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> stepBack(StepBackArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> reverseContinue(ReverseContinueArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> restartFrame(RestartFrameArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> goto_(GotoArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> pause(PauseArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<StackTraceResponse> stackTrace(StackTraceArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<ScopesResponse> scopes(ScopesArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<VariablesResponse> variables(VariablesArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<SetVariableResponse> setVariable(SetVariableArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<SourceResponse> source(SourceArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<ThreadsResponse> threads() {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> terminateThreads(TerminateThreadsArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<ModulesResponse> modules(ModulesArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<LoadedSourcesResponse> loadedSources(LoadedSourcesArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<EvaluateResponse> evaluate(EvaluateArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<SetExpressionResponse> setExpression(SetExpressionArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<StepInTargetsResponse> stepInTargets(StepInTargetsArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<GotoTargetsResponse> gotoTargets(GotoTargetsArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<CompletionsResponse> completions(CompletionsArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<ExceptionInfoResponse> exceptionInfo(ExceptionInfoArguments args) {
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 }
