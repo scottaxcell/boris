@@ -7,6 +7,9 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 public class GdbReaderThread extends Thread {
+    /**
+     * Use this as a guide: org.eclipse.cdt.dsf.mi.service.command.AbstractMIControl.RxThread
+     */
 
     private InputStream inputStream;
     static final private String THREAD_NAME = new String("GDB Reader Thread");
@@ -18,7 +21,6 @@ public class GdbReaderThread extends Thread {
 
     @Override
     public void run() {
-//        super.run();
         // TODO intialize MIParser
         // TODO while loop listening to process stream
 

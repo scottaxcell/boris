@@ -7,6 +7,7 @@ import org.eclipse.lsp4j.debug.services.IDebugProtocolServer;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.Thread;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -66,6 +67,13 @@ public class GdbDebugProtocolServer implements IDebugProtocolServer {
             gdbWriterThread.start();
 
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // TODO sleep is just for test purposes to see if gdb is actually fired up and reader sees output
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 

@@ -2,6 +2,8 @@ TODO:
 * implement server.launch
 - flesh out read and write threads
 - implement parser and lexer
+-- see the following as a starting point: org.eclipse.cdt.dsf.mi.service.command.output.MIResultRecord
+-- maybe pull in the cdt MI backend stuff instead of rewriting?
 * implement setBreakpoints
 - flesh out MICommand design
 - flesh out client.breakpoint event
