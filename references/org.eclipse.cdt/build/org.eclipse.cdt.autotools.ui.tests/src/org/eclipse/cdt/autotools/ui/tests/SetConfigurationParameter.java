@@ -76,7 +76,7 @@ public class SetConfigurationParameter extends AbstractTest {
 		shell = bot.shell("Create New Configuration");
 		shell.activate();
 		SWTBotText t = bot.textWithLabel("Name:");
-		t.setText("debug");
+		t.setText("com/boris/debug");
 		AbstractTest.clickRadioButtonInGroup("Existing configuration",
 				"Copy settings from");
 		bot.button("OK").click();
@@ -229,8 +229,8 @@ public class SetConfigurationParameter extends AbstractTest {
 		shell = bot.shell(projectName + ": Manage Configurations");
 		shell.activate();
 		SWTBotTable table = bot.table();
-		assertTrue(table.containsItem("debug"));
-		table.getTableItem("debug").select();
+		assertTrue(table.containsItem("com/boris/debug"));
+		table.getTableItem("com/boris/debug").select();
 		bot.button("Set Active").click();
 		bot.button("OK").click();
 		// Verify the debug configuration is active and has a user parameter:
@@ -240,11 +240,11 @@ public class SetConfigurationParameter extends AbstractTest {
 		configs.setFocus();
 		String[] items = configs.items();
 		for (int i = 0; i < items.length; ++i) {
-			if (items[i].contains("debug") && items[i].contains("Active")) {
+			if (items[i].contains("com/boris/debug") && items[i].contains("Active")) {
 				configs.setSelection(i);
 			}
 		}
-		assertTrue(configs.getText().contains("debug"));
+		assertTrue(configs.getText().contains("com/boris/debug"));
 		bot.treeWithLabel("Configure Settings").expandNode("configure")
 				.select("Advanced");
 		SWTBotText text = bot.textWithLabel("Additional command-line options");
@@ -381,8 +381,8 @@ public class SetConfigurationParameter extends AbstractTest {
 		bot.button("Manage Configurations...").click();
 		// Rename "debug" to "release" and rename "default" to "debug".
 		// The settings should follow the rename operation.
-		renameConfiguration("debug", "release");
-		renameConfiguration("default", "debug");
+		renameConfiguration("com/boris/debug", "release");
+		renameConfiguration("default", "com/boris/debug");
 		bot.button("OK").click();
 		// Verify that "release" has --enable-jeff set and that
 		// the new "debug" configuration has no user setting.
@@ -395,7 +395,7 @@ public class SetConfigurationParameter extends AbstractTest {
 		String setting = text.getText();
 		assertEquals("--enable-jeff", setting);
 		configs.setFocus();
-		configs.setSelection("debug");
+		configs.setSelection("com/boris/debug");
 		bot.treeWithLabel("Configure Settings").expandNode("configure")
 				.select("Advanced");
 		text = bot.textWithLabel("Additional command-line options");
@@ -407,8 +407,8 @@ public class SetConfigurationParameter extends AbstractTest {
 		// no user setting.
 		openProperties("Autotools", "Configure Settings");
 		configs = bot.comboBoxWithLabel("Configuration: ");
-		configs.setSelection("debug");
-		assertTrue(configs.getText().contains("debug"));
+		configs.setSelection("com/boris/debug");
+		assertTrue(configs.getText().contains("com/boris/debug"));
 		bot.treeWithLabel("Configure Settings").expandNode("configure")
 				.select("Advanced");
 		text = bot.textWithLabel("Additional command-line options");
@@ -436,12 +436,12 @@ public class SetConfigurationParameter extends AbstractTest {
 		bot.button("Manage Configurations...").click();
 		SWTBotShell shell = bot.shell(projectName + ": Manage Configurations");
 		shell.activate();
-		bot.table().select("debug");
+		bot.table().select("com/boris/debug");
 		bot.button("Set Active").click();
 		// Rename "debug" to "release" and rename "default" to "debug".
 		// The settings should follow the rename operation.
-		renameConfiguration("debug", "release");
-		renameConfiguration("default", "debug");
+		renameConfiguration("com/boris/debug", "release");
+		renameConfiguration("default", "com/boris/debug");
 		bot.button("OK").click();
 		shell = bot.shell("Properties for " + projectName);
 		shell.activate();
@@ -458,8 +458,8 @@ public class SetConfigurationParameter extends AbstractTest {
 		String setting = text.getText();
 		assertEquals("--enable-jeff", setting);
 		configs.setFocus();
-		configs.setSelection("debug");
-		assertTrue(configs.getText().contains("debug"));
+		configs.setSelection("com/boris/debug");
+		assertTrue(configs.getText().contains("com/boris/debug"));
 		bot.treeWithLabel("Configure Settings").expandNode("configure")
 				.select("Advanced");
 		text = bot.textWithLabel("Additional command-line options");
@@ -473,8 +473,8 @@ public class SetConfigurationParameter extends AbstractTest {
 		shell.activate();
 		bot.table().select("Build (GNU)");
 		bot.button("Set Active").click();
-		renameConfiguration("debug", "default");
-		renameConfiguration("release", "debug");
+		renameConfiguration("com/boris/debug", "default");
+		renameConfiguration("release", "com/boris/debug");
 		bot.button("OK").click();
 		shell = bot.shell("Properties for " + projectName);
 		shell.activate();

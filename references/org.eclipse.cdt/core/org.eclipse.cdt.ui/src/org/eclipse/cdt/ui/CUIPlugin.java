@@ -144,7 +144,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	private static CUIPlugin fgCPlugin;
 	private static ResourceBundle fgResourceBundle;
 
-	private static final String CONTENTASSIST = CUIPlugin.PLUGIN_ID + "/debug/contentassist" ; //$NON-NLS-1$
+	private static final String CONTENTASSIST = CUIPlugin.PLUGIN_ID + "/com/boris/debug/contentassist"; //$NON-NLS-1$
 
 	/**
 	 * The id of the C perspective

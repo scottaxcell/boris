@@ -1264,11 +1264,11 @@ public class CCorePlugin extends Plugin {
 		CContentTypes.setUseProjectSpecificContentTypes(project, val);
 	}
 
-	private static final String MODEL = CCorePlugin.PLUGIN_ID + "/debug/model"; //$NON-NLS-1$
-	private static final String PARSER = CCorePlugin.PLUGIN_ID + "/debug/parser"; //$NON-NLS-1$
-	private static final String PARSER_EXCEPTIONS = CCorePlugin.PLUGIN_ID + "/debug/parser/exceptions"; //$NON-NLS-1$
-	private static final String SCANNER = CCorePlugin.PLUGIN_ID + "/debug/scanner"; //$NON-NLS-1$
-	private static final String DELTA = CCorePlugin.PLUGIN_ID + "/debug/deltaprocessor"; //$NON-NLS-1$
+	private static final String MODEL = CCorePlugin.PLUGIN_ID + "/com/boris/debug/model"; //$NON-NLS-1$
+	private static final String PARSER = CCorePlugin.PLUGIN_ID + "/com/boris/debug/parser"; //$NON-NLS-1$
+	private static final String PARSER_EXCEPTIONS = CCorePlugin.PLUGIN_ID + "/com/boris/debug/parser/exceptions"; //$NON-NLS-1$
+	private static final String SCANNER = CCorePlugin.PLUGIN_ID + "/com/boris/debug/scanner"; //$NON-NLS-1$
+	private static final String DELTA = CCorePlugin.PLUGIN_ID + "/com/boris/debug/deltaprocessor"; //$NON-NLS-1$
 
 	/**
 	 * Configure the plug-in with respect to option settings defined in

@@ -2,18 +2,63 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="676dac2e-1c77-4bc4-a046-279d3b765425" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/NOTES.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/GdbReaderThread.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/GdbWriterThread.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/Utils.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com/boris/debug/com/boris/debug/Tests.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/GDBDebugProtocolServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/GdbDebugProtocolServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/com/boris/debug/com/boris/debug/GDBDebugProtocolServerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/boris/debug/com/boris/debug/GdbDebugProtocolServerTest.java" afterDir="false" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_code_findbugs_jsr305_1_3_9.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_code_gson_gson_2_7.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_errorprone_error_prone_annotations_2_0_18.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_guava_guava_22_0_rc1_android.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_j2objc_j2objc_annotations_1_1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_4_12.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_codehaus_mojo_animal_sniffer_annotations_1_14.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_lsp4j_org_eclipse_lsp4j_debug_0_5_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_lsp4j_org_eclipse_lsp4j_generator_0_5_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc_0_5_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_lsp4j_org_eclipse_lsp4j_jsonrpc_debug_0_5_0.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_xtend_org_eclipse_xtend_lib_2_16_0_M1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_xtend_org_eclipse_xtend_lib_macro_2_16_0_M1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_eclipse_xtext_org_eclipse_xtext_xbase_lib_2_16_0_M1.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_3.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/boris.iml" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/boris/debug/client/GdbDebugProtocolClient.java" />
+      <change beforePath="" afterPath="$PROJECT_DIR$/src/test/java/com/boris/debug/client/GdbDebugProtocolClientTest.java" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" afterPath="$PROJECT_DIR$/.idea/compiler.xml" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change beforePath="$PROJECT_DIR$/NOTES.txt" afterPath="$PROJECT_DIR$/notes.txt" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/build/org.eclipse.cdt.autotools.ui.tests/src/org/eclipse/cdt/autotools/ui/tests/SetConfigurationParameter.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/build/org.eclipse.cdt.autotools.ui.tests/src/org/eclipse/cdt/autotools/ui/tests/SetConfigurationParameter.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/build/org.eclipse.cdt.cmake.core/src/org/eclipse/cdt/cmake/core/internal/CMakeBuildConfiguration.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/build/org.eclipse.cdt.make.core/src/org/eclipse/cdt/make/core/MakeCorePlugin.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/build/org.eclipse.cdt.make.core/src/org/eclipse/cdt/make/core/MakeCorePlugin.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuilderCorePlugin.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/core/ManagedBuilderCorePlugin.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/projectconverter/UpdateManagedProject12.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/build/org.eclipse.cdt.managedbuilder.core/src/org/eclipse/cdt/managedbuilder/projectconverter/UpdateManagedProject12.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/build/org.eclipse.cdt.meson.ui.tests/src/org/eclipse/cdt/internal/meson/ui/tests/NewMesonConfigureTest.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/build/org.eclipse.cdt.meson.ui.tests/src/org/eclipse/cdt/internal/meson/ui/tests/NewMesonConfigureTest.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/build/org.eclipse.cdt.meson.ui/src/org/eclipse/cdt/meson/ui/properties/MesonPropertyPage.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/build/org.eclipse.cdt.meson.ui/src/org/eclipse/cdt/meson/ui/properties/MesonPropertyPage.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/core/CodanCorePlugin.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/codan/org.eclipse.cdt.codan.core/src/org/eclipse/cdt/codan/core/CodanCorePlugin.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/scanner/PortedScannerTests.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.core.tests/parser/org/eclipse/cdt/core/parser/tests/scanner/PortedScannerTests.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/TranslationUnit.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.core/model/org/eclipse/cdt/internal/core/model/TranslationUnit.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/IPDOMIndexerTask.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.core/parser/org/eclipse/cdt/core/dom/IPDOMIndexerTask.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/CPreprocessor.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/parser/scanner/CPreprocessor.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMManager.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.core/parser/org/eclipse/cdt/internal/core/pdom/PDOMManager.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/CCorePlugin.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.core/src/org/eclipse/cdt/core/CCorePlugin.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/resources/ResourceLookupTree.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.core/src/org/eclipse/cdt/internal/core/resources/ResourceLookupTree.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/ICElementPropertyConstants.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/ICElementPropertyConstants.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/includes/IncludeOrganizer.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.ui/src/org/eclipse/cdt/internal/ui/refactoring/includes/IncludeOrganizer.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/CUIPlugin.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/core/org.eclipse.cdt.ui/src/org/eclipse/cdt/ui/CUIPlugin.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/Trace.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/debug/org.eclipse.cdt.debug.core/src/org/eclipse/cdt/debug/internal/core/Trace.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyPart.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/dsf/org.eclipse.cdt.dsf.ui/src/org/eclipse/cdt/dsf/debug/internal/ui/disassembly/DisassemblyPart.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/dsf/org.eclipse.cdt.examples.dsf.pda/src/org/eclipse/cdt/examples/dsf/pda/PDAPlugin.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/dsf/org.eclipse.cdt.examples.dsf.pda/src/org/eclipse/cdt/examples/dsf/pda/PDAPlugin.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/build/QtBuildConfiguration.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/build/QtBuildConfiguration.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/qt/org.eclipse.cdt.qt.ui.tests/src/org/eclipse/cdt/qt/pro/parser/tests/QtProjectFileModifierTest.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/qt/org.eclipse.cdt.qt.ui.tests/src/org/eclipse/cdt/qt/pro/parser/tests/QtProjectFileModifierTest.java" />
+      <change beforePath="$PROJECT_DIR$/references/org.eclipse.cdt/qt/org.eclipse.cdt.qt.ui/src/org/eclipse/cdt/internal/qt/ui/editor/QtProjectFileKeyword.java" afterPath="$PROJECT_DIR$/references/org.eclipse.cdt/qt/org.eclipse.cdt.qt.ui/src/org/eclipse/cdt/internal/qt/ui/editor/QtProjectFileKeyword.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/GdbDebugProtocolServer.java" afterPath="$PROJECT_DIR$/src/main/java/com/boris/debug/server/GdbDebugProtocolServer.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/GdbReaderThread.java" afterPath="$PROJECT_DIR$/src/main/java/com/boris/debug/server/GdbReaderThread.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/GdbWriterThread.java" afterPath="$PROJECT_DIR$/src/main/java/com/boris/debug/server/GdbWriterThread.java" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/Utils.java" afterPath="$PROJECT_DIR$/src/main/java/com/boris/debug/Utils.java" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/boris/debug/com/boris/debug/GdbDebugProtocolServerTest.java" afterPath="$PROJECT_DIR$/src/test/java/com/boris/debug/server/GdbDebugProtocolServerTest.java" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/boris/debug/com/boris/debug/Tests.java" afterPath="$PROJECT_DIR$/src/test/java/com/boris/debug/Tests.java" />
     </list>
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -68,14 +113,12 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/GdbReaderThread.java">
+      <file leaf-file-name="notes.txt" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/notes.txt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="26" selection-start-line="26" selection-end-line="26" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -86,6 +129,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="JUnit4 Test Class" />
+        <option value="Salt Wireframe" />
+        <option value="UML Class" />
         <option value="Class" />
       </list>
     </option>
@@ -106,6 +151,11 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GradleLocalSettings">
+    <option name="externalProjectsViewState">
+      <projects_view />
+    </option>
+  </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
@@ -123,45 +173,65 @@
         <option value="$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/GdbDebugProtocolServer.java" />
         <option value="$PROJECT_DIR$/src/test/java/com/boris/debug/com/boris/debug/Tests.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/GdbReaderThread.java" />
-        <option value="$PROJECT_DIR$/NOTES.txt" />
         <option value="$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/GdbWriterThread.java" />
+        <option value="$PROJECT_DIR$/NOTES.txt" />
+        <option value="$PROJECT_DIR$/boris.puml" />
+        <option value="$PROJECT_DIR$/src/main/java/debug/Utils.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/boris/debug/server/GdbWriterThread.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/boris/debug/Tests.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/boris/debug/server/GdbDebugProtocolServerTest.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/boris/debug/Utils.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/boris/debug/server/GdbReaderThread.java" />
+        <option value="$PROJECT_DIR$/src/test/java/com/boris/debug/client/GdbDebugProtocolClientTest.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/boris/debug/server/GdbDebugProtocolServer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/boris/debug/client/GdbDebugProtocolClient.java" />
+        <option value="$PROJECT_DIR$/notes.txt" />
       </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
     </option>
   </component>
   <component name="MavenProjectNavigator">
     <treeState>
-      <expand>
-        <path>
-          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
-          <item name="boris" type="9519ce18:MavenProjectsStructure$ProjectNode" />
-        </path>
-        <path>
-          <item name="" type="16c1761:MavenProjectsStructure$RootNode" />
-          <item name="boris" type="9519ce18:MavenProjectsStructure$ProjectNode" />
-          <item name="Lifecycle" type="58874e2:MavenProjectsStructure$LifecycleNode" />
-        </path>
-      </expand>
+      <expand />
       <select />
     </treeState>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="293" />
-    <option name="y" value="52" />
-    <option name="width" value="1619" />
-    <option name="height" value="1000" />
+    <option name="x" value="94" />
+    <option name="width" value="1818" />
+    <option name="height" value="1047" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
   <component name="ProjectView">
-    <navigator proportions="" version="1">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
       <autoscrollToSource ProjectPane="true" />
       <autoscrollFromSource ProjectPane="true" />
+      <sortByType />
+      <manualOrder />
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
       <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -172,11 +242,6 @@
             <path>
               <item name="boris" type="b2602c69:ProjectViewProjectNode" />
               <item name="boris" type="462c0819:PsiDirectoryNode" />
-              <item name="references" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="boris" type="b2602c69:ProjectViewProjectNode" />
-              <item name="boris" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -204,6 +269,24 @@
               <item name="boris" type="b2602c69:ProjectViewProjectNode" />
               <item name="boris" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="debug" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="boris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="boris" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="main" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="debug" type="462c0819:PsiDirectoryNode" />
+              <item name="server" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="boris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="boris" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="test" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -224,18 +307,49 @@
             <path>
               <item name="boris" type="b2602c69:ProjectViewProjectNode" />
               <item name="boris" type="462c0819:PsiDirectoryNode" />
-              <item name="testcases" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="test" type="462c0819:PsiDirectoryNode" />
+              <item name="java" type="462c0819:PsiDirectoryNode" />
+              <item name="debug" type="462c0819:PsiDirectoryNode" />
+              <item name="client" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="boris" type="b2602c69:ProjectViewProjectNode" />
-              <item name="boris" type="462c0819:PsiDirectoryNode" />
-              <item name="testcases" type="462c0819:PsiDirectoryNode" />
-              <item name="helloworld" type="462c0819:PsiDirectoryNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+            <path>
+              <item name="boris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="Maven: org.eclipse.lsp4j:org.eclipse.lsp4j.debug:0.5.0" type="70bed36:NamedLibraryElementNode" />
+            </path>
+            <path>
+              <item name="boris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="Maven: org.eclipse.lsp4j:org.eclipse.lsp4j.debug:0.5.0" type="70bed36:NamedLibraryElementNode" />
+              <item name="org.eclipse.lsp4j.debug-0.5.0.jar" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="boris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="Maven: org.eclipse.lsp4j:org.eclipse.lsp4j.debug:0.5.0" type="70bed36:NamedLibraryElementNode" />
+              <item name="org.eclipse.lsp4j.debug-0.5.0.jar" type="462c0819:PsiDirectoryNode" />
+              <item name="debug" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="boris" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="Maven: org.eclipse.lsp4j:org.eclipse.lsp4j.debug:0.5.0" type="70bed36:NamedLibraryElementNode" />
+              <item name="org.eclipse.lsp4j.debug-0.5.0.jar" type="462c0819:PsiDirectoryNode" />
+              <item name="debug" type="462c0819:PsiDirectoryNode" />
+              <item name="services" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
+      <pane id="PackagesPane" />
+      <pane id="AndroidView" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -243,14 +357,19 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="JUnit4" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrarySuperClass.JUnit4" value="" />
-    <property name="project.structure.last.edited" value="Problems" />
-    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="reference.settings.project.maven.runner" />
+    <property name="settings.editor.selected.configurable" value="preferences.sourceCode.Java" />
+    <property name="aspect.path.notification.shown" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="CreateTestDialog.RecentsKey">
       <recent name="com.boris.debug.com.boris.debug.main" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.boris.debug.server" />
+      <recent name="com.boris.debug" />
     </key>
     <key name="CreateTestDialog.Recents.Supers">
       <recent name="" />
@@ -268,28 +387,87 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="JUnit.GdbDebugProtocolServerTest.launch">
-    <configuration name="GdbDebugProtocolServerTest.launch" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="boris" />
-      <extension name="coverage">
+  <component name="RunManager" selected="JUnit.GdbDebugProtocolClientTest">
+    <configuration name="GdbDebugProtocolClientTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
         <pattern>
-          <option name="PATTERN" value="com.boris.debug.com.boris.debug.*" />
+          <option name="PATTERN" value="com.boris.debug.client.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
+      <module name="boris" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="com.boris.debug.client" />
+      <option name="MAIN_CLASS_NAME" value="com.boris.debug.client.GdbDebugProtocolClientTest" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+    </configuration>
+    <configuration name="GdbDebugProtocolServerTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="com.boris.debug.server.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="boris" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PACKAGE_NAME" value="com.boris.debug.server" />
+      <option name="MAIN_CLASS_NAME" value="com.boris.debug.server.GdbDebugProtocolServerTest" />
+      <option name="METHOD_NAME" />
+      <option name="TEST_OBJECT" value="class" />
+      <option name="VM_PARAMETERS" />
+      <option name="PARAMETERS" />
+      <option name="WORKING_DIRECTORY" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
+    </configuration>
+    <configuration name="GdbDebugProtocolServerTest.launch" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <extension name="coverage" enabled="false" merge="false" runner="idea">
+        <pattern>
+          <option name="PATTERN" value="debug.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <module name="boris" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
       <option name="PACKAGE_NAME" value="com.boris.debug.com.boris.debug" />
-      <option name="MAIN_CLASS_NAME" value="com.boris.debug.com.boris.debug.GdbDebugProtocolServerTest" />
+      <option name="MAIN_CLASS_NAME" value="com.boris.debug.GdbDebugProtocolServerTest" />
       <option name="METHOD_NAME" value="launch" />
       <option name="TEST_OBJECT" value="method" />
+      <option name="VM_PARAMETERS" value="" />
       <option name="PARAMETERS" value="" />
-      <method v="2" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="ENV_VARIABLES" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="TEST_SEARCH_SCOPE">
+        <value defaultName="singleModule" />
+      </option>
+      <envs />
+      <patterns />
     </configuration>
     <configuration name="boris [test]" type="MavenRunConfiguration" factoryName="Maven" temporary="true">
       <MavenSettings>
         <option name="myGeneralSettings" />
         <option name="myRunnerSettings">
           <MavenRunnerSettings>
-            <option name="delegateBuildToMaven" value="false" />
             <option name="environmentProperties">
               <map />
             </option>
@@ -313,7 +491,6 @@
                 <option value="test" />
               </list>
             </option>
-            <option name="pomFileName" value="pom.xml" />
             <option name="profilesMap">
               <map />
             </option>
@@ -322,18 +499,24 @@
           </MavenRunnerParameters>
         </option>
       </MavenSettings>
-      <method v="2" />
     </configuration>
-    <list>
-      <item itemvalue="JUnit.GdbDebugProtocolServerTest.launch" />
-      <item itemvalue="Maven.boris [test]" />
+    <list size="4">
+      <item index="0" class="java.lang.String" itemvalue="JUnit.GdbDebugProtocolServerTest.launch" />
+      <item index="1" class="java.lang.String" itemvalue="Maven.boris [test]" />
+      <item index="2" class="java.lang.String" itemvalue="JUnit.GdbDebugProtocolServerTest" />
+      <item index="3" class="java.lang.String" itemvalue="JUnit.GdbDebugProtocolClientTest" />
     </list>
     <recent_temporary>
-      <list>
-        <item itemvalue="JUnit.GdbDebugProtocolServerTest.launch" />
-        <item itemvalue="Maven.boris [test]" />
+      <list size="4">
+        <item index="0" class="java.lang.String" itemvalue="JUnit.GdbDebugProtocolClientTest" />
+        <item index="1" class="java.lang.String" itemvalue="JUnit.GdbDebugProtocolServerTest" />
+        <item index="2" class="java.lang.String" itemvalue="JUnit.GdbDebugProtocolServerTest.launch" />
+        <item index="3" class="java.lang.String" itemvalue="Maven.boris [test]" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
   </component>
   <component name="StructureViewFactory">
     <option name="ACTIVE_ACTIONS" value=",ALPHA_COMPARATOR" />
@@ -350,6 +533,7 @@
       <updated>1539911459737</updated>
       <workItem from="1539911462672" duration="10367000" />
       <workItem from="1539921938696" duration="1896000" />
+      <workItem from="1541970045007" duration="10027000" />
     </task>
     <task id="LOCAL-00001" summary="setting up maven structure">
       <created>1539912957346</created>
@@ -369,39 +553,39 @@
     <servers />
   </component>
   <component name="TestHistory">
-    <history-entry file="GdbDebugProtocolServerTest_launch - 2018.10.18 at 22h 29m 19s.xml">
-      <configuration name="GdbDebugProtocolServerTest.launch" configurationId="JUnit" />
+    <history-entry file="GdbDebugProtocolClientTest - 2018.11.11 at 20h 10m 07s.xml">
+      <configuration name="GdbDebugProtocolClientTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="GdbDebugProtocolServerTest_launch - 2018.10.18 at 22h 29m 32s.xml">
-      <configuration name="GdbDebugProtocolServerTest.launch" configurationId="JUnit" />
+    <history-entry file="GdbDebugProtocolClientTest - 2018.11.11 at 20h 16m 54s.xml">
+      <configuration name="GdbDebugProtocolClientTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="GdbDebugProtocolServerTest_launch - 2018.10.18 at 22h 29m 39s.xml">
-      <configuration name="GdbDebugProtocolServerTest.launch" configurationId="JUnit" />
+    <history-entry file="GdbDebugProtocolClientTest - 2018.11.11 at 20h 18m 55s.xml">
+      <configuration name="GdbDebugProtocolClientTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="GdbDebugProtocolServerTest_launch - 2018.10.18 at 22h 32m 02s.xml">
-      <configuration name="GdbDebugProtocolServerTest.launch" configurationId="JUnit" />
+    <history-entry file="GdbDebugProtocolClientTest - 2018.11.11 at 20h 20m 08s.xml">
+      <configuration name="GdbDebugProtocolClientTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="GdbDebugProtocolServerTest_launch - 2018.10.18 at 22h 36m 04s.xml">
-      <configuration name="GdbDebugProtocolServerTest.launch" configurationId="JUnit" />
+    <history-entry file="GdbDebugProtocolClientTest - 2018.11.11 at 20h 28m 44s.xml">
+      <configuration name="GdbDebugProtocolClientTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="GdbDebugProtocolServerTest_launch - 2018.10.18 at 22h 36m 20s.xml">
-      <configuration name="GdbDebugProtocolServerTest.launch" configurationId="JUnit" />
+    <history-entry file="GdbDebugProtocolClientTest - 2018.11.11 at 20h 36m 09s.xml">
+      <configuration name="GdbDebugProtocolClientTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="GdbDebugProtocolServerTest_launch - 2018.10.18 at 22h 36m 46s.xml">
-      <configuration name="GdbDebugProtocolServerTest.launch" configurationId="JUnit" />
+    <history-entry file="GdbDebugProtocolClientTest - 2018.11.11 at 20h 41m 01s.xml">
+      <configuration name="GdbDebugProtocolClientTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="GdbDebugProtocolServerTest_launch - 2018.10.18 at 22h 36m 48s.xml">
-      <configuration name="GdbDebugProtocolServerTest.launch" configurationId="JUnit" />
+    <history-entry file="GdbDebugProtocolClientTest - 2018.11.11 at 20h 45m 55s.xml">
+      <configuration name="GdbDebugProtocolClientTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="GdbDebugProtocolServerTest_launch - 2018.10.18 at 22h 36m 52s.xml">
-      <configuration name="GdbDebugProtocolServerTest.launch" configurationId="JUnit" />
+    <history-entry file="GdbDebugProtocolClientTest - 2018.11.11 at 20h 46m 59s.xml">
+      <configuration name="GdbDebugProtocolClientTest" configurationId="JUnit" />
     </history-entry>
-    <history-entry file="GdbDebugProtocolServerTest_launch - 2018.10.18 at 22h 36m 56s.xml">
-      <configuration name="GdbDebugProtocolServerTest.launch" configurationId="JUnit" />
+    <history-entry file="GdbDebugProtocolClientTest - 2018.11.11 at 20h 47m 36s.xml">
+      <configuration name="GdbDebugProtocolClientTest" configurationId="JUnit" />
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="12263000" />
+    <option name="totallyTimeSpent" value="22290000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -413,31 +597,41 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="293" y="52" width="1619" height="1000" extended-state="0" />
+    <frame x="94" y="0" width="1818" height="1047" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info id="Designer" order="0" />
-      <window_info id="UI Designer" order="1" />
-      <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="3" sideWeight="0.49914238" visible="true" weight="0.2638271" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49968213" weight="0.32988507" />
-      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49904642" weight="0.32988507" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="TODO" order="6" weight="0.32988507" />
-      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Terminal" order="8" weight="0.32988507" />
-      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.5009536" side_tool="true" weight="0.32988507" />
-      <window_info anchor="bottom" id="Messages" order="10" weight="0.32988507" />
-      <window_info anchor="right" id="Palette" order="0" />
-      <window_info anchor="right" id="Palette&#9;" order="1" />
-      <window_info anchor="right" id="Maven Projects" order="2" sideWeight="0.49425286" visible="true" weight="0.19898283" />
-      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="3" type="SLIDING" weight="0.4" />
-      <window_info anchor="right" id="Ant Build" order="4" weight="0.25" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="5" weight="0.25" />
-      <window_info anchor="right" id="Structure" order="6" sideWeight="0.50574714" side_tool="true" visible="true" weight="0.19898283" />
+      <window_info id="PlantUML" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.38235295" sideWeight="0.4777975" order="-1" side_tool="false" content_ui="tabs" x="838" y="291" width="528" height="465" />
+      <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32988507" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32942432" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Image Layers" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32988507" sideWeight="0.5009536" order="9" side_tool="true" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19837804" sideWeight="0.4904051" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32942432" sideWeight="0.49904642" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32988507" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23418424" sideWeight="0.49914238" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32942432" sideWeight="0.49968213" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25582686" sideWeight="0.5222025" order="6" side_tool="true" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.39978677" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="5" side_tool="false" content_ui="combo" />
     </layout>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
   </component>
   <component name="UnknownFeatures">
     <option featureType="com.intellij.fileTypeFactory" implementationName="*.cpp" />
@@ -457,71 +651,14 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/GdbReaderThread.java</url>
-          <line>27</line>
-          <properties />
-          <option name="timeStamp" value="8" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/GdbReaderThread.java</url>
-          <line>26</line>
-          <properties />
-          <option name="timeStamp" value="11" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/GdbReaderThread.java</url>
-          <line>22</line>
-          <properties />
-          <option name="timeStamp" value="12" />
-        </line-breakpoint>
-      </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
+      <option name="time" value="2" />
     </breakpoint-manager>
+    <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="13" selection-start-column="13" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/services/IDebugProtocolServer.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="62" column="17" selection-start-line="62" selection-start-column="17" selection-end-line="62" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/README.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="32" selection-start-column="32" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar:///usr/lib/jvm/jdk-11.0.1/lib/src.zip!/java.base/java/util/concurrent/CompletableFuture.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="142" column="13" selection-start-line="142" selection-start-column="13" selection-end-line="142" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/Capabilities.class">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-180">
-          <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/org.eclipse.cdt/dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbAdapterFactory.java" />
-    <entry file="file://$PROJECT_DIR$/org.eclipse.cdt/dsf-gdb/org.eclipse.cdt.dsf.gdb.ui/src/org/eclipse/cdt/dsf/gdb/internal/ui/GdbSessionAdapters.java" />
-    <entry file="file://$PROJECT_DIR$/org.eclipse.cdt/dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IProcesses.java" />
-    <entry file="file://$PROJECT_DIR$/org.eclipse.cdt/dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/debug/service/IBreakpoints.java" />
     <entry file="file://$PROJECT_DIR$/org.eclipse.cdt/dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/IDsfService.java" />
     <entry file="file://$PROJECT_DIR$/org.eclipse.cdt/dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunchDelegate.java" />
     <entry file="file://$PROJECT_DIR$/org.eclipse.cdt/dsf/org.eclipse.cdt.dsf/src/org/eclipse/cdt/dsf/service/DsfSession.java" />
@@ -532,84 +669,344 @@
     <entry file="file://$PROJECT_DIR$/org.eclipse.cdt/dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GdbLaunch.java" />
     <entry file="file://$PROJECT_DIR$/org.eclipse.cdt/dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GDBProcess.java" />
     <entry file="file://$PROJECT_DIR$/org.eclipse.cdt/dsf-gdb/org.eclipse.cdt.dsf.gdb/src/org/eclipse/cdt/dsf/gdb/launching/GDBDebugger.java" />
-    <entry file="file://$PROJECT_DIR$/testcases/helloworld/makefile">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/testcases/helloworld/helloworld.cpp">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/references/org.eclipse.cdt/qt/org.eclipse.cdt.qt.core/src/org/eclipse/cdt/internal/qt/core/provider/LinuxQtInstallProvider.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="210">
-          <caret line="20" column="31" selection-start-line="20" selection-start-column="31" selection-end-line="20" selection-end-column="31" />
+          <caret line="20" column="31" lean-forward="false" selection-start-line="20" selection-start-column="31" selection-end-line="20" selection-end-column="31" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="422">
-          <caret line="38" column="19" selection-start-line="38" selection-start-column="19" selection-end-line="38" selection-end-column="19" />
+          <caret line="38" column="19" lean-forward="false" selection-start-line="38" selection-start-column="19" selection-end-line="38" selection-end-column="19" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/Utils.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/DebugProtcol.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="45">
-          <caret line="3" column="49" selection-start-line="3" selection-start-column="49" selection-end-line="3" selection-end-column="49" />
+        <state relative-caret-position="136">
+          <caret line="18" column="13" lean-forward="false" selection-start-line="18" selection-start-column="13" selection-end-line="18" selection-end-column="13" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/boris/debug/com/boris/debug/Tests.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/DebugProtcol.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="17" column="26" selection-start-line="17" selection-start-column="26" selection-end-line="17" selection-end-column="26" />
+        <state relative-caret-position="68">
+          <caret line="7" column="13" lean-forward="false" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/BreakpointEventArguments.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="22" column="13" lean-forward="false" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/SetBreakpointsResponse.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="37" column="10" lean-forward="false" selection-start-line="37" selection-start-column="10" selection-end-line="37" selection-end-column="10" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/SetBreakpointsArguments.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="14" column="13" lean-forward="true" selection-start-line="14" selection-start-column="13" selection-end-line="14" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/Source.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="11" column="13" lean-forward="false" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/Source.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="24" column="13" lean-forward="false" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/StackFrame.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="24" column="13" lean-forward="false" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/StackFrame.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1734">
+          <caret line="12" column="13" lean-forward="false" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/launch/DSPLauncher.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="353">
+          <caret line="98" column="35" lean-forward="false" selection-start-line="98" selection-start-column="35" selection-end-line="98" selection-end-column="35" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/Breakpoint.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="22" column="17" lean-forward="false" selection-start-line="22" selection-start-column="17" selection-end-line="22" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/Breakpoint.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="11" column="13" lean-forward="false" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/SetFunctionBreakpointsArguments.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="12" column="13" lean-forward="false" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="13" lean-forward="false" selection-start-line="0" selection-start-column="13" selection-end-line="0" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/services/IDebugProtocolServer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="491">
+          <caret line="125" column="36" lean-forward="false" selection-start-line="125" selection-start-column="36" selection-end-line="125" selection-end-column="36" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#5497#5498#0" expanded="false" />
+            <element signature="e#5545#5546#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/GdbDebugProtocolServer.java">
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/boris/debug/server/GdbDebugProtocolServerTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="211">
-          <caret line="48" selection-start-line="48" selection-end-line="48" />
+        <state relative-caret-position="357">
+          <caret line="21" column="0" lean-forward="false" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/NOTES.txt">
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.jsonrpc/0.5.0/org.eclipse.lsp4j.jsonrpc-0.5.0.jar!/org/eclipse/lsp4j/jsonrpc/Launcher.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="60" selection-start-line="1" selection-start-column="60" selection-end-line="1" selection-end-column="60" />
+        <state relative-caret-position="102">
+          <caret line="30" column="17" lean-forward="false" selection-start-line="30" selection-start-column="17" selection-end-line="30" selection-end-column="17" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/GdbWriterThread.java">
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.jsonrpc.debug/0.5.0/org.eclipse.lsp4j.jsonrpc.debug-0.5.0.jar!/org/eclipse/lsp4j/jsonrpc/debug/DebugLauncher.class">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="105">
-          <caret line="7" column="63" selection-start-line="7" selection-start-column="63" selection-end-line="7" selection-end-column="63" />
+        <state relative-caret-position="187">
+          <caret line="29" column="50" lean-forward="false" selection-start-line="29" selection-start-column="50" selection-end-line="29" selection-end-column="50" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/test/java/com/boris/debug/com/boris/debug/GdbDebugProtocolServerTest.java">
+    <entry file="jar://C:/cygwin/tools/batonroot/rodin/devkits/win64/jdk1.8.0_112/src.zip!/java/io/PipedInputStream.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="315">
-          <caret line="21" column="27" selection-start-line="21" selection-start-column="27" selection-end-line="21" selection-end-column="27" />
+        <state relative-caret-position="312">
+          <caret line="136" column="11" lean-forward="false" selection-start-line="136" selection-start-column="11" selection-end-line="136" selection-end-column="11" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#4196#4197#0" expanded="false" />
+            <element signature="e#4239#4240#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/com/boris/debug/com/boris/debug/GdbReaderThread.java">
+    <entry file="jar://C:/cygwin/tools/batonroot/rodin/devkits/win64/jdk1.8.0_112/src.zip!/java/io/PipedOutputStream.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="26" selection-start-line="26" selection-end-line="26" />
+        <state relative-caret-position="391">
+          <caret line="46" column="6" lean-forward="false" selection-start-line="46" selection-start-column="6" selection-end-line="46" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/launch/DSPLauncher.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="461">
+          <caret line="43" column="37" lean-forward="false" selection-start-line="43" selection-start-column="37" selection-end-line="43" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/LaunchRequestArguments.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="10" column="13" lean-forward="false" selection-start-line="10" selection-start-column="13" selection-end-line="10" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/LaunchRequestArguments.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="20" column="14" lean-forward="true" selection-start-line="20" selection-start-column="14" selection-end-line="20" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/InitializeRequestArguments.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-85">
+          <caret line="40" column="21" lean-forward="true" selection-start-line="40" selection-start-column="21" selection-end-line="40" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/InitializeRequestArguments.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="11" column="13" lean-forward="false" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/Capabilities.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="24" column="13" lean-forward="false" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/Capabilities.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="11" column="13" lean-forward="false" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/services/IDebugProtocolServer.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="81" column="36" lean-forward="false" selection-start-line="81" selection-start-column="36" selection-end-line="81" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/boris/debug/server/GdbReaderThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="374">
+          <caret line="26" column="12" lean-forward="false" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/boris/debug/server/GdbWriterThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="4" lean-forward="false" selection-start-line="10" selection-start-column="4" selection-end-line="10" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/boris/debug/client/GdbDebugProtocolClientTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="358">
+          <caret line="42" column="8" lean-forward="false" selection-start-line="42" selection-start-column="8" selection-end-line="42" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/boris.puml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="24" column="0" lean-forward="false" selection-start-line="24" selection-start-column="0" selection-end-line="24" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/test/java/com/boris/debug/Tests.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="17" column="19" lean-forward="true" selection-start-line="17" selection-start-column="19" selection-end-line="17" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/boris/debug/Utils.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="27" lean-forward="false" selection-start-line="10" selection-start-column="27" selection-end-line="10" selection-end-column="27" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="e#143#144#0" expanded="false" />
+            <element signature="e#191#192#0" expanded="false" />
+            <element signature="e#233#234#0" expanded="false" />
+            <element signature="e#282#283#0" expanded="false" />
+            <element signature="e#324#325#0" expanded="false" />
+            <element signature="e#373#374#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/boris/debug/server/GdbDebugProtocolServer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="528">
+          <caret line="57" column="0" lean-forward="false" selection-start-line="57" selection-start-column="0" selection-end-line="57" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/com/boris/debug/client/GdbDebugProtocolClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="19" column="47" lean-forward="false" selection-start-line="19" selection-start-column="47" selection-end-line="19" selection-end-column="47" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/services/IDebugProtocolClient.class">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="52" column="17" lean-forward="false" selection-start-line="52" selection-start-column="17" selection-end-line="52" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="jar://$MAVEN_REPOSITORY$/org/eclipse/lsp4j/org.eclipse.lsp4j.debug/0.5.0/org.eclipse.lsp4j.debug-0.5.0.jar!/org/eclipse/lsp4j/debug/services/IDebugProtocolClient.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="179">
+          <caret line="122" column="17" lean-forward="false" selection-start-line="122" selection-start-column="17" selection-end-line="122" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/notes.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -653,7 +1050,7 @@
       </state>
       <state key="JdkListConfigurable.UI">
         <settings>
-          <last-edited>11</last-edited>
+          <last-edited>1.8</last-edited>
           <splitter-proportions>
             <option name="proportions">
               <list>
@@ -670,7 +1067,6 @@
             <option name="proportions">
               <list>
                 <option value="0.2" />
-                <option value="0.6" />
               </list>
             </option>
           </splitter-proportions>

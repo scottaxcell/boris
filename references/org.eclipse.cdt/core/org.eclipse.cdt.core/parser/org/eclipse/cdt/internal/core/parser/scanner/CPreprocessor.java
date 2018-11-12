@@ -123,7 +123,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 
 	private static final int MAX_INCLUSION_DEPTH = 200;
 
-	private static final String TRACE_NO_GUARD = CCorePlugin.PLUGIN_ID + "/debug/scanner/missingIncludeGuards"; //$NON-NLS-1$
+	private static final String TRACE_NO_GUARD = CCorePlugin.PLUGIN_ID + "/com/boris/debug/scanner/missingIncludeGuards"; //$NON-NLS-1$
 
 	/**
 	 * Returns an integer, suitable for use as a macro value, representing the current

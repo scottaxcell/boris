@@ -1,4 +1,6 @@
-package com.boris.debug.com.boris.debug;
+package com.boris.debug;
+
+import com.boris.debug.server.GdbDebugProtocolServer;
 
 import java.util.HashMap;
 import java.util.Map;

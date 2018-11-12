@@ -62,7 +62,7 @@ public class CodanCorePlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
-		if (isDebuggingEnabled("/debug/performance")) { //$NON-NLS-1$
+		if (isDebuggingEnabled("/com/boris/debug/performance")) { //$NON-NLS-1$
 			CheckersTimeStats.getInstance().setEnabled(true);
 		}
 	}

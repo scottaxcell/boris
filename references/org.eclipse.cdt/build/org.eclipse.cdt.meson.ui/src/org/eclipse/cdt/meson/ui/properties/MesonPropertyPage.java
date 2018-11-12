@@ -205,8 +205,8 @@ public class MesonPropertyPage extends PropertyPage {
 					// default buildtype based on active build configuration
 					// user can always override and we will use override from then on
 					String defaultBuildType = "release"; //$NON-NLS-1$
-					if (configName.contains("debug")) { //$NON-NLS-1$
-						defaultBuildType = "debug"; //$NON-NLS-1$
+					if (configName.contains("com/boris/debug")) { //$NON-NLS-1$
+						defaultBuildType = "com/boris/debug"; //$NON-NLS-1$
 					}
 				    if (argMap.get("buildtype") == null) { //$NON-NLS-1$
 				    	argMap.put("buildtype", defaultBuildType); //$NON-NLS-1$

@@ -101,7 +101,7 @@ import org.eclipse.osgi.util.NLS;
 public class TranslationUnit extends Openable implements ITranslationUnit {
 	static {
 		CompositeValue.sDEBUG=
-				Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/parser/CompositeValue"));  //$NON-NLS-1$
+				Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/com/boris/debug/parser/CompositeValue"));  //$NON-NLS-1$
 	}
 
 	private URI location;

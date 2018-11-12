@@ -91,7 +91,7 @@ public class PDAPlugin extends Plugin {
 	@Override
     public void start(BundleContext context) throws Exception {
         fContext = context;
-        DEBUG = Boolean.parseBoolean(Platform.getDebugOption(PLUGIN_ID + "/debug"));  //$NON-NLS-1$
+        DEBUG = Boolean.parseBoolean(Platform.getDebugOption(PLUGIN_ID + "/com/boris/debug"));  //$NON-NLS-1$
 		super.start(context);
 	}
 

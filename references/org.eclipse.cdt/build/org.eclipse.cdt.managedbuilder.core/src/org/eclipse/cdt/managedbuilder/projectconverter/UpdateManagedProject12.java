@@ -56,7 +56,7 @@ import org.w3c.dom.NodeList;
 class UpdateManagedProject12 {
 	
 	private static final String ID_CYGWIN = "cygwin";	//$NON-NLS-1$
-	private static final String ID_DEBUG = "debug";	//$NON-NLS-1$
+	private static final String ID_DEBUG = "com/boris/debug";	//$NON-NLS-1$
 	private static final String ID_DIRS = "dirs";	//$NON-NLS-1$
 	private static final String ID_EXE = "exe";	//$NON-NLS-1$
 	private static final String ID_EXEC = "exec";	//$NON-NLS-1$
@@ -160,7 +160,7 @@ class UpdateManagedProject12 {
 				defId += ID_STATIC;
 				break;
 		}
-		defId += ID_SEPARATOR + (debug ? "debug" : "release"); //$NON-NLS-1$ //$NON-NLS-2$		
+		defId += ID_SEPARATOR + (debug ? "com/boris/debug" : "release"); //$NON-NLS-1$ //$NON-NLS-2$
 		return defId;
 	}
 	

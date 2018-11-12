@@ -197,10 +197,10 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		super.stop(context);
 	}
 
-	private static final String PATH_ENTRY = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/pathEntry"; //$NON-NLS-1$
-	private static final String PATH_ENTRY_INIT = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/pathEntryInit"; //$NON-NLS-1$
-	private static final String BUILDER = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/builder"; //$NON-NLS-1$
-	private static final String BUILD_MODEL = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/debug/buildModel"; //$NON-NLS-1$
+	private static final String PATH_ENTRY = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/com/boris/debug/pathEntry"; //$NON-NLS-1$
+	private static final String PATH_ENTRY_INIT = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/com/boris/debug/pathEntryInit"; //$NON-NLS-1$
+	private static final String BUILDER = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/com/boris/debug/builder"; //$NON-NLS-1$
+	private static final String BUILD_MODEL = ManagedBuilderCorePlugin.getUniqueIdentifier() + "/com/boris/debug/buildModel"; //$NON-NLS-1$
 
 	public static void log(IStatus status) {
 		ResourcesPlugin.getPlugin().getLog().log(status);

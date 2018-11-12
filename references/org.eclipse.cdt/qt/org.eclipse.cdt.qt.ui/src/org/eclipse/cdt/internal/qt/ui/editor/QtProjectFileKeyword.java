@@ -76,7 +76,7 @@ public enum QtProjectFileKeyword {
 	FUNC_PARSEJSON("parseJson"), //$NON-NLS-1$
 	FUNC_LOAD("load"), //$NON-NLS-1$
 	FUNC_INCLUDE("include"), //$NON-NLS-1$
-	FUNC_DEBUG("debug"), //$NON-NLS-1$
+	FUNC_DEBUG("com/boris/debug"), //$NON-NLS-1$
 	FUNC_LOG("log"), //$NON-NLS-1$
 	FUNC_MESSAGE("message"), //$NON-NLS-1$
 	FUNC_WARNING("warning"), //$NON-NLS-1$

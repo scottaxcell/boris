@@ -86,7 +86,7 @@ import org.eclipse.cdt.internal.formatter.ChangeFormatter;
  */
 public class IncludeOrganizer {
 	private static boolean DEBUG_HEADER_SUBSTITUTION =
-			Boolean.parseBoolean(Platform.getDebugOption(CUIPlugin.PLUGIN_ID + "/debug/includeOrganizer/headerSubstitution")); //$NON-NLS-1$
+			Boolean.parseBoolean(Platform.getDebugOption(CUIPlugin.PLUGIN_ID + "/com/boris/debug/includeOrganizer/headerSubstitution")); //$NON-NLS-1$
 
 	private static final Collator COLLATOR = Collator.getInstance();
 

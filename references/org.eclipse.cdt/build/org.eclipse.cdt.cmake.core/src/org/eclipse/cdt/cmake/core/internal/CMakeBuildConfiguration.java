@@ -160,7 +160,7 @@ public class CMakeBuildConfiguration extends CBuildConfiguration {
 
 				switch (getLaunchMode()) {
 				// TODO what to do with other modes
-				case "debug": //$NON-NLS-1$
+				case "com/boris/debug": //$NON-NLS-1$
 					command.add("-DCMAKE_BUILD_TYPE=Debug"); //$NON-NLS-1$
 					break;
 				case "run": //$NON-NLS-1$

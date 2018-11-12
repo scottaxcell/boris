@@ -1,9 +1,7 @@
-package com.boris.debug.com.boris.debug;
+package com.boris.debug.server;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.Assert.fail;
 
 public class GdbDebugProtocolServerTest {
 

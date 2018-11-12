@@ -135,7 +135,7 @@ class ResourceLookupTree implements IResourceChangeListener, IResourceDeltaVisit
 			}
 		};
 		fUnrefJob.setSystem(true);
-		fTrace= Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/resourceLookup"));  //$NON-NLS-1$
+		fTrace= Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/com/boris/debug/resourceLookup"));  //$NON-NLS-1$
 	}
 
 	public void startup() {

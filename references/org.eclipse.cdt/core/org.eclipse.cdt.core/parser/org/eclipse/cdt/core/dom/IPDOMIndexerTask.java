@@ -21,12 +21,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IPDOMIndexerTask {
-	public static final String TRACE_ACTIVITY   = CCorePlugin.PLUGIN_ID + "/debug/indexer/activity";  //$NON-NLS-1$
-	public static final String TRACE_STATISTICS = CCorePlugin.PLUGIN_ID + "/debug/indexer/statistics";  //$NON-NLS-1$
-	public static final String TRACE_INCLUSION_PROBLEMS = CCorePlugin.PLUGIN_ID + "/debug/indexer/problems/inclusion";  //$NON-NLS-1$
-	public static final String TRACE_SCANNER_PROBLEMS = CCorePlugin.PLUGIN_ID + "/debug/indexer/problems/scanner";  //$NON-NLS-1$
-	public static final String TRACE_SYNTAX_PROBLEMS = CCorePlugin.PLUGIN_ID + "/debug/indexer/problems/syntax";  //$NON-NLS-1$
-	public static final String TRACE_PROBLEMS   = CCorePlugin.PLUGIN_ID + "/debug/indexer/problems";  //$NON-NLS-1$
+	public static final String TRACE_ACTIVITY   = CCorePlugin.PLUGIN_ID + "/com/boris/debug/indexer/activity";  //$NON-NLS-1$
+	public static final String TRACE_STATISTICS = CCorePlugin.PLUGIN_ID + "/com/boris/debug/indexer/statistics";  //$NON-NLS-1$
+	public static final String TRACE_INCLUSION_PROBLEMS = CCorePlugin.PLUGIN_ID + "/com/boris/debug/indexer/problems/inclusion";  //$NON-NLS-1$
+	public static final String TRACE_SCANNER_PROBLEMS = CCorePlugin.PLUGIN_ID + "/com/boris/debug/indexer/problems/scanner";  //$NON-NLS-1$
+	public static final String TRACE_SYNTAX_PROBLEMS = CCorePlugin.PLUGIN_ID + "/com/boris/debug/indexer/problems/syntax";  //$NON-NLS-1$
+	public static final String TRACE_PROBLEMS   = CCorePlugin.PLUGIN_ID + "/com/boris/debug/indexer/problems";  //$NON-NLS-1$
 
 	/**
 	 * Called by the framework to perform the task.

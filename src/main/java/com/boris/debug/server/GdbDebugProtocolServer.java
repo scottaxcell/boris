@@ -1,5 +1,6 @@
-package com.boris.debug.com.boris.debug;
+package com.boris.debug.server;
 
+import com.boris.debug.Utils;
 import org.eclipse.lsp4j.debug.*;
 import org.eclipse.lsp4j.debug.services.IDebugProtocolServer;
 
@@ -28,7 +29,13 @@ public class GdbDebugProtocolServer implements IDebugProtocolServer {
 
     @Override
     public CompletableFuture<Capabilities> initialize(InitializeRequestArguments args) {
-        return CompletableFuture.completedFuture(null);
+        Utils.debug(this.getClass().getSimpleName() + " -- initialize called");
+
+        Capabilities capabilities = new Capabilities();
+        capabilities.setSupportsFunctionBreakpoints(false);
+        capabilities.setSupportsConditionalBreakpoints(false);
+
+        return CompletableFuture.completedFuture(capabilities);
     }
 
     @Override
@@ -43,7 +50,9 @@ public class GdbDebugProtocolServer implements IDebugProtocolServer {
         // cmd: gdb -q -nw -i mi2 [target]
         // -q: quiet, -nw: no windows i: interpreter (mi2 in our case)
 
-        final String[] cmdline = {Utils.GDB_PATH, "-q", "-nw", "-", "mi2"};
+        final String[] cmdline = {Utils.GDB_PATH, "-q", "-nw", "-i", "mi2"};
+
+        Utils.debug(this.getClass().getSimpleName() + " -- launch called");
 
         try {
             gdbProcess = Runtime.getRuntime().exec(cmdline);

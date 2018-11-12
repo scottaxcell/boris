@@ -1890,10 +1890,10 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 
 		Map<String, IMacroBinding> defs = fScanner.getMacroDefinitions();
-		assertTrue(defs.containsKey("debug")); 
+		assertTrue(defs.containsKey("com/boris/debug"));
 		assertTrue(defs.containsKey("showlist")); 
 		assertTrue(defs.containsKey("report")); 
-		IMacroBinding debug = defs.get("debug"); 
+		IMacroBinding debug = defs.get("com/boris/debug");
 		assertTrue(new String(debug.getParameterPlaceholderList()[0]).equals("__VA_ARGS__")); 
 		assertEquals("fprintf(stderr, __VA_ARGS__)", new String(debug.getExpansion())); 
 		
@@ -1925,10 +1925,10 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		validateProblemCount(0);
 
 		Map defs = fScanner.getMacroDefinitions();
-		assertTrue(defs.containsKey("debug")); 
+		assertTrue(defs.containsKey("com/boris/debug"));
 		assertTrue(defs.containsKey("showlist")); 
 		assertTrue(defs.containsKey("report")); 
-		IMacroBinding debug = (IMacroBinding) defs.get("debug"); 
+		IMacroBinding debug = (IMacroBinding) defs.get("com/boris/debug");
 		assertTrue(new String(debug.getParameterPlaceholderList()[0]).equals("vars")); 
 		assertTrue(new String(debug.getExpansion()).equals("fprintf(stderr, vars)")); 
 		IMacroBinding showlist = (IMacroBinding) defs.get("showlist"); 

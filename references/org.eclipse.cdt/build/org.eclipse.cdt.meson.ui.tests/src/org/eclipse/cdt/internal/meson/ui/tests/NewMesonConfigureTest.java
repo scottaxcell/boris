@@ -148,7 +148,7 @@ public class NewMesonConfigureTest {
 		
 		propertiesShell.bot().checkBox("werror").click();
 		
-		propertiesShell.bot().comboBoxWithLabel("buildtype").setSelection("debug");
+		propertiesShell.bot().comboBoxWithLabel("buildtype").setSelection("com/boris/debug");
 		
 		propertiesShell.bot().comboBoxWithLabel("warnlevel").setSelection("2");
 		
@@ -172,7 +172,7 @@ public class NewMesonConfigureTest {
 		
 		assertTrue(propertiesShell.bot().checkBox("werror").isChecked());
 		
-		assertEquals("debug", propertiesShell.bot().comboBoxWithLabel("buildtype").getText());
+		assertEquals("com/boris/debug", propertiesShell.bot().comboBoxWithLabel("buildtype").getText());
 		
 		assertEquals("2", propertiesShell.bot().comboBoxWithLabel("warnlevel").getText());
 
@@ -282,7 +282,7 @@ public class NewMesonConfigureTest {
 		
 		assertEquals("2", propertiesShell.bot().comboBoxWithLabel("warning_level").getText());
 		
-		assertEquals("debug", propertiesShell.bot().comboBoxWithLabel("buildtype").getText());
+		assertEquals("com/boris/debug", propertiesShell.bot().comboBoxWithLabel("buildtype").getText());
 		
 		assertEquals("-DJeff", propertiesShell.bot().textWithLabel("c_args").getText());
 		
@@ -310,7 +310,7 @@ public class NewMesonConfigureTest {
 		
 		assertEquals("false", propertiesShell.bot().comboBoxWithLabel("werror").getText());
 		
-		assertEquals("debug", propertiesShell.bot().comboBoxWithLabel("buildtype").getText());
+		assertEquals("com/boris/debug", propertiesShell.bot().comboBoxWithLabel("buildtype").getText());
 		
 		assertEquals("1", propertiesShell.bot().comboBoxWithLabel("warning_level").getText());
 

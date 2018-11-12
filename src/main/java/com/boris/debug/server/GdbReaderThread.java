@@ -1,4 +1,6 @@
-package com.boris.debug.com.boris.debug;
+package com.boris.debug.server;
+
+import com.boris.debug.Utils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,8 +27,7 @@ public class GdbReaderThread extends Thread {
         try {
             while ((numBytesRead = inputStream.read(buffer)) != -1) {
                 String stringRead = new String(buffer, StandardCharsets.UTF_8);
-                System.out.println("SGA: GdbReaderThread read: " + stringRead);
-
+                Utils.debug(this.getClass().getSimpleName() + " -- read " + stringRead);
             }
         }
         catch (IOException e) {

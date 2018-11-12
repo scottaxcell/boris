@@ -39,7 +39,7 @@ public interface ICElementPropertyConstants {
 	/** 
 	 * The <code>ICElement</code> property key for elf bss.
 	 */
-	public static final String	P_ELF_HAS_DEBUG = "debug"; //$NON-NLS-1$
+	public static final String	P_ELF_HAS_DEBUG = "com/boris/debug"; //$NON-NLS-1$
 
 	/** 
 	 * The <code>ICElement</code> property key for elf soname.

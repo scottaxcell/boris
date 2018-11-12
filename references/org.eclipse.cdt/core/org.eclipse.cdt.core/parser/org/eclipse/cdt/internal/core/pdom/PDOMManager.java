@@ -121,7 +121,7 @@ import com.ibm.icu.text.SimpleDateFormat;
  * Manages PDOM updates and events associated with them. Provides methods for index access.
  */
 public class PDOMManager implements IWritableIndexManager, IListener {
-	private static final String TRACE_INDEXER_SETUP = CCorePlugin.PLUGIN_ID + "/debug/indexer/setup"; //$NON-NLS-1$
+	private static final String TRACE_INDEXER_SETUP = CCorePlugin.PLUGIN_ID + "/com/boris/debug/indexer/setup"; //$NON-NLS-1$
 
 	private final class PCL implements IPreferenceChangeListener {
 		private ICProject fProject;
@@ -199,9 +199,9 @@ public class PDOMManager implements IWritableIndexManager, IListener {
 	boolean fTraceIndexerSetup;
 
 	public PDOMManager() {
-		PDOM.sDEBUG_LOCKS= Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/locks"));  //$NON-NLS-1$
+		PDOM.sDEBUG_LOCKS= Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/com/boris/debug/index/locks"));  //$NON-NLS-1$
 		IndexFileSet.sDEBUG=
-				Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/debug/index/IndexFileSet"));  //$NON-NLS-1$
+				Boolean.parseBoolean(Platform.getDebugOption(CCorePlugin.PLUGIN_ID + "/com/boris/debug/index/IndexFileSet"));  //$NON-NLS-1$
 		addIndexerSetupParticipant(new WaitForRefreshJobs());
 		fProjectDescriptionListener= new CProjectDescriptionListener(this);
 		fJobChangeListener= new JobChangeListener(this);

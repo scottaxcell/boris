@@ -202,7 +202,7 @@ public class QtBuildConfiguration extends CBuildConfiguration
 			switch (launchMode) {
 			case "run": //$NON-NLS-1$
 				return new String[] { "CONFIG-=debug_and_release", "CONFIG+=release" }; //$NON-NLS-1$ //$NON-NLS-2$
-			case "debug": //$NON-NLS-1$
+			case "com/boris/debug": //$NON-NLS-1$
 				return new String[] { "CONFIG-=debug_and_release", "CONFIG+=debug" }; //$NON-NLS-1$ //$NON-NLS-2$
 			default:
 				return new String[] { "CONFIG-=debug_and_release", "CONFIG+=launch_mode_" + launchMode }; //$NON-NLS-1$ //$NON-NLS-2$

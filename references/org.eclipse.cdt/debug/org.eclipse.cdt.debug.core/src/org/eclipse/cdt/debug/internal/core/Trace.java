@@ -88,7 +88,7 @@ public class Trace {
 	public static void init() {
 		DEBUG = CDebugCorePlugin.getDefault().isDebugging();
 
-		String option = Platform.getDebugOption(CDebugCorePlugin.PLUGIN_ID + "/debug/executables"); //$NON-NLS-1$
+		String option = Platform.getDebugOption(CDebugCorePlugin.PLUGIN_ID + "/com/boris/debug/executables"); //$NON-NLS-1$
 		DEBUG_EXECUTABLES = DEBUG && ((option != null) ? option.equalsIgnoreCase("true") : false); //$NON-NLS-1$
 	}
 	/** Singleton trace object */

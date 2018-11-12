@@ -416,7 +416,7 @@ public class MakeCorePlugin extends Plugin {
         GCCScannerConfigUtil.createSpecs();
 	}
 
-	private static final String SCANNER_CONFIG = MakeCorePlugin.getUniqueIdentifier() + "/debug/scdiscovery"; //$NON-NLS-1$
+	private static final String SCANNER_CONFIG = MakeCorePlugin.getUniqueIdentifier() + "/com/boris/debug/scdiscovery"; //$NON-NLS-1$
 	/**
 	 *
 	 */

@@ -62,7 +62,7 @@ public class QtProjectFileModifierTest extends TestCase {
 
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 
-		assertTrue(modifier.replaceVariableValue("CONFIG", "debug", "console", false)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertTrue(modifier.replaceVariableValue("CONFIG", "com/boris/debug", "console", false)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertEquals(
 				"CONFIG = qt console", //$NON-NLS-1$
 				document.get());
@@ -74,7 +74,7 @@ public class QtProjectFileModifierTest extends TestCase {
 
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 
-		assertFalse(modifier.replaceVariableValue("CONFIG", "console", "debug", false)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertFalse(modifier.replaceVariableValue("CONFIG", "console", "com/boris/debug", false)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertEquals(
 				"CONFIG = qt debug", //$NON-NLS-1$
 				document.get());
@@ -84,11 +84,11 @@ public class QtProjectFileModifierTest extends TestCase {
 	public void test_ReplaceMultilineValue_MatchWholeLineFalse() {
 		IDocument document = new Document(
 				"CONFIG = qt \\\n" //$NON-NLS-1$
-						+ "      debug"); //$NON-NLS-1$
+						+ "com/boris/debug"); //$NON-NLS-1$
 
 		QtProjectFileModifier modifier = new QtProjectFileModifier(document);
 
-		assertTrue(modifier.replaceVariableValue("CONFIG", "debug", "console", false)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertTrue(modifier.replaceVariableValue("CONFIG", "com/boris/debug", "console", false)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		assertEquals(
 				"CONFIG = qt \\\n" //$NON-NLS-1$
 						+ "      console", //$NON-NLS-1$

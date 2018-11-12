@@ -9,5 +9,8 @@
         <module name="boris" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="boris" target="8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

@@ -1226,7 +1226,7 @@ public abstract class DisassemblyPart extends WorkbenchPart implements IDisassem
 		manager.add(new GroupMarker("group.top")); // ICommonMenuConstants.GROUP_TOP //$NON-NLS-1$
 		manager.add(new Separator("group.breakpoints")); //$NON-NLS-1$
 		manager.add(fActionToggleBreakpointEnablement);
-		manager.add(new GroupMarker("debug")); //$NON-NLS-1$
+		manager.add(new GroupMarker("com/boris/debug")); //$NON-NLS-1$
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		manager.add(new GroupMarker(ITextEditorActionConstants.GROUP_RESTORE));
 		manager.add(new Separator("add")); //$NON-NLS-1$

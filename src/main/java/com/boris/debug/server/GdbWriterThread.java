@@ -1,4 +1,4 @@
-package com.boris.debug.com.boris.debug;
+package com.boris.debug.server;
 
 import java.io.OutputStream;
 
