@@ -9,4 +9,17 @@ public class MICommandFactory {
     public MIGdbExit createGdbExit() {
         return new MIGdbExit();
     }
+
+    public MIExecContinue createExecContinue() {
+        return new MIExecContinue();
+    }
+
+    public MIExecRun createExecRun() {
+        return new MIExecRun();
+    }
+
+    public MIGdbNext createGdbNext() {
+        return new MIGdbNext();
+    }
+
 }

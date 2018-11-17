@@ -1,19 +1,13 @@
 package com.boris.debug.server;
 
 import com.boris.debug.Utils;
-import com.boris.debug.server.commands.MIBreakInsert;
-import com.boris.debug.server.commands.MICommand;
-import com.boris.debug.server.commands.MICommandFactory;
-import com.boris.debug.server.commands.MIGdbExit;
+import com.boris.debug.server.commands.*;
 import org.eclipse.lsp4j.debug.*;
 import org.eclipse.lsp4j.debug.services.IDebugProtocolServer;
 
 import java.io.*;
 import java.lang.Thread;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -30,9 +24,37 @@ public class GdbDebugProtocolServer implements IDebugProtocolServer {
     private Process gdbProcess;
     private GdbReaderThread gdbReaderThread;
     private GdbWriterThread gdbWriterThread;
-    private final BlockingQueue<MICommand> writeCommands = new LinkedBlockingQueue<MICommand>();
+    private final List<CommandHandle> commandQueue = new ArrayList<CommandHandle>();
+    private final BlockingQueue<CommandHandle> txCommands = new LinkedBlockingQueue<CommandHandle>();
+    private final Map<Integer, CommandHandle> rxCommands = Collections.synchronizedMap(new HashMap<Integer, CommandHandle>());
     private final MICommandFactory miCommandFactory = new MICommandFactory();
+    private int tokenIdCounter = 0;
 
+    private int getNewTokenId() {
+        int count = ++tokenIdCounter;
+        // in case we ever wrap around
+        if (count <= 0) {
+            count = tokenIdCounter = 1;
+        }
+        return count;
+    }
+
+    public void queueCommand(MICommand miCommand) {
+        final CommandHandle commandHandle = new CommandHandle(miCommand);
+        commandQueue.add(commandHandle);
+        processNextQueuedCommand();
+    }
+
+    private void processNextQueuedCommand() {
+        if (!commandQueue.isEmpty()) {
+            final CommandHandle commandHandle = commandQueue.remove(0);
+            // TODO handle RawCommand scenario
+            commandHandle.generateTokenId();
+            if (commandHandle != null) {
+                txCommands.add(commandHandle);
+            }
+        }
+    }
 
     @Override
     public CompletableFuture<RunInTerminalResponse> runInTerminal(RunInTerminalRequestArguments args) {
@@ -120,7 +142,7 @@ public class GdbDebugProtocolServer implements IDebugProtocolServer {
     public CompletableFuture<Void> terminate(TerminateArguments args) {
         if (args == null) {
             MIGdbExit miGdbExit = miCommandFactory.createGdbExit();
-            writeCommands.add(miGdbExit);
+            queueCommand(miGdbExit);
         }
         return CompletableFuture.completedFuture(null);
     }
@@ -134,7 +156,7 @@ public class GdbDebugProtocolServer implements IDebugProtocolServer {
             StringBuilder stringBuilder = new StringBuilder(path);
             stringBuilder.append(':').append(line);
             MIBreakInsert breakInsert = miCommandFactory.createBreakInsert(stringBuilder.toString());
-            writeCommands.add(breakInsert);
+            queueCommand(breakInsert);
         }
         // TODO send response when response is returned from gdb
         return CompletableFuture.completedFuture(null);
@@ -152,11 +174,15 @@ public class GdbDebugProtocolServer implements IDebugProtocolServer {
 
     @Override
     public CompletableFuture<ContinueResponse> continue_(ContinueArguments args) {
+        MIExecContinue miExecContinue = miCommandFactory.createExecContinue();
+        queueCommand(miExecContinue);
         return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<Void> next(NextArguments args) {
+        MIGdbNext miGdbNext = miCommandFactory.createGdbNext();
+        queueCommand(miGdbNext);
         return CompletableFuture.completedFuture(null);
     }
 
@@ -270,6 +296,9 @@ public class GdbDebugProtocolServer implements IDebugProtocolServer {
         return CompletableFuture.completedFuture(null);
     }
 
+    /**
+     * Handles MI commands that are written to the GDB stream
+     */
     private class GdbWriterThread extends Thread {
         private OutputStream outputStream;
 
@@ -280,16 +309,24 @@ public class GdbDebugProtocolServer implements IDebugProtocolServer {
 
         @Override
         public void run() {
-            MICommand command;
+            CommandHandle commandHandle;
 
             while (true) {
                 try {
-                    command = writeCommands.take();
+                    commandHandle = txCommands.take();
                 } catch (InterruptedException e) {
                     break; // shutting down
                 }
 
-                String commandStr = command.constructCommand();
+                // TODO implement RawCommand concept
+//                if (!(commandHandle.getCommand() instanceof RawCommand)) {
+                    // RawCommands will not get an answer, so there is no need to add them to receive queue
+                    rxCommands.put(commandHandle.getTokenId(), commandHandle);
+//                }
+
+                String commandStr;
+                // TODO handle RawCommand scenario
+                commandStr = commandHandle.getTokenId() + commandHandle.getCommand().constructCommand();
                 Utils.debug(this.getClass().getSimpleName() + " -- writing: " + commandStr);
                 try {
                     outputStream.write(commandStr.getBytes());
@@ -306,6 +343,9 @@ public class GdbDebugProtocolServer implements IDebugProtocolServer {
         }
     }
 
+    /**
+     * Handles MI output from the GDB stream
+     */
     private class GdbReaderThread extends Thread {
         private InputStream inputStream;
 
@@ -340,5 +380,37 @@ public class GdbDebugProtocolServer implements IDebugProtocolServer {
             // TODO
             Utils.debug(this.getClass().getSimpleName() + " -- reading: " + line);
         }
+    }
+
+    /**
+     * Wrapper for handling individual requests
+     */
+    private class CommandHandle {
+        private MICommand command;
+        private int tokenId;
+
+        public CommandHandle(MICommand command) {
+            this.command = command;
+            tokenId = -1; // only intialized if needed
+        }
+
+        public MICommand getCommand() {
+            return command;
+        }
+
+        public void setCommand(MICommand command) {
+            this.command = command;
+        }
+
+        public int getTokenId() {
+            return tokenId;
+        }
+
+        public void setTokenId(int tokenId) {
+            this.tokenId = tokenId;
+        }
+
+        public void generateTokenId() {
+            tokenId = getNewTokenId();}
     }
 }
