@@ -1,5 +1,8 @@
 package com.boris.debug.server.commands;
 
+import com.boris.debug.server.output.MIInfo;
+import com.boris.debug.server.output.MIOutput;
+
 import java.util.ArrayList;
 import java.util.List;
 public class MICommand {
@@ -66,5 +69,9 @@ public class MICommand {
             stringBuilder.append(' ').append(parameter);
         }
         return stringBuilder.toString().trim();
+    }
+
+    public MIInfo getResult(MIOutput MIresult) {
+        return new MIInfo(MIresult);
     }
 }

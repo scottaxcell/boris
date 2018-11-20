@@ -1,6 +1,5 @@
 package com.boris.debug.server;
 
-import org.eclipse.lsp4j.debug.Breakpoint;
 import org.eclipse.lsp4j.debug.SetBreakpointsArguments;
 import org.eclipse.lsp4j.debug.Source;
 import org.eclipse.lsp4j.debug.SourceBreakpoint;
@@ -19,7 +18,7 @@ public class GdbDebugProtocolServerTest {
     }
 
     @org.junit.Test
-    public void launch() {
+    public void launch() throws InterruptedException {
         Map<String, Object> args = new HashMap<>();
         GdbDebugProtocolServer server = new GdbDebugProtocolServer();
         server.launch(args);

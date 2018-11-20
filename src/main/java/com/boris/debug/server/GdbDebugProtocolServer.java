@@ -1,7 +1,9 @@
 package com.boris.debug.server;
 
 import com.boris.debug.Utils;
+import com.boris.debug.client.GdbDebugProtocolClient;
 import com.boris.debug.server.commands.*;
+import com.boris.debug.server.output.*;
 import org.eclipse.lsp4j.debug.*;
 import org.eclipse.lsp4j.debug.services.IDebugProtocolServer;
 
@@ -29,6 +31,7 @@ public class GdbDebugProtocolServer implements IDebugProtocolServer {
     private final Map<Integer, CommandHandle> rxCommands = Collections.synchronizedMap(new HashMap<Integer, CommandHandle>());
     private final MICommandFactory miCommandFactory = new MICommandFactory();
     private int tokenIdCounter = 0;
+    private GdbDebugProtocolClient client;
 
     private int getNewTokenId() {
         int count = ++tokenIdCounter;
@@ -59,6 +62,11 @@ public class GdbDebugProtocolServer implements IDebugProtocolServer {
     @Override
     public CompletableFuture<RunInTerminalResponse> runInTerminal(RunInTerminalRequestArguments args) {
         return CompletableFuture.completedFuture(null);
+    }
+
+    public CompletableFuture<Capabilities> initialize(GdbDebugProtocolClient client, InitializeRequestArguments args) {
+        this.client = client;
+        return initialize(args);
     }
 
     @Override
@@ -348,6 +356,20 @@ public class GdbDebugProtocolServer implements IDebugProtocolServer {
      */
     private class GdbReaderThread extends Thread {
         private InputStream inputStream;
+        private final MIParser miParser = new MIParser();
+        /**
+         * List of out of band records since the last result record. Out of band
+         * records are required for processing the results of CLI commands.
+         */
+        private final List<MIOOBRecord> fAccumulatedOOBRecords = new LinkedList<MIOOBRecord>();
+        /**
+         * List of stream records since the last result record, not including
+         * the record currently being processed (if it's a stream one). This is
+         * a subset of {@link #fAccumulatedOOBRecords}, as a stream record is a
+         * particular type of OOB record.
+         */
+        private final List<MIStreamRecord> fAccumulatedStreamRecords = new LinkedList<MIStreamRecord>();
+
 
         GdbReaderThread(InputStream inputStream) {
             super("GDB Reader Thread");
@@ -377,8 +399,177 @@ public class GdbDebugProtocolServer implements IDebugProtocolServer {
         }
 
         private void processMIOutput(String line) {
-            // TODO
             Utils.debug(this.getClass().getSimpleName() + " -- reading: " + line);
+
+            MIParser.RecordType recordType = miParser.getRecordType(line);
+            if (recordType == MIParser.RecordType.ResultRecord) {
+                final MIResultRecord rr = miParser.parseMIResultRecord(line);
+
+                /*
+                 *  Find the command in the current output list. If we cannot then this is
+                 *  some form of asynchronous notification. Or perhaps general IO.
+                 */
+                int id = rr.getToken();
+
+                final CommandHandle commandHandle = rxCommands.remove(id);
+
+                if (commandHandle != null) {
+                    final MIOutput response = new MIOutput(
+                            rr, fAccumulatedOOBRecords.toArray(new MIOOBRecord[fAccumulatedOOBRecords.size()]) );
+                    fAccumulatedOOBRecords.clear();
+                    fAccumulatedStreamRecords.clear();
+
+                    MIInfo result = commandHandle.getCommand().getResult(response);
+//                    DataRequestMonitor<MIInfo> rm = commandHandle.getRequestMonitor();
+
+                    /*
+                     *  Not all users want to get there results. They indicate so by not having
+                     *  a completion object.
+                     */
+//                    if ( rm != null ) {
+                    if (client != null) {
+                        notifyClient(result);
+//                        rm.setData(result);
+
+//                        /*
+//                         * We need to indicate if this request had an error or not.
+//                         */
+//                        String errorResult =  rr.getResultClass();
+
+//                        if ( errorResult.equals(MIResultRecord.ERROR) ) {
+//                            String status = getStatusString(commandHandle.getCommand(),response);
+//                            String message = getBackendMessage(response);
+//                            Exception exception = new Exception(message);
+//                            rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED, status, exception));
+//                        }
+
+//                        /*
+//                         *  We need to complete the command on the DSF thread for data security.
+//                         */
+//                        final ICommandResult finalResult = result;
+//                        getExecutor().execute(new DsfRunnable() {
+//                            @Override
+//                            public void run() {
+//                                /*
+//                                 *  Complete the specific command.
+//                                 */
+//                                if (commandHandle.getRequestMonitor() != null) {
+//                                    commandHandle.getRequestMonitor().done();
+//                                }
+
+//                                /*
+//                                 *  Now tell the generic listeners about it.
+//                                 */
+//                                processCommandDone(commandHandle, finalResult);
+//                            }
+//                            @Override
+//                            public String toString() {
+//                                return "MI command output received for: " + commandHandle.getCommand(); //$NON-NLS-1$
+//                            }
+//                        });
+                    } else {
+                        Utils.debug(this.getClass().getSimpleName() + " -- processCommandDone: " + response.toString());
+                        /*
+                         *  While the specific requestor did not care about the completion  we
+                         *  need to call any listeners. This could have been a CLI command for
+                         *  example and  the CommandDone listeners there handle the IO as part
+                         *  of the work.
+                         */
+//                        final ICommandResult finalResult = result;
+//                        getExecutor().execute(new DsfRunnable() {
+//                            @Override
+//                            public void run() {
+//                                processCommandDone(commandHandle, finalResult);
+//                            }
+//                            @Override
+//                            public String toString() {
+//                                return "MI command output received for: " + commandHandle.getCommand(); //$NON-NLS-1$
+//                            }
+//                        });
+                    }
+                } else {
+                    /*
+                     *  GDB apparently can sometimes send multiple responses to the same command.  In those cases,
+                     *  the command handle is gone, so post the result as an event.  To avoid processing OOB records
+                     *  as events multiple times, do not include the accumulated OOB record list in the response
+                     *  MIOutput object.
+                     */
+                    final MIOutput response = new MIOutput(rr, new MIOOBRecord[0]);
+                    processEvent(response);
+
+//                    getExecutor().execute(new DsfRunnable() {
+//                        @Override
+//                        public void run() {
+//                            processEvent(response);
+//                        }
+//                        @Override
+//                        public String toString() {
+//                            return "MI asynchronous output received: " + response; //$NON-NLS-1$
+//                        }
+//                    });
+                }
+            } else if (recordType == MIParser.RecordType.OOBRecord) {
+                // Process OOBs
+                final MIOOBRecord oob = miParser.parseMIOOBRecord(line);
+
+                fAccumulatedOOBRecords.add(oob);
+                // limit growth, but only if these are not responses to CLI commands
+                // Bug 302927 & 330608
+                if (rxCommands.isEmpty() && fAccumulatedOOBRecords.size() > 20) {
+                    fAccumulatedOOBRecords.remove(0);
+                }
+
+                // The handling of this OOB record may need the stream records
+                // that preceded it. One such case is a stopped event caused by a
+                // catchpoint in gdb < 7.0. The stopped event provides no
+                // reason, but we can determine it was caused by a catchpoint by
+                // looking at the target stream.
+
+                final MIOutput response = new MIOutput(oob, fAccumulatedStreamRecords.toArray(new MIStreamRecord[fAccumulatedStreamRecords.size()]));
+
+                // If this is a stream record, add it to the accumulated bucket
+                // for possible use in handling a future OOB (see comment above)
+                if (oob instanceof MIStreamRecord) {
+                    fAccumulatedStreamRecords.add((MIStreamRecord)oob);
+                    if (fAccumulatedStreamRecords.size() > 20) { // limit growth; see bug 302927
+                        fAccumulatedStreamRecords.remove(0);
+                    }
+                }
+
+                if (client != null) {
+                    processEvent(response);
+                }
+
+                /*
+                 *   OOBS are events. So we pass them to any event listeners who want to see them. Again this must
+                 *   be done on the DSF thread for integrity.
+                 */
+//                getExecutor().execute(new DsfRunnable() {
+//                    @Override
+//                    public void run() {
+//                        processEvent(response);
+//                    }
+//                    @Override
+//                    public String toString() {
+//                        return "MI asynchronous output received: " + response; //$NON-NLS-1$
+//                    }
+//                });
+            }
+
+//            getExecutor().execute(new DsfRunnable() {
+//                @Override
+//                public void run() {
+//                    processNextQueuedCommand();
+//                }
+//            });
+        }
+
+        private void processEvent(MIOutput response) {
+            Utils.debug(this.getClass().getSimpleName() + " -- processEvent of: " + response.toString());
+        }
+
+        private void notifyClient(MIInfo result) {
+            Utils.debug(this.getClass().getSimpleName() + " -- notifyClient of: " + result.toString());
         }
     }
 

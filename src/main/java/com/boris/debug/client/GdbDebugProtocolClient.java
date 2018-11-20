@@ -1,6 +1,7 @@
 package com.boris.debug.client;
 
 import com.boris.debug.Utils;
+import com.boris.debug.server.GdbDebugProtocolServer;
 import org.eclipse.lsp4j.debug.Capabilities;
 import org.eclipse.lsp4j.debug.InitializeRequestArguments;
 import org.eclipse.lsp4j.debug.launch.DSPLauncher;
@@ -36,8 +37,6 @@ public class GdbDebugProtocolClient implements IDebugProtocolClient {
         this.out = out;
     }
 
-
-
     public void initialize() throws ExecutionException, InterruptedException {
         /**
          * TODO
@@ -54,7 +53,7 @@ public class GdbDebugProtocolClient implements IDebugProtocolClient {
         debugProtocolFuture = debugProtocolServerLauncher.startListening();
         debugProtocolServer = debugProtocolServerLauncher.getRemoteProxy();
 
-        Utils.debug("initializing GDB debug adapter..");
+        Utils.debug(this.getClass().getSimpleName() + " -- initializing GDB debug adapter..");
 
         InitializeRequestArguments arguments = new InitializeRequestArguments();
         arguments.setClientID("com.boris.debug");
@@ -70,7 +69,7 @@ public class GdbDebugProtocolClient implements IDebugProtocolClient {
         capabilities = (Capabilities) future.get();
         Utils.debug(this.getClass().getSimpleName() + " -- initialize future returned");
 
-        Utils.debug("launching GDB debug adapter..");
+        Utils.debug(this.getClass().getSimpleName() + " -- launching GDB debug adapter..");
         Map<String, Object> launchArgs = new HashMap<>();
         future = debugProtocolServer.launch(launchArgs);
         future.get();
