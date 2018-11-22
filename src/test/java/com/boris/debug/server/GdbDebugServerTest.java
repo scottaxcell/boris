@@ -7,7 +7,7 @@ import org.eclipse.lsp4j.debug.SourceBreakpoint;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GdbDebugProtocolServerTest {
+public class GdbDebugServerTest {
 
     @org.junit.Before
     public void setUp() throws Exception {
@@ -20,7 +20,7 @@ public class GdbDebugProtocolServerTest {
     @org.junit.Test
     public void launch() throws InterruptedException {
         Map<String, Object> args = new HashMap<>();
-        GdbDebugProtocolServer server = new GdbDebugProtocolServer();
+        GdbDebugServer server = new GdbDebugServer();
         server.launch(args);
     }
 
@@ -28,7 +28,7 @@ public class GdbDebugProtocolServerTest {
     public void setBreakPoints() throws InterruptedException {
         Map<String, Object> args = new HashMap<>();
         args.put("/home/saxcell/dev/boris/testcases/helloworld/helloworld", new Object());
-        GdbDebugProtocolServer server = new GdbDebugProtocolServer();
+        GdbDebugServer server = new GdbDebugServer();
         server.launch(args);
         Thread.sleep(300);
 

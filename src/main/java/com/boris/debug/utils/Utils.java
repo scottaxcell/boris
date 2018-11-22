@@ -1,4 +1,4 @@
-package com.boris.debug;
+package com.boris.debug.utils;
 
 public class Utils {
     public static final String GDB_PATH = "/usr/bin/gdb";

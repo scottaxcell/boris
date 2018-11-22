@@ -1,7 +1,7 @@
 package com.boris.debug.server;
 
-import com.boris.debug.Utils;
-import com.boris.debug.client.GdbDebugProtocolClient;
+import com.boris.debug.utils.Utils;
+import com.boris.debug.client.GdbDebugClient;
 import com.boris.debug.server.commands.*;
 import com.boris.debug.server.output.*;
 import org.eclipse.lsp4j.debug.*;
@@ -15,7 +15,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 
-public class GdbDebugProtocolServer implements IDebugProtocolServer {
+public class GdbDebugServer implements IDebugProtocolServer {
 
     /*
     * need to track active gdb session
@@ -31,7 +31,7 @@ public class GdbDebugProtocolServer implements IDebugProtocolServer {
     private final Map<Integer, CommandHandle> rxCommands = Collections.synchronizedMap(new HashMap<Integer, CommandHandle>());
     private final MICommandFactory miCommandFactory = new MICommandFactory();
     private int tokenIdCounter = 0;
-    private GdbDebugProtocolClient client;
+    private GdbDebugClient client;
 
     private int getNewTokenId() {
         int count = ++tokenIdCounter;
@@ -64,7 +64,7 @@ public class GdbDebugProtocolServer implements IDebugProtocolServer {
         return CompletableFuture.completedFuture(null);
     }
 
-    public CompletableFuture<Capabilities> initialize(GdbDebugProtocolClient client, InitializeRequestArguments args) {
+    public CompletableFuture<Capabilities> initialize(GdbDebugClient client, InitializeRequestArguments args) {
         this.client = client;
         return initialize(args);
     }

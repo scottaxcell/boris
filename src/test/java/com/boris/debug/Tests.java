@@ -1,6 +1,6 @@
 package com.boris.debug;
 
-import com.boris.debug.server.GdbDebugProtocolServer;
+import com.boris.debug.server.GdbDebugServer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +18,7 @@ public class Tests {
     @org.junit.Test
     public void gdbLauncher() {
         Map<String, Object> args = new HashMap<>();
-        GdbDebugProtocolServer server = new GdbDebugProtocolServer();
+        GdbDebugServer server = new GdbDebugServer();
         server.launch(args);
     }
 

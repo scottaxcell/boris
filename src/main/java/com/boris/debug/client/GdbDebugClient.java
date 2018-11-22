@@ -1,7 +1,6 @@
 package com.boris.debug.client;
 
-import com.boris.debug.Utils;
-import com.boris.debug.server.GdbDebugProtocolServer;
+import com.boris.debug.utils.Utils;
 import org.eclipse.lsp4j.debug.Capabilities;
 import org.eclipse.lsp4j.debug.InitializeRequestArguments;
 import org.eclipse.lsp4j.debug.launch.DSPLauncher;
@@ -18,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
-public class GdbDebugProtocolClient implements IDebugProtocolClient {
+public class GdbDebugClient implements IDebugProtocolClient {
     /**
      * lsp4e DSPDebugTarget for reference:
      * https://github.com/vladdu/lsp4e/blob/6f48292b40bb66593790e8c11415722cdeb9c4e3/org.eclipse.lsp4e.debug/src/org/eclipse/lsp4e/debug/debugmodel/DSPDebugTarget.java
@@ -32,7 +31,7 @@ public class GdbDebugProtocolClient implements IDebugProtocolClient {
     private IDebugProtocolServer debugProtocolServer;
     private Capabilities capabilities;
 
-    public GdbDebugProtocolClient(InputStream in , OutputStream out) {
+    public GdbDebugClient(InputStream in , OutputStream out) {
         this.in = in;
         this.out = out;
     }

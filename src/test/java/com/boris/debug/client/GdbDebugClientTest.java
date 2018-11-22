@@ -1,26 +1,23 @@
 package com.boris.debug.client;
 
-import com.boris.debug.server.GdbDebugProtocolServer;
-import org.eclipse.lsp4j.debug.TerminateArguments;
+import com.boris.debug.server.GdbDebugServer;
 import org.eclipse.lsp4j.debug.launch.DSPLauncher;
 import org.eclipse.lsp4j.debug.services.IDebugProtocolClient;
 import org.eclipse.lsp4j.debug.services.IDebugProtocolServer;
 import org.eclipse.lsp4j.jsonrpc.Launcher;
-import org.eclipse.lsp4j.jsonrpc.services.ServiceEndpoints;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-public class GdbDebugProtocolClientTest {
-    private GdbDebugProtocolServer server;
+public class GdbDebugClientTest {
+    private GdbDebugServer server;
     private Launcher<IDebugProtocolClient> serverLauncher;
     private Future<?> serverListening;
 
-    private GdbDebugProtocolClient client;
+    private GdbDebugClient client;
     private Launcher<IDebugProtocolServer> clientLauncher;
     private Future<?> clientListening;
 
@@ -33,11 +30,11 @@ public class GdbDebugProtocolClientTest {
         inClient.connect(outServer);
         outClient.connect(inServer);
 
-        server = new GdbDebugProtocolServer();
+        server = new GdbDebugServer();
         serverLauncher = DSPLauncher.createServerLauncher(server, inServer, outServer);
         serverListening = serverLauncher.startListening();
 
-        client = new GdbDebugProtocolClient(inClient, outClient);
+        client = new GdbDebugClient(inClient, outClient);
 //        clientLauncher = DSPLauncher.createClientLauncher(client, inClient, outClient);
 //        clientListening = clientLauncher.startListening();
     }
