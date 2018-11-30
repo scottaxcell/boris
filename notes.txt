@@ -1,13 +1,32 @@
 TODO:
-* implement server.launch
-- flesh out read and write threads
-- implement parser and lexer
--- see the following as a starting point: org.eclipse.cdt.dsf.mi.service.command.output.MIResultRecord
--- maybe pull in the cdt MI backend stuff instead of rewriting?
-* implement setBreakpoints
-- flesh out MICommand design
-- flesh out client.breakpoint event
+* make utils class proper singleton, private constructor
+* cleanup imported eclipse code and classes, time to roll my own - best learning opportunity
+* GdbDebugServer should wrap a GdbBackend which represents the gdb process and interacts with mi directly
+* rewrite server read and write implementation to gdb process - use same tx rx command implementation
+* implement logger with different levels for debugging
 
+ORDER OF EXECUTION:
+* exec
+* async mi output
+* setBreakpoints
+* threads
+* variables
+* stack
+
+send command with response algorithm:
+* set a timer for 3 seconds and if violated throw exception because we don't expect such a time sink
+* check rxCommands for id of command that was sent
+* if not there sleep
+* otherwise grab command response, parse it and send response to client
+while (true) {
+ if (rxCommands.remove(id)) {
+    parse out response from result
+    return response;
+ }
+ else {
+    Thread.sleep(200);
+ }
+}
 
 BACKLOG:
 * client should take arguments from user, e.g. target, attach or launch, working dir, etc.

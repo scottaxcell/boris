@@ -1,5 +1,6 @@
 package com.boris.debug.client.ui;
 
+import com.boris.debug.utils.Utils;
 import org.eclipse.lsp4j.debug.BreakpointEventArguments;
 import org.eclipse.lsp4j.debug.StoppedEventArguments;
 import org.eclipse.lsp4j.debug.services.IDebugProtocolClient;
@@ -32,11 +33,11 @@ public class BreakpointsPanel extends JPanel implements IDebugProtocolClient {
 
     @Override
     public void stopped(StoppedEventArguments args) {
-
+        Utils.debug(this.getClass().getSimpleName() + " -- stopped called ");
     }
 
     @Override
     public void breakpoint(BreakpointEventArguments args) {
-
+        Utils.debug(this.getClass().getSimpleName() + " -- breakpoint called ");
     }
 }

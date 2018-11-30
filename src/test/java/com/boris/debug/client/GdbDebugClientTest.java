@@ -30,11 +30,14 @@ public class GdbDebugClientTest {
         inClient.connect(outServer);
         outClient.connect(inServer);
 
+        client = new GdbDebugClient(inClient, outClient);
+
         server = new GdbDebugServer();
         serverLauncher = DSPLauncher.createServerLauncher(server, inServer, outServer);
         serverListening = serverLauncher.startListening();
+        server.setRemoteProxy(client);
+//        serverListening.get();
 
-        client = new GdbDebugClient(inClient, outClient);
 //        clientLauncher = DSPLauncher.createClientLauncher(client, inClient, outClient);
 //        clientListening = clientLauncher.startListening();
     }
