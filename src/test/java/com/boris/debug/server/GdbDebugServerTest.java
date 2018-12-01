@@ -1,11 +1,12 @@
 package com.boris.debug.server;
 
-import org.eclipse.lsp4j.debug.SetBreakpointsArguments;
-import org.eclipse.lsp4j.debug.Source;
-import org.eclipse.lsp4j.debug.SourceBreakpoint;
+import org.eclipse.lsp4j.debug.*;
 
+import java.lang.Thread;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class GdbDebugServerTest {
 
@@ -25,7 +26,7 @@ public class GdbDebugServerTest {
     }
 
     @org.junit.Test
-    public void setBreakPoints() throws InterruptedException {
+    public void setBreakPoints() throws InterruptedException, ExecutionException {
         Map<String, Object> args = new HashMap<>();
         args.put("/home/saxcell/dev/boris/testcases/helloworld/helloworld", new Object());
         GdbDebugServer server = new GdbDebugServer();
@@ -39,8 +40,22 @@ public class GdbDebugServerTest {
         SetBreakpointsArguments setBreakpointsArguments = new SetBreakpointsArguments();
         setBreakpointsArguments.setSource(source);
         setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
-        server.setBreakpoints(setBreakpointsArguments);
+//        server.setBreakpoints(setBreakpointsArguments);
+        CompletableFuture<SetBreakpointsResponse> future = server.setBreakpoints(setBreakpointsArguments);
+        SetBreakpointsResponse setBreakpointsResponse = future.get();
+        Thread.sleep(3000);
+    }
+
+    @org.junit.Test
+    public void terminate() throws InterruptedException {
+        Map<String, Object> args = new HashMap<>();
+        args.put("/home/saxcell/dev/boris/testcases/helloworld/helloworld", new Object());
+        GdbDebugServer server = new GdbDebugServer();
+        server.launch(args);
         Thread.sleep(300);
+
+        server.terminate(null);
+        Thread.sleep(3000);
     }
 
 }

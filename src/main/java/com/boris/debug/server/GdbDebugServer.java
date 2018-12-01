@@ -1,9 +1,11 @@
 package com.boris.debug.server;
 
-import com.boris.debug.server.mi.command.CommandFactory;
+import com.boris.debug.server.mi.command.*;
+import com.boris.debug.server.mi.output.MIConst;
 import com.boris.debug.server.mi.output.Output;
+import com.boris.debug.server.mi.output.Result;
+import com.boris.debug.server.mi.output.Tuple;
 import com.boris.debug.server.mi.parser.Parser;
-import com.boris.debug.server.mi.command.Command;
 import com.boris.debug.server.mi.record.ResultRecord;
 import com.boris.debug.utils.Logger;
 import com.boris.debug.utils.Utils;
@@ -24,23 +26,23 @@ public class GdbDebugServer implements IDebugProtocolServer {
     private Process gdbProcess;
     private GdbReaderThread gdbReaderThread;
     private GdbWriterThread gdbWriterThread;
-    private final CommandFactory CommandFactory = new CommandFactory();
+    private final CommandFactory commandFactory = new CommandFactory();
     private IDebugProtocolClient client;
     private ExecutorService executor = Executors.newCachedThreadPool();
     /**
      * Commands that need to be processed
      */
-    private final List<CommandWrapper> commandQueue = new ArrayList<>();
+    private final BlockingQueue<CommandWrapper> commandQueue = new LinkedBlockingQueue<>();
     /**
      * Commands that have been written to the GDB stream
      */
-    private final BlockingQueue<CommandWrapper> writtenCommands = new LinkedBlockingQueue<>();
+    private final List<CommandWrapper> writtenCommands = new ArrayList<>();
     /**
      * Commands that have been read from the GDB stream
      */
     private final Map<Integer, CommandWrapper> readCommands = Collections.synchronizedMap(new HashMap<Integer, CommandWrapper>());
     /**
-     * Aligns command requests with command responses
+     * Aligns commandWrapper requests with commandWrapper responses
      */
     private int tokenCounter = 0;
 
@@ -56,22 +58,34 @@ public class GdbDebugServer implements IDebugProtocolServer {
         return newTokenCounter;
     }
 
-//    public void queueCommand(MICommand miCommand) {
-//        final CommandWrapper commandHandle = new CommandWrapper(miCommand);
-//        commandQueue.add(commandHandle);
-//        processNextQueuedCommand();
-//    }
+    private int queueCommand(Command command) {
+        int token = -1;
+        final CommandWrapper commandWrapper = new CommandWrapper(command);
+        commandQueue.add(commandWrapper);
+        if (commandWrapper.getCommand().isRequiresResponse()) {
+            commandWrapper.generateToken();
+            token = commandWrapper.getToken();
+        }
+        Utils.debug("queued.. " + commandWrapper.getCommand().constructCommand());
+        return token;
+    }
 
-//    private void processNextQueuedCommand() {
+    private int processNextQueuedCommand() {
+//        int token = -1;
 //        if (!commandQueue.isEmpty()) {
-//            final CommandWrapper commandHandle = commandQueue.remove(0);
-//            // TODO handle RawCommand scenario
-//            commandHandle.generateTokenId();
-//            if (commandHandle != null) {
-//                writtenCommands.add(commandHandle);
+//            final CommandWrapper commandWrapper = commandQueue.remove(0);
+//            if (commandWrapper != null) {
+//                if (commandWrapper.getCommand().isRequiresResponse()) {
+//                    commandWrapper.generateToken();
+//                    token = commandWrapper.getToken();
+//                }
+////                writtenCommands.add(commandWrapper);
+//                Utils.debug(commandWrapper.getCommand().constructCommand() + " processed..");
 //            }
 //        }
-//    }
+//        return token;
+        return -1;
+    }
 
     @Override
     public CompletableFuture<RunInTerminalResponse> runInTerminal(RunInTerminalRequestArguments args) {
@@ -80,7 +94,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
     @Override
     public CompletableFuture<Capabilities> initialize(InitializeRequestArguments args) {
-        Utils.debug(this.getClass().getSimpleName() + " -- initialize called");
+        Utils.debug("initialize");
 
         Capabilities capabilities = new Capabilities();
         capabilities.setSupportsFunctionBreakpoints(false);
@@ -112,11 +126,11 @@ public class GdbDebugServer implements IDebugProtocolServer {
             }
             cmdline = tmp.toArray(new String[0]);
         }
-        Utils.debug(this.getClass().getSimpleName() + " -- launch called");
 
         try {
-            Utils.debug(this.getClass().getSimpleName() + " -- executing: " + Arrays.toString(cmdline));
+            Utils.debug("starting GDB -- " + Arrays.toString(cmdline));
             gdbProcess = Runtime.getRuntime().exec(cmdline);
+
             InputStream inputStream = gdbProcess.getInputStream();
             OutputStream outputStream = gdbProcess.getOutputStream();
 
@@ -125,15 +139,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
             gdbWriterThread = new GdbWriterThread(outputStream);
             gdbWriterThread.start();
-
         } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // TODO sleep is just for test purposes to see if gdb is actually fired up and reader sees output
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
@@ -157,34 +163,86 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
     @Override
     public CompletableFuture<Void> terminate(TerminateArguments args) {
-//        if (args == null) {
-//            MIGdbExit miGdbExit = miCommandFactory.createGdbExit();
-//            queueCommand(miGdbExit);
-//        }
+        if (args == null) {
+            GdbExitCommand miGdbExit = commandFactory.createGdbExit();
+            queueCommand(miGdbExit);
+        }
         return CompletableFuture.completedFuture(null);
     }
 
     @Override
     public CompletableFuture<SetBreakpointsResponse> setBreakpoints(SetBreakpointsArguments args) {
+        List<Integer> tokens = new ArrayList<>();
         Source source = args.getSource();
         String path = source.getPath();
         for (SourceBreakpoint breakpoint : args.getBreakpoints()) {
             Long line = breakpoint.getLine();
             StringBuilder stringBuilder = new StringBuilder(path);
             stringBuilder.append(':').append(line);
-//            MIBreakInsert breakInsert = miCommandFactory.createBreakInsert(stringBuilder.toString());
-//            queueCommand(breakInsert);
+            BreakInsertCommand breakInsertCommand = commandFactory.createBreakInsert(stringBuilder.toString());
+            final int token = queueCommand(breakInsertCommand);
+            tokens.add(token);
         }
-        Supplier<SetBreakpointsResponse> supplier = new Supplier<SetBreakpointsResponse>() {
+
+        Supplier<SetBreakpointsResponse> supplier = setBreakpointsResponseSupplier(tokens, args);
+        return CompletableFuture.supplyAsync(supplier, executor);
+    }
+
+    private Supplier<SetBreakpointsResponse> setBreakpointsResponseSupplier(List<Integer> tokens, SetBreakpointsArguments args) {
+        return new Supplier<SetBreakpointsResponse>() {
             @Override
             public SetBreakpointsResponse get() {
-//                while (true) {
-//                    if (readCommands.remove())
-//                }
-                return null;
+                // TODO start timer to flag any commandWrapper that doesn't get a response
+                List<CommandWrapper> commandResponses = new ArrayList<>();
+                while (commandResponses.size() != tokens.size()) {
+                    for (Integer token : tokens) {
+                        if (readCommands.containsKey(token)) {
+                            CommandWrapper commandWrapper = readCommands.remove(token);
+                            commandResponses.add(commandWrapper);
+                        }
+                    }
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException ignored) {
+                    }
+                }
+                return getSetBreakpointsResponse(commandResponses, args);
             }
         };
-        return CompletableFuture.supplyAsync(supplier, executor);
+    }
+
+    private SetBreakpointsResponse getSetBreakpointsResponse(List<CommandWrapper> commandWrappers, SetBreakpointsArguments args) {
+        SetBreakpointsResponse response = new SetBreakpointsResponse();
+        List<Breakpoint> breakpoints = new ArrayList<>();
+        for (CommandWrapper commandWrapper : commandWrappers) {
+            CommandResponse commandResponse = commandWrapper.getCommandResponse();
+            Output output = commandResponse.getOutput();
+            ResultRecord resultRecord = output.getResultRecord();
+
+            if (resultRecord.getResultClass() == ResultRecord.ResultClass.DONE) {
+                Result[] results = resultRecord.getResults();
+                for (Result result : results) {
+                    if ("bkpt".equals(result.getVariable())) {
+                        Tuple tuple = (Tuple) result.getValue();
+                        MIConst file = (MIConst) tuple.getFieldValue("file");
+                        MIConst fullname = (MIConst) tuple.getFieldValue("fullname");
+                        MIConst line = (MIConst) tuple.getFieldValue("line");
+                        Source source = new Source();
+                        source.setName(file.getcString());
+                        source.setPath(fullname.getcString());
+                        Breakpoint breakpoint = new Breakpoint();
+                        breakpoint.setSource(source);
+                        breakpoint.setLine(Long.parseLong(line.getcString()));
+                        breakpoints.add(breakpoint);
+                    }
+                }
+            }
+            Utils.debug(this.getClass().getSimpleName() + " " + commandWrapper.getToken() + "." + commandWrapper.getCommand().constructCommand());
+        }
+        // TODO parse commandWrapper response into set breakpoint reponse maintaining same order as original args
+        if (!breakpoints.isEmpty())
+            response.setBreakpoints(breakpoints.toArray(new Breakpoint[breakpoints.size()]));
+        return response;
     }
 
     @Override
@@ -338,20 +396,23 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
             while (true) {
                 try {
-                    commandWrapper = writtenCommands.take();
+                    commandWrapper = commandQueue.take();
                 } catch (InterruptedException e) {
                     break;
                 }
 
-                // TODO handle case of non-reponse command
-                readCommands.put(commandWrapper.getToken(), commandWrapper);
+                if (commandWrapper.getCommand().isRequiresResponse())
+                    writtenCommands.add(commandWrapper);
 
-                String commandStr;
-                commandStr = commandWrapper.getToken() + commandWrapper.getCommand().constructCommand();
-                Logger.getInstance().fine(this.getClass().getSimpleName() + " -- writing: " + commandStr);
+                StringBuilder commandBuilder = new StringBuilder();
+                if (commandWrapper.getCommand().isRequiresResponse())
+                    commandBuilder.append(commandWrapper.getToken());
+                commandBuilder.append(commandWrapper.getCommand().constructCommand());
+
                 try {
-                    outputStream.write(commandStr.getBytes());
+                    outputStream.write(commandBuilder.toString().getBytes());
                     outputStream.flush();
+                    Utils.debug(commandBuilder.toString() + " written..");
                 } catch (IOException e) {
                     break;
                 }
@@ -374,6 +435,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
         GdbReaderThread(InputStream inputStream) {
             super("GDB Reader Thread");
             this.inputStream = inputStream;
+            parser = new Parser();
         }
 
         @Override
@@ -383,11 +445,13 @@ public class GdbDebugServer implements IDebugProtocolServer {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     if (line.length() != 0) {
+                        Utils.debug("reading line: " + line);
                         handleOutput(line);
                     }
                 }
-            } catch (IOException ignored) {
-            } catch (RejectedExecutionException ignored) {
+                Utils.debug("GdbReaderThread while FINISHED");
+            } catch (IOException | RejectedExecutionException ignored) {
+                ignored.printStackTrace();
             }
             try {
                 if (inputStream != null)
@@ -405,10 +469,14 @@ public class GdbDebugServer implements IDebugProtocolServer {
                 CommandWrapper commandWrapper = getWrittenCommand(token);
                 if (commandWrapper != null) {
                     writtenCommands.remove(commandWrapper);
+
                     Output output = new Output(resultRecord);
 
-                    CommandWrapper readCommandWrapper = null;
-                    readCommands.put(token, readCommandWrapper);
+                    CommandResponse commandResponse = new CommandResponse(output);
+                    commandWrapper.setCommandResponse(commandResponse);
+
+                    readCommands.put(token, commandWrapper);
+                    Utils.debug("received " + commandWrapper.getCommand().constructCommand());
                 }
                 else {
                     // TODO treat response as an event
@@ -433,10 +501,11 @@ public class GdbDebugServer implements IDebugProtocolServer {
     }
 
     /**
-     * Wrapper for handling command requests and responses
+     * Wrapper for handling commandWrapper requests and responses
      */
     private class CommandWrapper {
         private Command command;
+        private CommandResponse commandResponse;
         private int token;
 
         public CommandWrapper(Command command) {
@@ -462,6 +531,35 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
         public void generateToken() {
             token = getNewToken();
+        }
+
+        public CommandResponse getCommandResponse() {
+            return commandResponse;
+        }
+
+        public void setCommandResponse(CommandResponse commandResponse) {
+            this.commandResponse = commandResponse;
+        }
+    }
+
+    /**
+     * Timer for detecting written commands that don't receive a response
+     */
+    private class CommandResponseTimer extends TimerTask {
+        private CommandWrapper commandWrapper;
+
+        public CommandResponseTimer(CommandWrapper commandWrapper) {
+            this.commandWrapper = commandWrapper;
+        }
+
+        @Override
+        public void run() {
+            CommandWrapper writtenCommand = getWrittenCommand(commandWrapper.getToken());
+            if (writtenCommand != null) {
+                String msg = this.getClass().getSimpleName() + " " + writtenCommand.getCommand().constructCommand() + " did not received a response in time";
+                Logger.getInstance().warning(msg);
+                throw new RuntimeException(msg);
+            }
         }
     }
 }

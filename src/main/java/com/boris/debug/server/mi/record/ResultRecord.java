@@ -1,5 +1,6 @@
 package com.boris.debug.server.mi.record;
 
+import com.boris.debug.server.mi.output.Result;
 import com.boris.debug.server.mi.output.Tuple;
 
 /**
@@ -14,6 +15,7 @@ public class ResultRecord {
 
     public ResultRecord() {
         token = -1;
+        value = new Tuple();
     }
 
     public int getToken() {
@@ -30,6 +32,14 @@ public class ResultRecord {
 
     public void setResultClass(ResultClass resultClass) {
         this.resultClass = resultClass;
+    }
+
+    public Result[] getResults() {
+        return value.getResults();
+    }
+
+    public void setResults(Result[] res) {
+        value.setResults(res);
     }
 
     /**

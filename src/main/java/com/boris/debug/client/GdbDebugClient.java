@@ -1,5 +1,6 @@
 package com.boris.debug.client;
 
+import com.boris.debug.utils.Logger;
 import com.boris.debug.utils.Utils;
 import org.eclipse.lsp4j.debug.Capabilities;
 import org.eclipse.lsp4j.debug.InitializeRequestArguments;
@@ -52,11 +53,11 @@ public class GdbDebugClient implements IDebugProtocolClient {
         debugProtocolFuture = debugProtocolServerLauncher.startListening();
         debugProtocolServer = debugProtocolServerLauncher.getRemoteProxy();
 
-        Utils.debug(this.getClass().getSimpleName() + " -- initializing GDB debug adapter..");
+        Logger.getInstance().info(this.getClass().getSimpleName() + ": initialize");
 
         InitializeRequestArguments arguments = new InitializeRequestArguments();
         arguments.setClientID("com.boris.debug");
-        arguments.setAdapterID("adapterId"); // TODO must not be null so initializing
+        arguments.setAdapterID("adapterId"); // TODO must not be null so initializing to something
         arguments.setPathFormat("path");
         arguments.setSupportsVariableType(true);
         arguments.setSupportsVariablePaging(true);
@@ -66,9 +67,7 @@ public class GdbDebugClient implements IDebugProtocolClient {
 
         CompletableFuture<?> future = debugProtocolServer.initialize(arguments);
         capabilities = (Capabilities) future.get();
-        Utils.debug(this.getClass().getSimpleName() + " -- initialize future returned");
 
-        Utils.debug(this.getClass().getSimpleName() + " -- launching GDB debug adapter..");
         Map<String, Object> launchArgs = new HashMap<>();
         future = debugProtocolServer.launch(launchArgs);
         future.get();
@@ -76,7 +75,7 @@ public class GdbDebugClient implements IDebugProtocolClient {
 
     @Override
     public void initialized() {
-        Utils.debug(this.getClass().getSimpleName() + " initialized() event called");
+        Logger.getInstance().info(this.getClass().getSimpleName() + ": initialized");
     }
 
     public IDebugProtocolServer getDebugProtocolServer() {

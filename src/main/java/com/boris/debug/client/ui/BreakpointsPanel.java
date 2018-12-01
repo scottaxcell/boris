@@ -1,5 +1,6 @@
 package com.boris.debug.client.ui;
 
+import com.boris.debug.utils.Logger;
 import com.boris.debug.utils.Utils;
 import org.eclipse.lsp4j.debug.BreakpointEventArguments;
 import org.eclipse.lsp4j.debug.StoppedEventArguments;
@@ -9,7 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class BreakpointsPanel extends JPanel implements IDebugProtocolClient {
-    // List element: file name and line number
+    // MIList element: file name and line number
     private JList list;
     private DefaultListModel model;
 
@@ -33,11 +34,11 @@ public class BreakpointsPanel extends JPanel implements IDebugProtocolClient {
 
     @Override
     public void stopped(StoppedEventArguments args) {
-        Utils.debug(this.getClass().getSimpleName() + " -- stopped called ");
+        Logger.getInstance().fine(this.getClass().getSimpleName() + ": stopped");
     }
 
     @Override
     public void breakpoint(BreakpointEventArguments args) {
-        Utils.debug(this.getClass().getSimpleName() + " -- breakpoint called ");
+        Logger.getInstance().fine(this.getClass().getSimpleName() + ": breakpoint");
     }
 }

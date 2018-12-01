@@ -12,6 +12,6 @@ public class Utils {
     }
 
     public static void error(Object o) {
-        System.out.println("DEBUG: " + o);
+        System.out.println("ERROR: " + o);
     }
 }
