@@ -1,7 +1,10 @@
 package com.boris.debug.server;
 
 import com.boris.debug.server.mi.command.*;
-import com.boris.debug.server.mi.output.*;
+import com.boris.debug.server.mi.output.MIConst;
+import com.boris.debug.server.mi.output.Output;
+import com.boris.debug.server.mi.output.Result;
+import com.boris.debug.server.mi.output.Tuple;
 import com.boris.debug.server.mi.parser.Parser;
 import com.boris.debug.server.mi.record.OutOfBandRecord;
 import com.boris.debug.server.mi.record.ResultRecord;
@@ -14,7 +17,6 @@ import org.eclipse.lsp4j.debug.services.IDebugProtocolServer;
 import java.io.*;
 import java.lang.Thread;
 import java.util.*;
-import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 
@@ -28,6 +30,8 @@ public class GdbDebugServer implements IDebugProtocolServer {
     private final CommandFactory commandFactory = new CommandFactory();
     private IDebugProtocolClient client;
     private ExecutorService executor = Executors.newCachedThreadPool();
+    private EventProcessor eventProcessor = new EventProcessor();
+    private boolean gdbInitialized = false;
     /**
      * Commands that need to be processed
      */
@@ -45,9 +49,9 @@ public class GdbDebugServer implements IDebugProtocolServer {
      */
     private int tokenCounter = 0;
 
-
     public void setRemoteProxy(IDebugProtocolClient client) {
         this.client = client;
+        eventProcessor.setClient(client);
     }
 
     private int getNewToken() {
@@ -138,7 +142,8 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
             gdbWriterThread = new GdbWriterThread(outputStream);
             gdbWriterThread.start();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -202,7 +207,8 @@ public class GdbDebugServer implements IDebugProtocolServer {
                     }
                     try {
                         Thread.sleep(200);
-                    } catch (InterruptedException ignored) {
+                    }
+                    catch (InterruptedException ignored) {
                     }
                 }
                 return getSetBreakpointsResponse(commandResponses, args);
@@ -256,9 +262,20 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
     @Override
     public CompletableFuture<ContinueResponse> continue_(ContinueArguments args) {
-//        MIExecContinue miExecContinue = miCommandFactory.createExecContinue();
-//        queueCommand(miExecContinue);
-        return CompletableFuture.completedFuture(null);
+        ExecContinueCommand execContinue = commandFactory.createExecContinue();
+        queueCommand(execContinue);
+        Supplier<ContinueResponse> supplier = continueResponseSupplier(args);
+        return CompletableFuture.supplyAsync(supplier, executor);
+    }
+
+    private Supplier<ContinueResponse> continueResponseSupplier(ContinueArguments args) {
+        return new Supplier<ContinueResponse>() {
+            @Override
+            public ContinueResponse get() {
+                ContinueResponse response = new ContinueResponse();
+                return response;
+            }
+        };
     }
 
     @Override
@@ -396,7 +413,8 @@ public class GdbDebugServer implements IDebugProtocolServer {
             while (true) {
                 try {
                     commandWrapper = commandQueue.take();
-                } catch (InterruptedException e) {
+                }
+                catch (InterruptedException e) {
                     break;
                 }
 
@@ -412,14 +430,16 @@ public class GdbDebugServer implements IDebugProtocolServer {
                     outputStream.write(commandBuilder.toString().getBytes());
                     outputStream.flush();
                     Utils.debug(commandBuilder.toString() + " written..");
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     break;
                 }
             }
             try {
                 if (outputStream != null)
                     outputStream.close();
-            } catch (IOException ignored) {
+            }
+            catch (IOException ignored) {
             }
         }
     }
@@ -449,13 +469,15 @@ public class GdbDebugServer implements IDebugProtocolServer {
                     }
                 }
                 Utils.debug("GdbReaderThread while FINISHED");
-            } catch (IOException | RejectedExecutionException ignored) {
+            }
+            catch (IOException | RejectedExecutionException ignored) {
                 ignored.printStackTrace();
             }
             try {
                 if (inputStream != null)
                     inputStream.close();
-            } catch (IOException ignored) {
+            }
+            catch (IOException ignored) {
             }
         }
 
@@ -478,7 +500,19 @@ public class GdbDebugServer implements IDebugProtocolServer {
                     Utils.debug("received " + commandWrapper.getCommand().constructCommand());
                 }
                 else {
-                    // TODO treat response as an event
+                    // treat response as an event
+                    Output output = new Output(resultRecord);
+                    executor.execute(() -> {
+                        processEvent(output);
+                    });
+                }
+            }
+            else if (recordType == Parser.RecordType.GdbPrompt) {
+                if (!gdbInitialized) {
+                    // run target
+                    ExecRunCommand execRunCommand = commandFactory.createExecRun();
+                    queueCommand(execRunCommand);
+                    gdbInitialized = true;
                 }
             }
             else if (recordType == Parser.RecordType.OutOfBand) {
@@ -492,23 +526,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
     }
 
     private void processEvent(Output output) {
-        OutOfBandRecord outOfBandRecord = output.getOutOfBandRecord();
-        if (outOfBandRecord == null)
-            return;
-        Utils.debug("processing event " + outOfBandRecord.toString());
-
-        if (outOfBandRecord instanceof ExecAsyncOutput) {
-            String asyncClass = ((ExecAsyncOutput) outOfBandRecord).getAsyncClass();
-            if ("stopped".equals(asyncClass)) {
-
-            }
-        }
-        else if (outOfBandRecord instanceof StatusAsyncOutput) {
-            // TODO
-        }
-        else if (outOfBandRecord instanceof NotifyAsyncOutput) {
-            // TODO
-        }
+        eventProcessor.eventReceived(output);
     }
 
     private CommandWrapper getWrittenCommand(int token) {

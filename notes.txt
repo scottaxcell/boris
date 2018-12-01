@@ -1,9 +1,8 @@
 TODO:
-* make utils class proper singleton, private constructor
-* cleanup imported eclipse code and classes, time to roll my own - best learning opportunity
-* GdbDebugServer should wrap a GdbBackend which represents the gdb process and interacts with mi directly
-* rewrite server read and write implementation to gdb process - use same tx rx command implementation
-* implement logger with different levels for debugging
+* event processor to notify client of an event
+
+* track whether or not debuggee is stopped or running
+* set up tests better when it comes to loading a target (helloworld)
 
 ORDER OF EXECUTION:
 * exec

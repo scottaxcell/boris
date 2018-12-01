@@ -9,11 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
+    private static final String GDB_PROMPT = "(gdb)";
     public enum RecordType {
         OutOfBand,
         Result,
         Stream,
-        Async
+        Async,
+        GdbPrompt
     }
 
     public RecordType getRecordType(String line) {
@@ -26,6 +28,8 @@ public class Parser {
         if (i < line.length()) {
             if (ResultRecord.RESULT_RECORD_PREFIX == line.charAt(i))
                 return RecordType.Result;
+            else if (line.startsWith(GDB_PROMPT, i))
+                return RecordType.GdbPrompt;
             else
                 return RecordType.OutOfBand;
         }
@@ -113,7 +117,8 @@ public class Parser {
             String digits = buffer.substring(0, i);
             try {
                 token = Integer.parseInt(digits);
-            } catch (NumberFormatException ignored) {
+            }
+            catch (NumberFormatException ignored) {
             }
             buffer.delete(0, i);
         }

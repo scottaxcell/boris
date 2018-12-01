@@ -21,8 +21,10 @@ public class GdbDebugServerTest {
     @org.junit.Test
     public void launch() throws InterruptedException {
         Map<String, Object> args = new HashMap<>();
+        args.put("/home/saxcell/dev/boris/testcases/helloworld/helloworld", new Object());
         GdbDebugServer server = new GdbDebugServer();
         server.launch(args);
+        Thread.sleep(300);
     }
 
     @org.junit.Test
@@ -40,7 +42,6 @@ public class GdbDebugServerTest {
         SetBreakpointsArguments setBreakpointsArguments = new SetBreakpointsArguments();
         setBreakpointsArguments.setSource(source);
         setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
-//        server.setBreakpoints(setBreakpointsArguments);
         CompletableFuture<SetBreakpointsResponse> future = server.setBreakpoints(setBreakpointsArguments);
         SetBreakpointsResponse setBreakpointsResponse = future.get();
         Thread.sleep(3000);
