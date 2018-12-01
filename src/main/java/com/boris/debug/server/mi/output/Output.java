@@ -7,19 +7,23 @@ import com.boris.debug.server.mi.record.ResultRecord;
  * output -> ( out-of-band-record )* [ result-record ] "(gdb)" nl
  */
 public class Output {
-    private OutOfBandRecord[] outOfBandRecords;
+    private OutOfBandRecord outOfBandRecord;
     private ResultRecord resultRecord;
 
     public Output(ResultRecord resultRecord) {
         this.resultRecord = resultRecord;
     }
 
-    public OutOfBandRecord[] getOutOfBandRecords() {
-        return outOfBandRecords;
+    public Output(OutOfBandRecord outOfBandRecord) {
+        this.resultRecord = resultRecord;
     }
 
-    public void setOutOfBandRecords(OutOfBandRecord[] outOfBandRecords) {
-        this.outOfBandRecords = outOfBandRecords;
+    public OutOfBandRecord getOutOfBandRecord() {
+        return outOfBandRecord;
+    }
+
+    public void setOutOfBandRecord(OutOfBandRecord outOfBandRecord) {
+        this.outOfBandRecord = outOfBandRecord;
     }
 
     public ResultRecord getResultRecord() {

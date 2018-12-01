@@ -1,11 +1,9 @@
 package com.boris.debug.server;
 
 import com.boris.debug.server.mi.command.*;
-import com.boris.debug.server.mi.output.MIConst;
-import com.boris.debug.server.mi.output.Output;
-import com.boris.debug.server.mi.output.Result;
-import com.boris.debug.server.mi.output.Tuple;
+import com.boris.debug.server.mi.output.*;
 import com.boris.debug.server.mi.parser.Parser;
+import com.boris.debug.server.mi.record.OutOfBandRecord;
 import com.boris.debug.server.mi.record.ResultRecord;
 import com.boris.debug.utils.Logger;
 import com.boris.debug.utils.Utils;
@@ -16,6 +14,7 @@ import org.eclipse.lsp4j.debug.services.IDebugProtocolServer;
 import java.io.*;
 import java.lang.Thread;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 
@@ -482,12 +481,33 @@ public class GdbDebugServer implements IDebugProtocolServer {
                     // TODO treat response as an event
                 }
             }
-            else if (recordType == Parser.RecordType.Stream) {
-                // TODO
+            else if (recordType == Parser.RecordType.OutOfBand) {
+                OutOfBandRecord outOfBandRecord = parser.parseOutOfBandRecord(line);
+                Output output = new Output(outOfBandRecord);
+                executor.execute(() -> {
+                    processEvent(output);
+                });
             }
-            else if (recordType == Parser.RecordType.Async) {
-                // TODO
+        }
+    }
+
+    private void processEvent(Output output) {
+        OutOfBandRecord outOfBandRecord = output.getOutOfBandRecord();
+        if (outOfBandRecord == null)
+            return;
+        Utils.debug("processing event " + outOfBandRecord.toString());
+
+        if (outOfBandRecord instanceof ExecAsyncOutput) {
+            String asyncClass = ((ExecAsyncOutput) outOfBandRecord).getAsyncClass();
+            if ("stopped".equals(asyncClass)) {
+
             }
+        }
+        else if (outOfBandRecord instanceof StatusAsyncOutput) {
+            // TODO
+        }
+        else if (outOfBandRecord instanceof NotifyAsyncOutput) {
+            // TODO
         }
     }
 

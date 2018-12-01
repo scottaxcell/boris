@@ -1,8 +1,9 @@
 package com.boris.debug.server.mi.parser;
 
 import com.boris.debug.server.mi.output.*;
+import com.boris.debug.server.mi.record.AsyncRecord;
+import com.boris.debug.server.mi.record.OutOfBandRecord;
 import com.boris.debug.server.mi.record.ResultRecord;
-import com.boris.debug.server.mi.record.StreamRecord;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,25 +28,79 @@ public class Parser {
                 return RecordType.Result;
             else
                 return RecordType.OutOfBand;
-//            else if (StreamRecord.CONSOLE_OUTPUT_PREFIX == line.charAt(i)
-//                    || StreamRecord.TARGET_OUTPUT_PREFIX == line.charAt(i)
-//                    || StreamRecord.LOG_OUTPUT_PREFIX == line.charAt(i)) {
-//                return RecordType.Stream;
-//            }
-            // TODO handle async record
         }
         throw new RuntimeException("Can't process end of line");
     }
 
-    public ResultRecord processResultRecord(String line) {
-        StringBuffer stringBuffer = new StringBuffer(line);
-        // TODO parse token
-        int token = parseToken(stringBuffer);
+    public OutOfBandRecord parseOutOfBandRecord(String line) {
+        OutOfBandRecord outOfBandRecord = null;
+        StringBuffer buffer = new StringBuffer(line);
+        int token = parseToken(buffer);
 
-        // TODO parse type (done, running, etc.)
-        ResultRecord resultRecord = new ResultRecord();
-        // TODO parse result values
-        return null;
+        char c = buffer.length() != 0 ? buffer.charAt(0) : 0;
+        if (c == '*' || c == '+' || c == '=') {
+            buffer.deleteCharAt(0);
+            AsyncRecord asyncRecord = null;
+            switch (c) {
+                case '*':
+                    asyncRecord = new ExecAsyncOutput();
+                    break;
+                case '+':
+                    asyncRecord = new StatusAsyncOutput();
+                    break;
+                case '=':
+                    asyncRecord = new NotifyAsyncOutput();
+                    break;
+                default:
+                    throw new RuntimeException("expected an async character");
+            }
+            asyncRecord.setToken(token);
+            int i = buffer.toString().indexOf(',');
+            if (i != -1) {
+                String asyncClass = buffer.substring(0, i);
+                asyncRecord.setAsyncClass(asyncClass);
+                buffer.delete(0, i + 1);
+            }
+            else {
+                asyncRecord.setAsyncClass(buffer.toString().trim());
+                buffer.setLength(0);
+            }
+            Result[] results = parseResults(buffer);
+            asyncRecord.setResults(results);
+            outOfBandRecord = asyncRecord;
+        }
+        // TODO
+//        else if (c == '~' || c == '@' || c == '&') {
+//            buffer.deleteCharAt(0);
+//            StreamRecord stream = null;
+//            switch (c) {
+//                case '~':
+//                    stream = new ConsoleStreamOutput();
+//                    break;
+
+//                case '@':
+//                    stream = new TargetStreamOutput();
+//                    break;
+
+//                case '&':
+//                    stream = new LogStreamOutput();
+//                    break;
+//                default:
+//                    assert false;
+//                    stream = new ConsoleStreamOutput();
+//            }
+//            if (buffer.length() > 0 && buffer.charAt(0) == '"')
+//                buffer.deleteCharAt(0);
+//            stream.setCString(parseCString(buffer);
+//            outOfBandRecord = stream;
+//        }
+//        else {
+//            // Badly format MI line, just pass it to the user as target stream
+//            StreamRecord stream = new TargetStreamOutput();
+//            stream.setCString(line + "\n");
+//            outOfBandRecord = stream;
+//        }
+        return outOfBandRecord;
     }
 
     private int parseToken(StringBuffer buffer) {
@@ -228,15 +283,19 @@ public class Parser {
                 if (escapeSeen) {
                     stringBuffer.append(c);
                     escapeSeen = false;
-                } else
+                }
+                else
                     escapeSeen = true;
-            } else if (c == '"') {
+            }
+            else if (c == '"') {
                 if (escapeSeen) {
                     stringBuffer.append(c);
                     escapeSeen = false;
-                } else
+                }
+                else
                     endQuotesSeen = true;
-            } else {
+            }
+            else {
                 if (escapeSeen)
                     stringBuffer.append('\\');
                 stringBuffer.append(c);
