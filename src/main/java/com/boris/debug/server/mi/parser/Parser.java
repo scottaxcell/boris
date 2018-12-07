@@ -4,6 +4,7 @@ import com.boris.debug.server.mi.output.*;
 import com.boris.debug.server.mi.record.AsyncRecord;
 import com.boris.debug.server.mi.record.OutOfBandRecord;
 import com.boris.debug.server.mi.record.ResultRecord;
+import com.boris.debug.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,8 +137,11 @@ public class Parser {
 
         parseResultClass(buffer, resultRecord);
 
-        Result[] results = parseResults(buffer);
-        resultRecord.setResults(results);
+        if (buffer.length() > 0 && buffer.charAt(0) == ',') {
+            buffer.deleteCharAt(0);
+            Result[] results = parseResults(buffer);
+            resultRecord.setResults(results);
+        }
 
         return resultRecord;
     }
@@ -169,10 +173,16 @@ public class Parser {
     }
 
     private Result[] parseResults(StringBuffer buffer) {
+        if (buffer.toString().contains("stopped")) {
+            Utils.debug(buffer.toString());
+        }
         List<Result> results = new ArrayList<>();
+        Result result = parseResult(buffer);
+        if (result != null)
+            results.add(result);
         while (buffer.length() > 0 && buffer.charAt(0) == ',') {
             buffer.deleteCharAt(0);
-            Result result = parseResult(buffer);
+            result = parseResult(buffer);
             if (result != null)
                 results.add(result);
         }

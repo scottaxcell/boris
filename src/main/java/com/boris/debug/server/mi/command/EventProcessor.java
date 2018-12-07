@@ -1,11 +1,11 @@
 package com.boris.debug.server.mi.command;
 
 import com.boris.debug.server.mi.event.Event;
+import com.boris.debug.server.mi.event.ExitedEvent;
 import com.boris.debug.server.mi.output.*;
 import com.boris.debug.server.mi.record.OutOfBandRecord;
 import com.boris.debug.server.mi.record.ResultRecord;
 import com.boris.debug.utils.Utils;
-import org.eclipse.lsp4j.debug.ExitedEventArguments;
 import org.eclipse.lsp4j.debug.TerminatedEventArguments;
 import org.eclipse.lsp4j.debug.services.IDebugProtocolClient;
 
@@ -21,8 +21,8 @@ public class EventProcessor {
     }
 
     public void eventReceived(Output output) {
-        if (client == null)
-            return;
+//        if (client == null)
+//            return;
 
         ResultRecord resultRecord = output.getResultRecord();
         OutOfBandRecord outOfBandRecord = output.getOutOfBandRecord();
@@ -41,7 +41,6 @@ public class EventProcessor {
     }
 
     private void processOutOfbandResponseEvent(OutOfBandRecord outOfBandRecord) {
-        // TODO This should all be passed to the EventProcessor to handle
         Utils.debug("processing out-of-band record event " + outOfBandRecord.toString());
         if (outOfBandRecord instanceof ExecAsyncOutput) {
             processExecAsyncOutput((ExecAsyncOutput) outOfBandRecord);
@@ -60,24 +59,26 @@ public class EventProcessor {
             return;
 
         Result[] results = execAsyncOutput.getResults();
-        for (int i = 0; i < results.length; i++) {
-            String variable = results[i].getVariable();
-            Value value = results[i].getValue();
+        for (Result result : results) {
+            String variable = result.getVariable();
+            Value value = result.getValue();
             if (variable.equals("reason")) {
                 if (value instanceof MIConst) {
                     String reason = ((MIConst) value).getcString();
-                    if ("exited-normally".equals(reason) || "exited".equals(reason)) {
-                        Event event = createEvent(execAsyncOutput, reason);
-                        // TODO pass event to some sort of event process to notify the client
-                    }
+                    Event event = createEvent(execAsyncOutput, reason);
+                    dispatchEvent(event);
                 }
             }
         }
     }
 
     private Event createEvent(ExecAsyncOutput execAsyncOutput, String reason) {
+        Event event = null;
+        if ("exited-normally".equals(reason) || "exited".equals(reason)) {
+            event = ExitedEvent.parse(execAsyncOutput.getResults());
+        }
 
-        return null;
+        return event;
     }
 
     private void processResultRecordEvent(ResultRecord resultRecord) {
@@ -93,7 +94,7 @@ public class EventProcessor {
                 // TODO
                 break;
             case EXIT:
-                notifyClientOfExitResultRecord();
+                notifyClientOfGdbExit();
                 break;
             case RUNNING:
                 // TODO
@@ -101,21 +102,25 @@ public class EventProcessor {
             default:
                 throw new RuntimeException("unexpected ResultClass");
         }
-
     }
 
-    private void notifyClientOfExitResultRecord() {
+    private void dispatchEvent(Event event) {
+        if (event instanceof ExitedEvent) {
+            notifyClientOfExitOutOfBandRecord((ExitedEvent) event);
+        }
+    }
+
+    private void notifyClientOfGdbExit() {
+        Utils.debug("notifying client of gdb exit");
         if (client == null)
             return;
-        TerminatedEventArguments terminatedEventArguments = new TerminatedEventArguments();
-        client.terminated(terminatedEventArguments);
+        client.terminated(new TerminatedEventArguments());
     }
 
-    private void notifyClientOfExitOutOfBandRecord(Result[] results) {
+    private void notifyClientOfExitOutOfBandRecord(ExitedEvent event) {
+        Utils.debug("notifying client of exit with code = " + event.getArgs().getExitCode());
         if (client == null)
             return;
-        ExitedEventArguments exitedEventArguments = new ExitedEventArguments();
-        client.exited(exitedEventArguments);
+        client.exited(event.getArgs());
     }
-
 }

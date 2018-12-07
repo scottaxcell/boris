@@ -16,7 +16,7 @@ public class Output {
     }
 
     public Output(OutOfBandRecord outOfBandRecord) {
-        this.resultRecord = resultRecord;
+        this.outOfBandRecord = outOfBandRecord;
     }
 
     public OutOfBandRecord getOutOfBandRecord() {

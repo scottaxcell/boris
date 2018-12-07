@@ -429,7 +429,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
                 try {
                     outputStream.write(commandBuilder.toString().getBytes());
                     outputStream.flush();
-                    Utils.debug(commandBuilder.toString() + " written..");
+                    Utils.debug(commandBuilder.toString().trim() + " written..");
                 }
                 catch (IOException e) {
                     break;
@@ -502,9 +502,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
                 else {
                     // treat response as an event
                     Output output = new Output(resultRecord);
-                    executor.execute(() -> {
-                        processEvent(output);
-                    });
+                    processEvent(output);
                 }
             }
             else if (recordType == Parser.RecordType.GdbPrompt) {
@@ -518,15 +516,13 @@ public class GdbDebugServer implements IDebugProtocolServer {
             else if (recordType == Parser.RecordType.OutOfBand) {
                 OutOfBandRecord outOfBandRecord = parser.parseOutOfBandRecord(line);
                 Output output = new Output(outOfBandRecord);
-                executor.execute(() -> {
-                    processEvent(output);
-                });
+                processEvent(output);
             }
         }
     }
 
     private void processEvent(Output output) {
-        eventProcessor.eventReceived(output);
+        executor.execute(() -> eventProcessor.eventReceived(output));
     }
 
     private CommandWrapper getWrittenCommand(int token) {
