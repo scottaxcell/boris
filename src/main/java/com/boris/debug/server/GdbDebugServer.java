@@ -24,14 +24,16 @@ import java.util.function.Supplier;
  * GDB Server - implements DAP interface
  */
 public class GdbDebugServer implements IDebugProtocolServer {
-    private Process gdbProcess;
+    private Target target;
+    private GdbBackend backend;
     private GdbReaderThread gdbReaderThread;
     private GdbWriterThread gdbWriterThread;
     private final CommandFactory commandFactory = new CommandFactory();
     private IDebugProtocolClient client;
     private ExecutorService executor = Executors.newCachedThreadPool();
     private EventProcessor eventProcessor = new EventProcessor();
-    private boolean gdbInitialized = false;
+    private boolean initialized = false;
+    private boolean initializeRequestFinished = false;
     /**
      * Commands that need to be processed
      */
@@ -49,45 +51,12 @@ public class GdbDebugServer implements IDebugProtocolServer {
      */
     private int tokenCounter = 0;
 
-    public void setRemoteProxy(IDebugProtocolClient client) {
-        this.client = client;
-        eventProcessor.setClient(client);
+    private GdbDebugServer() {
+        // no allowed
     }
 
-    private int getNewToken() {
-        int newTokenCounter = ++tokenCounter;
-        if (newTokenCounter <= 0)
-            newTokenCounter = tokenCounter = 1;
-        return newTokenCounter;
-    }
-
-    private int queueCommand(Command command) {
-        int token = -1;
-        final CommandWrapper commandWrapper = new CommandWrapper(command);
-        commandQueue.add(commandWrapper);
-        if (commandWrapper.getCommand().isRequiresResponse()) {
-            commandWrapper.generateToken();
-            token = commandWrapper.getToken();
-        }
-        Utils.debug("queued.. " + commandWrapper.getCommand().constructCommand());
-        return token;
-    }
-
-    private int processNextQueuedCommand() {
-//        int token = -1;
-//        if (!commandQueue.isEmpty()) {
-//            final CommandWrapper commandWrapper = commandQueue.remove(0);
-//            if (commandWrapper != null) {
-//                if (commandWrapper.getCommand().isRequiresResponse()) {
-//                    commandWrapper.generateToken();
-//                    token = commandWrapper.getToken();
-//                }
-////                writtenCommands.add(commandWrapper);
-//                Utils.debug(commandWrapper.getCommand().constructCommand() + " processed..");
-//            }
-//        }
-//        return token;
-        return -1;
+    public GdbDebugServer(Target target) {
+        this.target = target;
     }
 
     @Override
@@ -99,9 +68,21 @@ public class GdbDebugServer implements IDebugProtocolServer {
     public CompletableFuture<Capabilities> initialize(InitializeRequestArguments args) {
         Utils.debug("initialize");
 
+        backend = new GdbBackend(target);
+        backend.startGdb();
+
+        gdbReaderThread = new GdbReaderThread(backend.getInputStream());
+        gdbReaderThread.start();
+
+        gdbWriterThread = new GdbWriterThread(backend.getOutputStream());
+        gdbWriterThread.start();
+
+        // TODO setup async response waiting for gdb prompt
         Capabilities capabilities = new Capabilities();
         capabilities.setSupportsFunctionBreakpoints(false);
         capabilities.setSupportsConditionalBreakpoints(false);
+
+        setInitializeRequestFinished(true);
 
         return CompletableFuture.completedFuture(capabilities);
     }
@@ -113,39 +94,8 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
     @Override
     public CompletableFuture<Void> launch(Map<String, Object> args) {
-        // args: target: exe to run
-        // https://sourceware.org/gdb/onlinedocs/gdb/Mode-Options.html
-        // cmd: gdb -q -nw -i mi2 [target]
-        // -q: quiet, -nw: no windows i: interpreter (mi2 in our case)
-
-        String[] cmdline = {Utils.GDB_PATH, "-q", "-nw", "-i", "mi2"};
-
-        if (!args.isEmpty()) {
-            // TODO this just a temporary hack for testing purposes
-            List<String> tmp = new ArrayList<>();
-            tmp.addAll(Arrays.asList(cmdline));
-            for (Map.Entry<String, Object> entry : args.entrySet()) {
-                tmp.add(entry.getKey());
-            }
-            cmdline = tmp.toArray(new String[0]);
-        }
-
-        try {
-            Utils.debug("starting GDB -- " + Arrays.toString(cmdline));
-            gdbProcess = Runtime.getRuntime().exec(cmdline);
-
-            InputStream inputStream = gdbProcess.getInputStream();
-            OutputStream outputStream = gdbProcess.getOutputStream();
-
-            gdbReaderThread = new GdbReaderThread(inputStream);
-            gdbReaderThread.start();
-
-            gdbWriterThread = new GdbWriterThread(outputStream);
-            gdbWriterThread.start();
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
+        ExecRunCommand execRunCommand = commandFactory.createExecRun();
+        queueCommand(execRunCommand);
 
         return CompletableFuture.completedFuture(null);
     }
@@ -395,6 +345,85 @@ public class GdbDebugServer implements IDebugProtocolServer {
         return CompletableFuture.completedFuture(null);
     }
 
+
+    public void setInitialized(boolean initialized) {
+        this.initialized = initialized;
+    }
+
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    public void setRemoteProxy(IDebugProtocolClient client) {
+        this.client = client;
+        eventProcessor.setClient(client);
+    }
+
+    private int getNewToken() {
+        int newTokenCounter = ++tokenCounter;
+        if (newTokenCounter <= 0)
+            newTokenCounter = tokenCounter = 1;
+        return newTokenCounter;
+    }
+
+    private int queueCommand(Command command) {
+        int token = -1;
+        final CommandWrapper commandWrapper = new CommandWrapper(command);
+        commandQueue.add(commandWrapper);
+        if (commandWrapper.getCommand().isRequiresResponse()) {
+            commandWrapper.generateToken();
+            token = commandWrapper.getToken();
+        }
+        Utils.debug("queued.. " + commandWrapper.getCommand().constructCommand());
+        return token;
+    }
+
+    private void notifyClientOfInitialized() {
+        if (!isInitializeRequestFinished() || eventProcessor == null)
+            return;
+        eventProcessor.notifyClientOfInitialized();
+    }
+
+    private int processNextQueuedCommand() {
+//        int token = -1;
+//        if (!commandQueue.isEmpty()) {
+//            final CommandWrapper commandWrapper = commandQueue.remove(0);
+//            if (commandWrapper != null) {
+//                if (commandWrapper.getCommand().isRequiresResponse()) {
+//                    commandWrapper.generateToken();
+//                    token = commandWrapper.getToken();
+//                }
+////                writtenCommands.add(commandWrapper);
+//                Utils.debug(commandWrapper.getCommand().constructCommand() + " processed..");
+//            }
+//        }
+//        return token;
+        return -1;
+    }
+
+    public boolean isInitializeRequestFinished() {
+        return initializeRequestFinished;
+    }
+
+    public void setInitializeRequestFinished(boolean initializeRequestFinished) {
+        this.initializeRequestFinished = initializeRequestFinished;
+    }
+
+    private void processEvent(Output output) {
+        // do not
+        if (isInitialized())
+            return;
+        executor.execute(() -> eventProcessor.eventReceived(output));
+    }
+
+    private CommandWrapper getWrittenCommand(int token) {
+        for (CommandWrapper commandWrapper : writtenCommands) {
+            if (commandWrapper.getToken() == token)
+                return commandWrapper;
+        }
+        return null;
+    }
+
     /**
      * Handles MI commands that are written to the GDB stream
      */
@@ -506,12 +535,11 @@ public class GdbDebugServer implements IDebugProtocolServer {
                 }
             }
             else if (recordType == Parser.RecordType.GdbPrompt) {
-                if (!gdbInitialized) {
-                    // run target
-                    ExecRunCommand execRunCommand = commandFactory.createExecRun();
-                    queueCommand(execRunCommand);
-                    gdbInitialized = true;
+                if (!isInitialized()) {
+                    setInitialized(true);
+                    notifyClientOfInitialized();
                 }
+                // TODO should fire output event on client
             }
             else if (recordType == Parser.RecordType.OutOfBand) {
                 OutOfBandRecord outOfBandRecord = parser.parseOutOfBandRecord(line);
@@ -521,18 +549,6 @@ public class GdbDebugServer implements IDebugProtocolServer {
         }
     }
 
-    private void processEvent(Output output) {
-        executor.execute(() -> eventProcessor.eventReceived(output));
-    }
-
-    private CommandWrapper getWrittenCommand(int token) {
-        for (CommandWrapper commandWrapper : writtenCommands) {
-            if (commandWrapper.getToken() == token) {
-                return commandWrapper;
-            }
-        }
-        return null;
-    }
 
     /**
      * Wrapper for handling commandWrapper requests and responses

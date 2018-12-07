@@ -2,10 +2,7 @@ package com.boris.debug.client;
 
 import com.boris.debug.utils.Logger;
 import com.boris.debug.utils.Utils;
-import org.eclipse.lsp4j.debug.Capabilities;
-import org.eclipse.lsp4j.debug.ExitedEventArguments;
-import org.eclipse.lsp4j.debug.InitializeRequestArguments;
-import org.eclipse.lsp4j.debug.TerminatedEventArguments;
+import org.eclipse.lsp4j.debug.*;
 import org.eclipse.lsp4j.debug.launch.DSPLauncher;
 import org.eclipse.lsp4j.debug.services.IDebugProtocolClient;
 import org.eclipse.lsp4j.debug.services.IDebugProtocolServer;
@@ -88,6 +85,11 @@ public class GdbDebugClient implements IDebugProtocolClient {
     @Override
     public void terminated(TerminatedEventArguments args) {
         Logger.getInstance().info(this.getClass().getSimpleName() + ": terminated");
+    }
+
+    @Override
+    public void continued(ContinuedEventArguments args) {
+        Logger.getInstance().info(this.getClass().getSimpleName() + ": continued");
     }
 
     public IDebugProtocolServer getDebugProtocolServer() {

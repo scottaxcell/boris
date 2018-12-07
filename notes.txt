@@ -1,6 +1,6 @@
 TODO:
-* event processor to notify client of an event
-
+* finish up handling of running events ^running and *running
+* add breakpoint-hit event support
 * track whether or not debuggee is stopped or running
 * set up tests better when it comes to loading a target (helloworld)
 

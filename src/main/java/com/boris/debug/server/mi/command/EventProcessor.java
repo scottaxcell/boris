@@ -2,10 +2,12 @@ package com.boris.debug.server.mi.command;
 
 import com.boris.debug.server.mi.event.Event;
 import com.boris.debug.server.mi.event.ExitedEvent;
+import com.boris.debug.server.mi.event.RunningEvent;
 import com.boris.debug.server.mi.output.*;
 import com.boris.debug.server.mi.record.OutOfBandRecord;
 import com.boris.debug.server.mi.record.ResultRecord;
 import com.boris.debug.utils.Utils;
+import org.eclipse.lsp4j.debug.ContinuedEventArguments;
 import org.eclipse.lsp4j.debug.TerminatedEventArguments;
 import org.eclipse.lsp4j.debug.services.IDebugProtocolClient;
 
@@ -21,9 +23,6 @@ public class EventProcessor {
     }
 
     public void eventReceived(Output output) {
-//        if (client == null)
-//            return;
-
         ResultRecord resultRecord = output.getResultRecord();
         OutOfBandRecord outOfBandRecord = output.getOutOfBandRecord();
         if (resultRecord != null) {
@@ -32,12 +31,6 @@ public class EventProcessor {
         else if (outOfBandRecord != null) {
             processOutOfbandResponseEvent(outOfBandRecord);
         }
-
-    }
-
-    public void notifyClient() {
-        if (client == null)
-            return;
     }
 
     private void processOutOfbandResponseEvent(OutOfBandRecord outOfBandRecord) {
@@ -97,7 +90,7 @@ public class EventProcessor {
                 notifyClientOfGdbExit();
                 break;
             case RUNNING:
-                // TODO
+                notifyClientOfRunning();
                 break;
             default:
                 throw new RuntimeException("unexpected ResultClass");
@@ -112,15 +105,35 @@ public class EventProcessor {
 
     private void notifyClientOfGdbExit() {
         Utils.debug("notifying client of gdb exit");
-        if (client == null)
+        if (getClient() == null)
             return;
-        client.terminated(new TerminatedEventArguments());
+        getClient().terminated(new TerminatedEventArguments());
     }
 
     private void notifyClientOfExitOutOfBandRecord(ExitedEvent event) {
         Utils.debug("notifying client of exit with code = " + event.getArgs().getExitCode());
-        if (client == null)
+        if (getClient() == null)
             return;
-        client.exited(event.getArgs());
+        getClient().exited(event.getArgs());
+    }
+
+    private void notifyClientOfRunningOutOfBandRecord(RunningEvent event) {
+        Utils.debug("notifying client of running");
+        if (getClient() == null)
+            return;
+        getClient().continued(event.getArgs());
+    }
+
+    private void notifyClientOfRunning() {
+        Utils.debug("notifying client of running");
+        if (getClient() == null)
+            return;
+        getClient().continued(new ContinuedEventArguments());
+    }
+
+    public void notifyClientOfInitialized() {
+        if (getClient() == null)
+            return;
+        getClient().initialized();
     }
 }

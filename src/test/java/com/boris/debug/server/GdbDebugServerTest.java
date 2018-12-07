@@ -19,19 +19,9 @@ public class GdbDebugServerTest {
     }
 
     @org.junit.Test
-    public void launch() throws InterruptedException {
+    public void initialize() throws InterruptedException, ExecutionException {
+        GdbDebugServer server = new GdbDebugServer(new Target("/home/saxcell/dev/boris/testcases/helloworld/helloworld"));
         Map<String, Object> args = new HashMap<>();
-        args.put("/home/saxcell/dev/boris/testcases/helloworld/helloworld", new Object());
-        GdbDebugServer server = new GdbDebugServer();
-        server.launch(args);
-        Thread.sleep(300);
-    }
-
-    @org.junit.Test
-    public void setBreakPoints() throws InterruptedException, ExecutionException {
-        Map<String, Object> args = new HashMap<>();
-        args.put("/home/saxcell/dev/boris/testcases/helloworld/helloworld", new Object());
-        GdbDebugServer server = new GdbDebugServer();
         server.launch(args);
         Thread.sleep(300);
 
@@ -49,9 +39,8 @@ public class GdbDebugServerTest {
 
     @org.junit.Test
     public void terminate() throws InterruptedException {
+        GdbDebugServer server = new GdbDebugServer(new Target("/home/saxcell/dev/boris/testcases/helloworld/helloworld"));
         Map<String, Object> args = new HashMap<>();
-        args.put("/home/saxcell/dev/boris/testcases/helloworld/helloworld", new Object());
-        GdbDebugServer server = new GdbDebugServer();
         server.launch(args);
         Thread.sleep(300);
 

@@ -1,6 +1,7 @@
 package com.boris.debug.client;
 
 import com.boris.debug.server.GdbDebugServer;
+import com.boris.debug.server.Target;
 import org.eclipse.lsp4j.debug.launch.DSPLauncher;
 import org.eclipse.lsp4j.debug.services.IDebugProtocolClient;
 import org.eclipse.lsp4j.debug.services.IDebugProtocolServer;
@@ -32,7 +33,7 @@ public class GdbDebugClientTest {
 
         client = new GdbDebugClient(inClient, outClient);
 
-        server = new GdbDebugServer();
+        server = new GdbDebugServer(new Target("some target"));
         serverLauncher = DSPLauncher.createServerLauncher(server, inServer, outServer);
         serverListening = serverLauncher.startListening();
         server.setRemoteProxy(client);
@@ -40,6 +41,15 @@ public class GdbDebugClientTest {
 
 //        clientLauncher = DSPLauncher.createClientLauncher(client, inClient, outClient);
 //        clientListening = clientLauncher.startListening();
+
+        /**
+         * FLOW
+         * - start debugger(target)
+         * - initialize request
+         * - initialize response
+         * - intialized event
+         */
+
     }
 
     @org.junit.After
