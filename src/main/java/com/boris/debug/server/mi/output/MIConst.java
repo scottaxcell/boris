@@ -4,6 +4,7 @@ package com.boris.debug.server.mi.output;
  * const -> c-string
  */
 public class MIConst extends Value {
+    // TODO write translator to create a human readable string from a cstring
     private String cString;
 
     public String getcString() {

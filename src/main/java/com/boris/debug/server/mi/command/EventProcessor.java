@@ -29,11 +29,11 @@ public class EventProcessor {
             processResultRecordEvent(resultRecord);
         }
         else if (outOfBandRecord != null) {
-            processOutOfbandResponseEvent(outOfBandRecord);
+            processOutOfBandResponseEvent(outOfBandRecord);
         }
     }
 
-    private void processOutOfbandResponseEvent(OutOfBandRecord outOfBandRecord) {
+    private void processOutOfBandResponseEvent(OutOfBandRecord outOfBandRecord) {
         Utils.debug("processing out-of-band record event " + outOfBandRecord.toString());
         if (outOfBandRecord instanceof ExecAsyncOutput) {
             processExecAsyncOutput((ExecAsyncOutput) outOfBandRecord);

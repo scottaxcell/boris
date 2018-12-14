@@ -52,7 +52,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
     private int tokenCounter = 0;
 
     private GdbDebugServer() {
-        // no allowed
+        // not allowed
     }
 
     public GdbDebugServer(Target target) {
@@ -77,7 +77,6 @@ public class GdbDebugServer implements IDebugProtocolServer {
         gdbWriterThread = new GdbWriterThread(backend.getOutputStream());
         gdbWriterThread.start();
 
-        // TODO setup async response waiting for gdb prompt
         Capabilities capabilities = new Capabilities();
         capabilities.setSupportsFunctionBreakpoints(false);
         capabilities.setSupportsConditionalBreakpoints(false);
@@ -410,7 +409,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
     }
 
     private void processEvent(Output output) {
-        // do not
+        // do not send events until initialized event has been sent to client
         if (isInitialized())
             return;
         executor.execute(() -> eventProcessor.eventReceived(output));
@@ -539,7 +538,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
                     setInitialized(true);
                     notifyClientOfInitialized();
                 }
-                // TODO should fire output event on client
+                // TODO should fire off output event to client
             }
             else if (recordType == Parser.RecordType.OutOfBand) {
                 OutOfBandRecord outOfBandRecord = parser.parseOutOfBandRecord(line);

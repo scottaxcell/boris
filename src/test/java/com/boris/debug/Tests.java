@@ -15,11 +15,4 @@ public class Tests {
     public void tearDown() throws Exception {
     }
 
-    @org.junit.Test
-    public void gdbLauncher() {
-        Map<String, Object> args = new HashMap<>();
-        GdbDebugServer server = new GdbDebugServer();
-        server.launch(args);
-    }
-
 }
