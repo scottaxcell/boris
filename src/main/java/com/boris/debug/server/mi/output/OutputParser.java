@@ -148,4 +148,10 @@ public class OutputParser {
 
         return stackFrame;
     }
+
+    public static ScopesResponse parseScopesResponse(Output output) {
+        ScopesResponse response = new ScopesResponse();
+        return response;
+    }
+
 }

@@ -39,4 +39,10 @@ public class CommandFactory {
         threadSelectCommand.setRequiresResponse(true);
         return threadSelectCommand;
     }
+
+    public StackSelectFrameCommand createStackSelectFrame(Long frameId) {
+        StackSelectFrameCommand stackSelectFrameCommand = new StackSelectFrameCommand(String.valueOf(frameId));
+        stackSelectFrameCommand.setRequiresResponse(true);
+        return stackSelectFrameCommand;
+    }
 }

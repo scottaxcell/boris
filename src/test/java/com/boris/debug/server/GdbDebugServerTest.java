@@ -314,4 +314,52 @@ public class GdbDebugServerTest {
         Assert.assertEquals(stackTraceResponse.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
     }
 
+    @org.junit.Test
+    public void scopes() throws InterruptedException, TimeoutException, ExecutionException {
+        Source source = new Source();
+        source.setPath(SOURCE_FILENAME);
+        source.setName(new File(SOURCE_FILENAME).getName());
+
+        SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
+        sourceBreakpoint.setLine(Long.valueOf(22));
+
+        SetBreakpointsArguments request = new SetBreakpointsArguments();
+        request.setSource(source);
+        request.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
+
+        SetBreakpointsResponse response = new SetBreakpointsResponse();
+        List<Breakpoint> breakpoints = new ArrayList<>();
+        Breakpoint breakpoint = new Breakpoint();
+        breakpoint.setSource(source);
+        breakpoint.setLine(Long.valueOf(22));
+        breakpoints.add(breakpoint);
+        response.setBreakpoints(breakpoints.toArray(new Breakpoint[breakpoints.size()]));
+
+        CompletableFuture<?> future = server.setBreakpoints(request);
+        Assert.assertEquals(response.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
+        Thread.sleep(HALF_SECOND);
+
+        future = server.launch(new HashMap<>());
+        Assert.assertEquals(null, future.get(TWO_SECONDS, TimeUnit.MILLISECONDS));
+
+        Thread.sleep(TWO_SECONDS);
+        Assert.assertTrue(client.isStopped());
+
+        StoppedEventArguments stoppedArgs = new StoppedEventArguments();
+        stoppedArgs.setReason(StoppedEventArgumentsReason.BREAKPOINT + ";bkptno=1");
+        stoppedArgs.setThreadId(Long.valueOf(1));
+        stoppedArgs.setAllThreadsStopped(true);
+        Assert.assertEquals(stoppedArgs.toString(), client.getStoppedEventArguments().toString());
+
+        // The test
+        ScopesArguments scopesArguments = new ScopesArguments();
+        scopesArguments.setFrameId(1L);
+        future = server.scopes(scopesArguments);
+        ScopesResponse scopesResponse = (ScopesResponse) future.get(TWO_SECONDS, TimeUnit.MILLISECONDS);
+        Assert.assertEquals(2, scopesResponse.getScopes().length);
+        Assert.assertEquals("Locals", scopesResponse.getScopes()[0].getName());
+        Assert.assertEquals(Long.valueOf(100), scopesResponse.getScopes()[0].getVariablesReference());
+        Assert.assertEquals("Arguments", scopesResponse.getScopes()[1].getName());
+        Assert.assertEquals(Long.valueOf(101), scopesResponse.getScopes()[1].getVariablesReference());
+    }
 }

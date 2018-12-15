@@ -48,6 +48,11 @@ public class GdbDebugServer implements IDebugProtocolServer {
      */
     private int tokenCounter = 0;
 
+    /**
+     * TODO need to track scope variablesReference number for each frame
+     */
+    private VariablesReferenceMap variablesReferenceMap = new VariablesReferenceMap();
+
     private GdbDebugServer() {
         // not allowed
     }
@@ -280,11 +285,37 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
     @Override
     public CompletableFuture<ScopesResponse> scopes(ScopesArguments args) {
-        return CompletableFuture.completedFuture(null);
+        ScopesResponse response = new ScopesResponse();
+
+        List<Scope> scopes = new ArrayList<>();
+        scopes.add(createScope("Locals", args.getFrameId()));
+        scopes.add(createScope("Arguments", args.getFrameId()));
+        response.setScopes(scopes.toArray(new Scope[scopes.size()]));
+
+        return CompletableFuture.completedFuture(response);
+    }
+
+    private Scope createScope(String name, Long frameId) {
+        Scope scope = new Scope();
+        scope.setName(name);
+        scope.setVariablesReference(variablesReferenceMap.create(String.format("%s_%s", name, frameId)));
+        return scope;
     }
 
     @Override
     public CompletableFuture<VariablesResponse> variables(VariablesArguments args) {
+        // TODO get frameId from variablesArguments
+        String variablesReference = variablesReferenceMap.get(args.getVariablesReference());
+        String[] tmp = variablesReference.split("_");
+        String type = tmp[0];
+        Long frameId = Long.valueOf(tmp[1]);
+
+        if ("Locals".equals(type)) {
+
+        }
+        else if ("Arguments".equals(type)) {
+
+        }
         return CompletableFuture.completedFuture(null);
     }
 
@@ -639,6 +670,30 @@ public class GdbDebugServer implements IDebugProtocolServer {
                 Logger.getInstance().warning(msg);
                 throw new RuntimeException(msg);
             }
+        }
+    }
+
+    /**
+     * Track variablesReference
+     */
+    private static class VariablesReferenceMap {
+        private final Long START_VARIABLES_REFERENCE = Long.valueOf(100);
+        private Map<Long, String> map = new HashMap<>();
+        private Long nextVariablesReference = START_VARIABLES_REFERENCE;
+
+        public Long create(String variablesReference) {
+            Long next = nextVariablesReference++;
+            map.put(next, variablesReference);
+            return next;
+        }
+
+        public String get(Long variablesReference) {
+            return map.get(variablesReference);
+        }
+
+        public void reset() {
+            map = new HashMap<>();
+            nextVariablesReference = START_VARIABLES_REFERENCE;
         }
     }
 }
