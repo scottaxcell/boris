@@ -21,4 +21,10 @@ public class CommandFactory {
         execContinueCommand.setRequiresResponse(true);
         return execContinueCommand;
     }
+
+    public ThreadsInfoCommand createThreadsInfo() {
+        ThreadsInfoCommand threadsInfoCommand = new ThreadsInfoCommand();
+        threadsInfoCommand.setRequiresResponse(true);
+        return threadsInfoCommand;
+    }
 }

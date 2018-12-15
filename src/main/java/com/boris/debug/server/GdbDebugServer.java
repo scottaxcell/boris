@@ -296,7 +296,43 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
     @Override
     public CompletableFuture<ThreadsResponse> threads() {
-        return CompletableFuture.completedFuture(null);
+        ThreadsInfoCommand threadsInfoCommand = commandFactory.createThreadsInfo();
+        final int token = queueCommand(threadsInfoCommand);
+        Supplier<ThreadsResponse> supplier = setThreadsResponseSupplier(token);
+        return CompletableFuture.supplyAsync(supplier, executor);
+    }
+
+    private Supplier<ThreadsResponse> setThreadsResponseSupplier(int token) {
+        return new Supplier<ThreadsResponse>() {
+            @Override
+            public ThreadsResponse get() {
+                // TODO start timer to flag any commandWrapper that doesn't get a response
+                while (true) {
+                    if (readCommands.containsKey(token)) {
+                        CommandWrapper commandWrapper = readCommands.remove(token);
+                        return getThreadsResponse(commandWrapper);
+                    }
+                    try {
+                        Thread.sleep(200);
+                    }
+                    catch (InterruptedException ignored) {
+                    }
+                }
+            }
+        };
+    }
+
+    private ThreadsResponse getThreadsResponse(CommandWrapper commandWrapper) {
+        CommandResponse commandResponse = commandWrapper.getCommandResponse();
+        Output output = commandResponse.getOutput();
+        ResultRecord resultRecord = output.getResultRecord();
+        if (resultRecord.getResultClass() == ResultRecord.ResultClass.DONE) {
+            Result[] results = resultRecord.getResults();
+            for (Result result : results) {
+                Utils.debug(result);
+            }
+        }
+        return null;
     }
 
     @Override
@@ -547,7 +583,6 @@ public class GdbDebugServer implements IDebugProtocolServer {
             }
         }
     }
-
 
     /**
      * Wrapper for handling commandWrapper requests and responses
