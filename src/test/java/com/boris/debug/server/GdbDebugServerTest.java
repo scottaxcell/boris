@@ -237,10 +237,12 @@ public class GdbDebugServerTest {
 
         // The test
         ThreadsResponse threadsResponse = new ThreadsResponse();
+        org.eclipse.lsp4j.debug.Thread thread = new org.eclipse.lsp4j.debug.Thread();
+        thread.setName("helloworld");
+        thread.setId(Long.valueOf(1));
+        threadsResponse.setThreads(new org.eclipse.lsp4j.debug.Thread[]{thread});
+
         future = server.threads();
         Assert.assertEquals(threadsResponse.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
-        while (true) {
-            Thread.sleep(HALF_SECOND);
-        }
     }
 }

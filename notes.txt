@@ -1,46 +1,13 @@
 TODO:
 * finish up handling of running events ^running and *running
-* add breakpoint-hit event support
 * track whether or not debuggee is stopped or running
-* set up tests better when it comes to loading a target (helloworld)
-
-ORDER OF EXECUTION:
-* exec
-* async mi output
-* setBreakpoints
-* threads
-* variables
-* stack
-
-send command with response algorithm:
-* set a timer for 3 seconds and if violated throw exception because we don't expect such a time sink
-* check rxCommands for id of command that was sent
-* if not there sleep
-* otherwise grab command response, parse it and send response to client
-while (true) {
- if (rxCommands.remove(id)) {
-    parse out response from result
-    return response;
- }
- else {
-    Thread.sleep(200);
- }
-}
 
 BACKLOG:
 * client should take arguments from user, e.g. target, attach or launch, working dir, etc.
 * client should take input and output streams as args
 * figure out (understand how it works) how to override threadpool like in DSPDebugTarget
 
-DONE:
-* model architecture
-* fix com.boris.debug.com.boris.debug package name
-* implement client launcher from client
-
-
 BUGS:
-* sometimes reader thread doesn't see "(gdb)" output on process startup
-
 
 Code references:
 https://github.com/dlsniper/ideagdb/blob/master/src/uk/co/cwspencer/gdb/Gdb.java
@@ -50,34 +17,3 @@ https://sourceware.org/gdb/onlinedocs/gdb/index.html#Top
 
 DAP Specification:
 https://microsoft.github.io/debug-adapter-protocol/specification
-
-
-ARCHITECTURE
-============
-Server
-******
-GdbDebugProtocolServer
-* launches gdb process
-* create reader thread for listening to gdb stdout process stream, fires events for client
-* create writer thread for writing to gdb stdin process stream, called by client
-* queue of commands waiting to be sent to gdb
-* queue of pending commands waiting for a response from gdb
-
-ReaderThread
-* parser any incoming strings from gdb stdout
-
-WriterThread
-* writes command to gdb stdin
-
-Command
-* representation of command that is written to gdb
-
-MILexer
-* lexical analysis of GDB/MI output
-
-MIParser
-* parser for GDB/MI output
-
-
-Client
-******

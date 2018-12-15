@@ -1,10 +1,7 @@
 package com.boris.debug.server;
 
 import com.boris.debug.server.mi.command.*;
-import com.boris.debug.server.mi.output.MIConst;
-import com.boris.debug.server.mi.output.Output;
-import com.boris.debug.server.mi.output.Result;
-import com.boris.debug.server.mi.output.Tuple;
+import com.boris.debug.server.mi.output.*;
 import com.boris.debug.server.mi.parser.Parser;
 import com.boris.debug.server.mi.record.OutOfBandRecord;
 import com.boris.debug.server.mi.record.ResultRecord;
@@ -326,13 +323,46 @@ public class GdbDebugServer implements IDebugProtocolServer {
         CommandResponse commandResponse = commandWrapper.getCommandResponse();
         Output output = commandResponse.getOutput();
         ResultRecord resultRecord = output.getResultRecord();
+
+        ThreadsResponse response = new ThreadsResponse();
+        List<org.eclipse.lsp4j.debug.Thread> threads = new ArrayList<>();
+
+        // TODO refactor this mess, create a class(s) for doing this parsing
         if (resultRecord.getResultClass() == ResultRecord.ResultClass.DONE) {
             Result[] results = resultRecord.getResults();
             for (Result result : results) {
-                Utils.debug(result);
+                if ("threads".equals(result.getVariable())) {
+                    Value value = result.getValue();
+                    if (value instanceof MIList) {
+                        MIList list = (MIList) value;
+                        Value[] values = list.getValues();
+                        for (Value v : values) {
+                            org.eclipse.lsp4j.debug.Thread thread = new org.eclipse.lsp4j.debug.Thread();
+                            if (v instanceof Tuple) {
+                                Result[] tupleResults = ((Tuple) v).getResults();
+                                for (Result tr : tupleResults) {
+                                    String var = tr.getVariable();
+                                    if ("id".equals(var)) {
+                                        Value val = tr.getValue();
+                                        if (val instanceof MIConst)
+                                            thread.setId(Long.valueOf(((MIConst) val).getcString().trim()));
+                                    }
+                                    else if ("name".equals(var)) {
+                                        Value val = tr.getValue();
+                                        if (val instanceof MIConst)
+                                            thread.setName(((MIConst) val).getcString().trim());
+                                    }
+                                }
+                            }
+                            threads.add(thread);
+                        }
+                    }
+                }
             }
         }
-        return null;
+        if (!threads.isEmpty())
+            response.setThreads(threads.toArray(new org.eclipse.lsp4j.debug.Thread[threads.size()]));
+        return response;
     }
 
     @Override
