@@ -139,26 +139,23 @@ public class GdbDebugServer implements IDebugProtocolServer {
     }
 
     private Supplier<SetBreakpointsResponse> setBreakpointsResponseSupplier(List<Integer> tokens, SetBreakpointsArguments args) {
-        return new Supplier<SetBreakpointsResponse>() {
-            @Override
-            public SetBreakpointsResponse get() {
-                // TODO start timer to flag any commandWrapper that doesn't get a response
-                List<CommandWrapper> commandResponses = new ArrayList<>();
-                while (commandResponses.size() != tokens.size()) {
-                    for (Integer token : tokens) {
-                        if (readCommands.containsKey(token)) {
-                            CommandWrapper commandWrapper = readCommands.remove(token);
-                            commandResponses.add(commandWrapper);
-                        }
-                    }
-                    try {
-                        Thread.sleep(200);
-                    }
-                    catch (InterruptedException ignored) {
+        return () -> {
+            // TODO start timer to flag any commandWrapper that doesn't get a response
+            List<CommandWrapper> commandResponses = new ArrayList<>();
+            while (commandResponses.size() != tokens.size()) {
+                for (Integer token : tokens) {
+                    if (readCommands.containsKey(token)) {
+                        CommandWrapper commandWrapper = readCommands.remove(token);
+                        commandResponses.add(commandWrapper);
                     }
                 }
-                return getSetBreakpointsResponse(commandResponses, args);
+                try {
+                    Thread.sleep(200);
+                }
+                catch (InterruptedException ignored) {
+                }
             }
+            return getSetBreakpointsResponse(commandResponses, args);
         };
     }
 
@@ -168,26 +165,9 @@ public class GdbDebugServer implements IDebugProtocolServer {
         for (CommandWrapper commandWrapper : commandWrappers) {
             CommandResponse commandResponse = commandWrapper.getCommandResponse();
             Output output = commandResponse.getOutput();
-            ResultRecord resultRecord = output.getResultRecord();
-
-            if (resultRecord.getResultClass() == ResultRecord.ResultClass.DONE) {
-                Result[] results = resultRecord.getResults();
-                for (Result result : results) {
-                    if ("bkpt".equals(result.getVariable())) {
-                        Tuple tuple = (Tuple) result.getValue();
-                        MIConst file = (MIConst) tuple.getFieldValue("file");
-                        MIConst fullname = (MIConst) tuple.getFieldValue("fullname");
-                        MIConst line = (MIConst) tuple.getFieldValue("line");
-                        Source source = new Source();
-                        source.setName(file.getcString());
-                        source.setPath(fullname.getcString());
-                        Breakpoint breakpoint = new Breakpoint();
-                        breakpoint.setSource(source);
-                        breakpoint.setLine(Long.parseLong(line.getcString()));
-                        breakpoints.add(breakpoint);
-                    }
-                }
-            }
+            Breakpoint breakpoint = OutputParser.parseBreakpointsResponse(output);
+            if (breakpoint != null)
+                breakpoints.add(breakpoint);
             Utils.debug(this.getClass().getSimpleName() + " " + commandWrapper.getToken() + "." + commandWrapper.getCommand().constructCommand());
         }
         // TODO parse commandWrapper response into set breakpoint reponse maintaining same order as original args
@@ -215,12 +195,9 @@ public class GdbDebugServer implements IDebugProtocolServer {
     }
 
     private Supplier<ContinueResponse> continueResponseSupplier(ContinueArguments args) {
-        return new Supplier<ContinueResponse>() {
-            @Override
-            public ContinueResponse get() {
-                ContinueResponse response = new ContinueResponse();
-                return response;
-            }
+        return () -> {
+            ContinueResponse response = new ContinueResponse();
+            return response;
         };
     }
 
@@ -300,20 +277,17 @@ public class GdbDebugServer implements IDebugProtocolServer {
     }
 
     private Supplier<ThreadsResponse> setThreadsResponseSupplier(int token) {
-        return new Supplier<ThreadsResponse>() {
-            @Override
-            public ThreadsResponse get() {
-                // TODO start timer to flag any commandWrapper that doesn't get a response
-                while (true) {
-                    if (readCommands.containsKey(token)) {
-                        CommandWrapper commandWrapper = readCommands.remove(token);
-                        return getThreadsResponse(commandWrapper);
-                    }
-                    try {
-                        Thread.sleep(200);
-                    }
-                    catch (InterruptedException ignored) {
-                    }
+        return () -> {
+            // TODO start timer to flag any commandWrapper that doesn't get a response
+            while (true) {
+                if (readCommands.containsKey(token)) {
+                    CommandWrapper commandWrapper = readCommands.remove(token);
+                    return getThreadsResponse(commandWrapper);
+                }
+                try {
+                    Thread.sleep(200);
+                }
+                catch (InterruptedException ignored) {
                 }
             }
         };
@@ -322,46 +296,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
     private ThreadsResponse getThreadsResponse(CommandWrapper commandWrapper) {
         CommandResponse commandResponse = commandWrapper.getCommandResponse();
         Output output = commandResponse.getOutput();
-        ResultRecord resultRecord = output.getResultRecord();
-
-        ThreadsResponse response = new ThreadsResponse();
-        List<org.eclipse.lsp4j.debug.Thread> threads = new ArrayList<>();
-
-        // TODO refactor this mess, create a class(s) for doing this parsing
-        if (resultRecord.getResultClass() == ResultRecord.ResultClass.DONE) {
-            Result[] results = resultRecord.getResults();
-            for (Result result : results) {
-                if ("threads".equals(result.getVariable())) {
-                    Value value = result.getValue();
-                    if (value instanceof MIList) {
-                        MIList list = (MIList) value;
-                        Value[] values = list.getValues();
-                        for (Value v : values) {
-                            org.eclipse.lsp4j.debug.Thread thread = new org.eclipse.lsp4j.debug.Thread();
-                            if (v instanceof Tuple) {
-                                Result[] tupleResults = ((Tuple) v).getResults();
-                                for (Result tr : tupleResults) {
-                                    String var = tr.getVariable();
-                                    if ("id".equals(var)) {
-                                        Value val = tr.getValue();
-                                        if (val instanceof MIConst)
-                                            thread.setId(Long.valueOf(((MIConst) val).getcString().trim()));
-                                    }
-                                    else if ("name".equals(var)) {
-                                        Value val = tr.getValue();
-                                        if (val instanceof MIConst)
-                                            thread.setName(((MIConst) val).getcString().trim());
-                                    }
-                                }
-                            }
-                            threads.add(thread);
-                        }
-                    }
-                }
-            }
-        }
-        if (!threads.isEmpty())
-            response.setThreads(threads.toArray(new org.eclipse.lsp4j.debug.Thread[threads.size()]));
+        ThreadsResponse response = OutputParser.parseThreadsResponse(output);
         return response;
     }
 
