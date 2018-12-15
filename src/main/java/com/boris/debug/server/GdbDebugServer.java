@@ -410,7 +410,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
     private void processEvent(Output output) {
         // do not send events until initialized event has been sent to client
-        if (isInitialized())
+        if (!isInitialized())
             return;
         executor.execute(() -> eventProcessor.eventReceived(output));
     }

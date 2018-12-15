@@ -1,5 +1,7 @@
 package com.boris.debug.server;
 
+import org.eclipse.lsp4j.debug.ExitedEventArguments;
+import org.eclipse.lsp4j.debug.StoppedEventArguments;
 import org.eclipse.lsp4j.debug.services.IDebugProtocolClient;
 import org.eclipse.lsp4j.jsonrpc.Endpoint;
 import org.eclipse.xtext.xbase.lib.Pair;
@@ -10,7 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
-public class AssertingEndpoint implements Endpoint, IDebugProtocolClient {
+public class AssertingClientEndpoint implements Endpoint, IDebugProtocolClient {
     public Map<String, Pair<Object, Object>> expectedRequests = new LinkedHashMap<>();
     public Map<String, Object> expectedNotifications = new LinkedHashMap<>();
 
@@ -54,14 +56,40 @@ public class AssertingEndpoint implements Endpoint, IDebugProtocolClient {
         Assert.fail("expectations were not cleared out " + toString());
     }
 
-    boolean initializedExercised = false;
-    public boolean isInitializedExercised() {
+    private boolean initializedExercised = false;
+    boolean isInitializedExercised() {
         return initializedExercised;
     }
 
     @Override
     public void initialized() {
         initializedExercised = true;
+    }
+
+    private long exitReturnCode = Long.MAX_VALUE;
+    long exitedCleanly() {
+        return exitReturnCode;
+    }
+
+    @Override
+    public void exited(ExitedEventArguments args) {
+        exitReturnCode = args.getExitCode();
+    }
+
+    private boolean stopped = false;
+    boolean isStopped() {
+        return stopped;
+    }
+
+    private StoppedEventArguments stoppedEventArguments;
+    StoppedEventArguments getStoppedEventArguments() {
+        return stoppedEventArguments;
+    }
+
+    @Override
+    public void stopped(StoppedEventArguments args) {
+        stopped = true;
+        stoppedEventArguments = args;
     }
 }
 

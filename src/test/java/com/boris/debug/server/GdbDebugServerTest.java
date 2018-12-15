@@ -1,7 +1,6 @@
 package com.boris.debug.server;
 
-import org.eclipse.lsp4j.debug.Capabilities;
-import org.eclipse.lsp4j.debug.InitializeRequestArguments;
+import org.eclipse.lsp4j.debug.*;
 import org.eclipse.lsp4j.debug.launch.DSPLauncher;
 import org.eclipse.lsp4j.debug.services.IDebugProtocolClient;
 import org.eclipse.lsp4j.debug.services.IDebugProtocolServer;
@@ -9,27 +8,56 @@ import org.eclipse.lsp4j.jsonrpc.Launcher;
 import org.eclipse.lsp4j.jsonrpc.services.ServiceEndpoints;
 import org.junit.Assert;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.lang.Thread;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.*;
 
 public class GdbDebugServerTest {
-    private static final int TIMEOUT = 2000;
+    private static final int THREE_SECONDS = 3000;
+    private static final int TWO_SECONDS = 2000;
+    private static final int ONE_SECOND = 1000;
     private static final int HALF_SECOND = 500;
 
-    private static final String TARGET_FILENAME = "/home/saxcell/dev/boris/testcases/helloworld/helloworld";
+    private static final String TEST_CASE_DIR = "/home/saxcell/dev/boris/testcases/helloworld";
+    private static final String SOURCE_DIR = String.format("%s/helloworld.cpp", TEST_CASE_DIR);
+    private static final String TARGET_FILENAME = String.format("%s/helloworld", TEST_CASE_DIR);
     private Target target = new Target(TARGET_FILENAME);
+
+    private static final String[] makeCmdLine = {"make", "-f", "makefile"};
 
     private GdbDebugServer server;
     private Launcher<IDebugProtocolClient> serverLauncher;
     private Future<?> serverListening;
 
-    private AssertingEndpoint client;
+    private AssertingClientEndpoint client;
     private Launcher<IDebugProtocolServer> clientLauncher;
     private Future<?> clientListening;
 
+    private void compileHelloWorldExe() {
+        try {
+            ProcessBuilder processBuilder = new ProcessBuilder(makeCmdLine);
+            processBuilder.directory(new File(TEST_CASE_DIR));
+            processBuilder.start();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Exercise initialize handshake with server
+     * @throws Exception
+     */
     @org.junit.Before
     public void setUp() throws Exception {
+        compileHelloWorldExe();
+
         PipedInputStream inClient = new PipedInputStream();
         PipedOutputStream outClient = new PipedOutputStream();
         PipedInputStream inServer = new PipedInputStream();
@@ -42,21 +70,11 @@ public class GdbDebugServerTest {
         serverLauncher = DSPLauncher.createServerLauncher(server, inServer, outServer);
         serverListening = serverLauncher.startListening();
 
-        client = new AssertingEndpoint();
+        client = new AssertingClientEndpoint();
         server.setRemoteProxy(client);
         clientLauncher = DSPLauncher.createClientLauncher(ServiceEndpoints.toServiceObject(client, IDebugProtocolClient.class), inClient, outClient);
         clientListening = clientLauncher.startListening();
-    }
 
-    @org.junit.After
-    public void tearDown() throws Exception {
-        clientListening.cancel(true);
-        serverListening.cancel(true);
-        Thread.sleep(10);
-    }
-
-    @org.junit.Test
-    public void initialize() throws InterruptedException, ExecutionException, TimeoutException {
         InitializeRequestArguments request = new InitializeRequestArguments();
         request.setClientID("com.boris.debug");
         request.setAdapterID("adapterId");
@@ -72,37 +90,108 @@ public class GdbDebugServerTest {
         result.setSupportsConditionalBreakpoints(false);
 
         CompletableFuture<?> future = server.initialize(request);
-        Assert.assertEquals(result.toString(), future.get(TIMEOUT, TimeUnit.MILLISECONDS).toString());
-
+        Assert.assertEquals(result.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
         Thread.sleep(HALF_SECOND);
         Assert.assertTrue(client.isInitializedExercised());
+
+        Thread.sleep(TWO_SECONDS);
     }
 
+    @org.junit.After
+    public void tearDown() throws Exception {
+        clientListening.cancel(true);
+        serverListening.cancel(true);
+        Thread.sleep(HALF_SECOND);
+    }
+
+    /**
+     * Set a single breakpoint on a single source
+     * @throws InterruptedException
+     * @throws TimeoutException
+     * @throws ExecutionException
+     */
     @org.junit.Test
-    public void terminate() throws InterruptedException {
+    public void setBreakpoints() throws InterruptedException, TimeoutException, ExecutionException {
+        Source source = new Source();
+        source.setPath(SOURCE_DIR);
+        source.setName(new File(SOURCE_DIR).getName());
+
+        SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
+        sourceBreakpoint.setLine(Long.valueOf(9));
+
+        SetBreakpointsArguments request = new SetBreakpointsArguments();
+        request.setSource(source);
+        request.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
+
+        SetBreakpointsResponse response = new SetBreakpointsResponse();
+        List<Breakpoint> breakpoints = new ArrayList<>();
+        Breakpoint breakpoint = new Breakpoint();
+        breakpoint.setSource(source);
+        breakpoint.setLine(Long.valueOf(9));
+        breakpoints.add(breakpoint);
+        response.setBreakpoints(breakpoints.toArray(new Breakpoint[breakpoints.size()]));
+
+        CompletableFuture<SetBreakpointsResponse> future = server.setBreakpoints(request);
+        Assert.assertEquals(response.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
+        Thread.sleep(HALF_SECOND);
     }
 
+    /**
+     * Launch target and verify executable exits cleanly
+     * @throws InterruptedException
+     * @throws TimeoutException
+     * @throws ExecutionException
+     */
+    @org.junit.Test
+    public void launch() throws InterruptedException, TimeoutException, ExecutionException {
+        CompletableFuture<Void> future = server.launch(new HashMap<>());
+        Assert.assertEquals(null, future.get(TWO_SECONDS, TimeUnit.MILLISECONDS));
 
-//        client.expectedNotifications.put("initialized", new Object());
-//        client.joinOnEmpty();
-//        Thread.sleep(3000);
+        Thread.sleep(TWO_SECONDS);
+        Assert.assertEquals(0, client.exitedCleanly());
+    }
 
-//        verify(client).
-//        CompletableFuture<Capabilities> capainitialize(InitializeRequestArguments args) {
+    /**
+     * Set a single breakpoint, launch target, and verify breakpoint is hit and stopped
+     * @throws InterruptedException
+     * @throws TimeoutException
+     * @throws ExecutionException
+     */
+    @org.junit.Test
+    public void breakpointHitStopped() throws InterruptedException, TimeoutException, ExecutionException {
+        Source source = new Source();
+        source.setPath(SOURCE_DIR);
+        source.setName(new File(SOURCE_DIR).getName());
 
-//        Map<String, Object> args = new HashMap<>();
-//        server.launch(args);
-//        Thread.sleep(300);
+        SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
+        sourceBreakpoint.setLine(Long.valueOf(9));
 
-//        Source source = new Source();
-//        source.setPath("/home/saxcell/dev/boris/testcases/helloworld/helloworld.cpp");
-//        SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
-//        sourceBreakpoint.setLine(Long.valueOf(9));
-//        SetBreakpointsArguments setBreakpointsArguments = new SetBreakpointsArguments();
-//        setBreakpointsArguments.setSource(source);
-//        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
-//        CompletableFuture<SetBreakpointsResponse> future = server.setBreakpoints(setBreakpointsArguments);
-//        SetBreakpointsResponse setBreakpointsResponse = future.get();
-//        Thread.sleep(3000);
+        SetBreakpointsArguments request = new SetBreakpointsArguments();
+        request.setSource(source);
+        request.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
 
+        SetBreakpointsResponse response = new SetBreakpointsResponse();
+        List<Breakpoint> breakpoints = new ArrayList<>();
+        Breakpoint breakpoint = new Breakpoint();
+        breakpoint.setSource(source);
+        breakpoint.setLine(Long.valueOf(9));
+        breakpoints.add(breakpoint);
+        response.setBreakpoints(breakpoints.toArray(new Breakpoint[breakpoints.size()]));
+
+        CompletableFuture<?> future = server.setBreakpoints(request);
+        Assert.assertEquals(response.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
+        Thread.sleep(HALF_SECOND);
+
+        future = server.launch(new HashMap<>());
+        Assert.assertEquals(null, future.get(TWO_SECONDS, TimeUnit.MILLISECONDS));
+
+        Thread.sleep(TWO_SECONDS);
+        Assert.assertTrue(client.isStopped());
+
+        StoppedEventArguments stoppedArgs = new StoppedEventArguments();
+        stoppedArgs.setReason(StoppedEventArgumentsReason.BREAKPOINT + ";bkptno=1");
+        stoppedArgs.setThreadId(Long.valueOf(1));
+        stoppedArgs.setAllThreadsStopped(true);
+        Assert.assertEquals(stoppedArgs.toString(), client.getStoppedEventArguments().toString());
+    }
 }

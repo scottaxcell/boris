@@ -1,5 +1,6 @@
 package com.boris.debug.server.mi.command;
 
+import com.boris.debug.server.mi.event.BreakpointHitEvent;
 import com.boris.debug.server.mi.event.Event;
 import com.boris.debug.server.mi.event.ExitedEvent;
 import com.boris.debug.server.mi.event.RunningEvent;
@@ -70,6 +71,9 @@ public class EventProcessor {
         if ("exited-normally".equals(reason) || "exited".equals(reason)) {
             event = ExitedEvent.parse(execAsyncOutput.getResults());
         }
+        else if ("breakpoint-hit".equals(reason)) {
+            event = BreakpointHitEvent.parse(execAsyncOutput.getResults());
+        }
 
         return event;
     }
@@ -101,6 +105,9 @@ public class EventProcessor {
         if (event instanceof ExitedEvent) {
             notifyClientOfExitOutOfBandRecord((ExitedEvent) event);
         }
+        else if (event instanceof BreakpointHitEvent) {
+            notifyClientOfBreakpointHit((BreakpointHitEvent) event);
+        }
     }
 
     private void notifyClientOfGdbExit() {
@@ -115,6 +122,13 @@ public class EventProcessor {
         if (getClient() == null)
             return;
         getClient().exited(event.getArgs());
+    }
+
+    private void notifyClientOfBreakpointHit(BreakpointHitEvent event) {
+        Utils.debug("notifying client of breakpoint hit");
+        if (getClient() == null)
+            return;
+        getClient().stopped(event.getArgs());
     }
 
     private void notifyClientOfRunningOutOfBandRecord(RunningEvent event) {
