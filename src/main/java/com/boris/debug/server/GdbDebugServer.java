@@ -245,7 +245,37 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
     @Override
     public CompletableFuture<StackTraceResponse> stackTrace(StackTraceArguments args) {
-        return CompletableFuture.completedFuture(null);
+        ThreadSelectCommand threadSelectCommand = commandFactory.createThreadSelect(args.getThreadId());
+        queueCommand(threadSelectCommand);
+
+        StackListFramesCommand stackListFramesCommand = commandFactory.createStackListFrames();
+        final int token = queueCommand(stackListFramesCommand);
+        Supplier<StackTraceResponse> supplier = setStackTraceResponseSupplier(token);
+        return CompletableFuture.supplyAsync(supplier, executor);
+    }
+
+    private Supplier<StackTraceResponse> setStackTraceResponseSupplier(int token) {
+        return () -> {
+            // TODO start timer to flag any commandWrapper that doesn't get a response
+            while (true) {
+                if (readCommands.containsKey(token)) {
+                    CommandWrapper commandWrapper = readCommands.remove(token);
+                    return getStackTraceResponse(commandWrapper);
+                }
+                try {
+                    Thread.sleep(200);
+                }
+                catch (InterruptedException ignored) {
+                }
+            }
+        };
+    }
+
+    private StackTraceResponse getStackTraceResponse(CommandWrapper commandWrapper) {
+        CommandResponse commandResponse = commandWrapper.getCommandResponse();
+        Output output = commandResponse.getOutput();
+        StackTraceResponse response = OutputParser.parseStackListFramesResponse(output);
+        return response;
     }
 
     @Override

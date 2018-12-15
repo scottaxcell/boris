@@ -25,7 +25,7 @@ public class GdbDebugServerTest {
     private static final int HALF_SECOND = 500;
 
     private static final String TEST_CASE_DIR = "/home/saxcell/dev/boris/testcases/helloworld";
-    private static final String SOURCE_DIR = String.format("%s/helloworld.cpp", TEST_CASE_DIR);
+    private static final String SOURCE_FILENAME = String.format("%s/helloworld.cpp", TEST_CASE_DIR);
     private static final String TARGET_FILENAME = String.format("%s/helloworld", TEST_CASE_DIR);
     private Target target = new Target(TARGET_FILENAME);
 
@@ -114,8 +114,8 @@ public class GdbDebugServerTest {
     public void setBreakpoints() throws InterruptedException, TimeoutException, ExecutionException {
         // The test
         Source source = new Source();
-        source.setPath(SOURCE_DIR);
-        source.setName(new File(SOURCE_DIR).getName());
+        source.setPath(SOURCE_FILENAME);
+        source.setName(new File(SOURCE_FILENAME).getName());
 
         SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
         sourceBreakpoint.setLine(Long.valueOf(9));
@@ -162,8 +162,8 @@ public class GdbDebugServerTest {
     @org.junit.Test
     public void breakpointHitStopped() throws InterruptedException, TimeoutException, ExecutionException {
         Source source = new Source();
-        source.setPath(SOURCE_DIR);
-        source.setName(new File(SOURCE_DIR).getName());
+        source.setPath(SOURCE_FILENAME);
+        source.setName(new File(SOURCE_FILENAME).getName());
 
         SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
         sourceBreakpoint.setLine(Long.valueOf(9));
@@ -201,8 +201,8 @@ public class GdbDebugServerTest {
     @org.junit.Test
     public void threads() throws InterruptedException, TimeoutException, ExecutionException {
         Source source = new Source();
-        source.setPath(SOURCE_DIR);
-        source.setName(new File(SOURCE_DIR).getName());
+        source.setPath(SOURCE_FILENAME);
+        source.setName(new File(SOURCE_FILENAME).getName());
 
         SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
         sourceBreakpoint.setLine(Long.valueOf(9));
@@ -245,4 +245,73 @@ public class GdbDebugServerTest {
         future = server.threads();
         Assert.assertEquals(threadsResponse.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
     }
+
+    @org.junit.Test
+    public void stackTrace() throws InterruptedException, TimeoutException, ExecutionException {
+        Source source = new Source();
+        source.setPath(SOURCE_FILENAME);
+        source.setName(new File(SOURCE_FILENAME).getName());
+
+        SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
+        sourceBreakpoint.setLine(Long.valueOf(22));
+
+        SetBreakpointsArguments request = new SetBreakpointsArguments();
+        request.setSource(source);
+        request.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
+
+        SetBreakpointsResponse response = new SetBreakpointsResponse();
+        List<Breakpoint> breakpoints = new ArrayList<>();
+        Breakpoint breakpoint = new Breakpoint();
+        breakpoint.setSource(source);
+        breakpoint.setLine(Long.valueOf(22));
+        breakpoints.add(breakpoint);
+        response.setBreakpoints(breakpoints.toArray(new Breakpoint[breakpoints.size()]));
+
+        CompletableFuture<?> future = server.setBreakpoints(request);
+        Assert.assertEquals(response.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
+        Thread.sleep(HALF_SECOND);
+
+        future = server.launch(new HashMap<>());
+        Assert.assertEquals(null, future.get(TWO_SECONDS, TimeUnit.MILLISECONDS));
+
+        Thread.sleep(TWO_SECONDS);
+        Assert.assertTrue(client.isStopped());
+
+        StoppedEventArguments stoppedArgs = new StoppedEventArguments();
+        stoppedArgs.setReason(StoppedEventArgumentsReason.BREAKPOINT + ";bkptno=1");
+        stoppedArgs.setThreadId(Long.valueOf(1));
+        stoppedArgs.setAllThreadsStopped(true);
+        Assert.assertEquals(stoppedArgs.toString(), client.getStoppedEventArguments().toString());
+
+        // The test
+        StackTraceArguments stackTraceArguments = new StackTraceArguments();
+        stackTraceArguments.setThreadId(Long.valueOf(1));
+
+        StackTraceResponse stackTraceResponse = new StackTraceResponse();
+        List<StackFrame> stackFrames = new ArrayList<>();
+
+        source = new Source();
+        source.setName("helloworld.cpp");
+        source.setPath(SOURCE_FILENAME);
+
+        StackFrame stackFrame = new StackFrame();
+        stackFrame.setId(Long.valueOf(0));
+        stackFrame.setLine(Long.valueOf(22));
+        stackFrame.setName("foo");
+        stackFrame.setSource(source);
+        stackFrames.add(stackFrame);
+
+        stackFrame = new StackFrame();
+        stackFrame.setId(Long.valueOf(1));
+        stackFrame.setLine(Long.valueOf(10));
+        stackFrame.setName("main");
+        stackFrame.setSource(source);
+        stackFrames.add(stackFrame);
+
+        stackTraceResponse.setStackFrames(stackFrames.toArray(new StackFrame[stackFrames.size()]));
+
+        future = server.stackTrace(stackTraceArguments);
+        Assert.assertEquals(stackTraceResponse.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
+    }
+
 }

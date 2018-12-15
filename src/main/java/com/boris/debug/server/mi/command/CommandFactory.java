@@ -27,4 +27,16 @@ public class CommandFactory {
         threadsInfoCommand.setRequiresResponse(true);
         return threadsInfoCommand;
     }
+
+    public StackListFramesCommand createStackListFrames() {
+        StackListFramesCommand stackListFramesCommand = new StackListFramesCommand();
+        stackListFramesCommand.setRequiresResponse(true);
+        return stackListFramesCommand;
+    }
+
+    public ThreadSelectCommand createThreadSelect(Long threadNum) {
+        ThreadSelectCommand threadSelectCommand = new ThreadSelectCommand(String.valueOf(threadNum));
+        threadSelectCommand.setRequiresResponse(true);
+        return threadSelectCommand;
+    }
 }

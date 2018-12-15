@@ -11,8 +11,13 @@ public class Command {
 
     public Command(String operation) {
         this.operation = operation;
-        requiresResponse = false;
         parameters = new ArrayList<>();
+        options = new ArrayList<>();
+    }
+
+    public Command(String operation, List<String> parameters) {
+        this.operation = operation;
+        this.parameters = parameters;
         options = new ArrayList<>();
     }
 

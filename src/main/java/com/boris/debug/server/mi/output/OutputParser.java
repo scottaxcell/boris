@@ -1,8 +1,8 @@
 package com.boris.debug.server.mi.output;
 
 import com.boris.debug.server.mi.record.ResultRecord;
-import org.eclipse.lsp4j.debug.*;
 import org.eclipse.lsp4j.debug.Thread;
+import org.eclipse.lsp4j.debug.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +63,7 @@ public class OutputParser {
         return response;
     }
 
-    public static Thread parseThread(Tuple tuple) {
+    private static Thread parseThread(Tuple tuple) {
         org.eclipse.lsp4j.debug.Thread thread = new org.eclipse.lsp4j.debug.Thread();
         Result[] tupleResults = tuple.getResults();
         for (Result tr : tupleResults) {
@@ -80,5 +80,87 @@ public class OutputParser {
             }
         }
         return thread;
+    }
+
+    public static StackTraceResponse parseStackListFramesResponse(Output output) {
+        StackTraceResponse response = new StackTraceResponse();
+        List<StackFrame> stackFrames = new ArrayList<>();
+
+        ResultRecord resultRecord = output.getResultRecord();
+        if (resultRecord.getResultClass() == ResultRecord.ResultClass.DONE) {
+            Result[] results = resultRecord.getResults();
+            for (Result result : results) {
+                Value val = result.getValue();
+                if (val instanceof MIList)
+                    parseStack((MIList) val, stackFrames);
+            }
+        }
+
+        if (!stackFrames.isEmpty())
+            response.setStackFrames(stackFrames.toArray(new StackFrame[stackFrames.size()]));
+
+        return response;
+    }
+
+    private static void parseStack(MIList miList, List<StackFrame> aList) {
+        Result[] results = miList.getResults();
+        for (Result result : results) {
+            String var = result.getVariable();
+            if ("frame".equals(var)) {
+                Value value = result.getValue();
+                if (value instanceof Tuple) {
+                    aList.add(parseFrame((Tuple) value));
+                }
+            }
+        }
+    }
+
+    private static StackFrame parseFrame(Tuple tuple) {
+        StackFrame stackFrame = new StackFrame();
+        Result[] results = tuple.getResults();
+        for (Result result : results) {
+            String var = result.getVariable();
+            Value value = result.getValue();
+            String str = "";
+            if (value != null && value instanceof MIConst) {
+                str = ((MIConst) value).getcString();
+            }
+
+            if (var.equals("level")) { //$NON-NLS-1$
+                stackFrame.setId(Long.valueOf(str.trim()));
+            }
+            else if (var.equals("func")) { //$NON-NLS-1$
+                if (str != null) {
+                    stackFrame.setName(str.trim());
+                }
+            }
+            else if (var.equals("file")) { //$NON-NLS-1$
+                Source source = stackFrame.getSource();
+                if (source == null) {
+                    source = new Source();
+                    source.setName(str.trim());
+                    stackFrame.setSource(new Source());
+                }
+                else {
+                    source.setName(str.trim());
+                }
+            }
+            else if (var.equals("fullname")) { //$NON-NLS-1$
+                Source source = stackFrame.getSource();
+                if (source == null) {
+                    source = new Source();
+                    source.setPath(str.trim());
+                    stackFrame.setSource(new Source());
+                }
+                else {
+                    source.setPath(str.trim());
+                }
+            }
+            else if (var.equals("line")) { //$NON-NLS-1$
+                stackFrame.setLine(Long.valueOf(str.trim()));
+            }
+        }
+
+        return stackFrame;
     }
 }
