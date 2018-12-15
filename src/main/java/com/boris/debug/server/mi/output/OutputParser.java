@@ -117,6 +117,7 @@ public class OutputParser {
 
     private static StackFrame parseFrame(Tuple tuple) {
         StackFrame stackFrame = new StackFrame();
+        stackFrame.setSource(new Source());
         Result[] results = tuple.getResults();
         for (Result result : results) {
             String var = result.getVariable();
@@ -135,26 +136,10 @@ public class OutputParser {
                 }
             }
             else if (var.equals("file")) { //$NON-NLS-1$
-                Source source = stackFrame.getSource();
-                if (source == null) {
-                    source = new Source();
-                    source.setName(str.trim());
-                    stackFrame.setSource(new Source());
-                }
-                else {
-                    source.setName(str.trim());
-                }
+                stackFrame.getSource().setName(str.trim());
             }
             else if (var.equals("fullname")) { //$NON-NLS-1$
-                Source source = stackFrame.getSource();
-                if (source == null) {
-                    source = new Source();
-                    source.setPath(str.trim());
-                    stackFrame.setSource(new Source());
-                }
-                else {
-                    source.setPath(str.trim());
-                }
+                stackFrame.getSource().setPath(str.trim());
             }
             else if (var.equals("line")) { //$NON-NLS-1$
                 stackFrame.setLine(Long.valueOf(str.trim()));
