@@ -8,6 +8,7 @@ public class Command {
     private List<String> parameters;
     private List<String> options;
     private boolean requiresResponse;
+    private boolean ignoreResponse;
 
     public Command(String operation) {
         this.operation = operation;
@@ -27,6 +28,14 @@ public class Command {
 
     public void setRequiresResponse(boolean requiresResponse) {
         this.requiresResponse = requiresResponse;
+    }
+
+    public boolean isIgnoreResponse() {
+        return ignoreResponse;
+    }
+
+    public void setIgnoreResponse(boolean ignoreResponse) {
+        this.ignoreResponse = ignoreResponse;
     }
 
     public String getOperation() {

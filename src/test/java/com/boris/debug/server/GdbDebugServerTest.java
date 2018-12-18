@@ -75,21 +75,21 @@ public class GdbDebugServerTest {
         clientLauncher = DSPLauncher.createClientLauncher(ServiceEndpoints.toServiceObject(client, IDebugProtocolClient.class), inClient, outClient);
         clientListening = clientLauncher.startListening();
 
-        InitializeRequestArguments request = new InitializeRequestArguments();
-        request.setClientID("com.boris.debug");
-        request.setAdapterID("adapterId");
-        request.setPathFormat("path");
-        request.setSupportsVariableType(true);
-        request.setSupportsVariablePaging(true);
-        request.setLinesStartAt1(true);
-        request.setColumnsStartAt1(true);
-        request.setSupportsRunInTerminalRequest(true);
+        InitializeRequestArguments initializeRequestArguments = new InitializeRequestArguments();
+        initializeRequestArguments.setClientID("com.boris.debug");
+        initializeRequestArguments.setAdapterID("adapterId");
+        initializeRequestArguments.setPathFormat("path");
+        initializeRequestArguments.setSupportsVariableType(true);
+        initializeRequestArguments.setSupportsVariablePaging(true);
+        initializeRequestArguments.setLinesStartAt1(true);
+        initializeRequestArguments.setColumnsStartAt1(true);
+        initializeRequestArguments.setSupportsRunInTerminalRequest(true);
 
         Capabilities result = new Capabilities();
         result.setSupportsFunctionBreakpoints(false);
         result.setSupportsConditionalBreakpoints(false);
 
-        CompletableFuture<?> future = server.initialize(request);
+        CompletableFuture<?> future = server.initialize(initializeRequestArguments);
         Assert.assertEquals(result.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
         Thread.sleep(HALF_SECOND);
         Assert.assertTrue(client.isInitializedExercised());
@@ -120,20 +120,20 @@ public class GdbDebugServerTest {
         SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
         sourceBreakpoint.setLine(Long.valueOf(9));
 
-        SetBreakpointsArguments request = new SetBreakpointsArguments();
-        request.setSource(source);
-        request.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
+        SetBreakpointsArguments setBreakpointsArguments = new SetBreakpointsArguments();
+        setBreakpointsArguments.setSource(source);
+        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
 
-        SetBreakpointsResponse response = new SetBreakpointsResponse();
+        SetBreakpointsResponse setBreakpointsResponse = new SetBreakpointsResponse();
         List<Breakpoint> breakpoints = new ArrayList<>();
         Breakpoint breakpoint = new Breakpoint();
         breakpoint.setSource(source);
         breakpoint.setLine(Long.valueOf(9));
         breakpoints.add(breakpoint);
-        response.setBreakpoints(breakpoints.toArray(new Breakpoint[breakpoints.size()]));
+        setBreakpointsResponse.setBreakpoints(breakpoints.toArray(new Breakpoint[breakpoints.size()]));
 
-        CompletableFuture<SetBreakpointsResponse> future = server.setBreakpoints(request);
-        Assert.assertEquals(response.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
+        CompletableFuture<SetBreakpointsResponse> future = server.setBreakpoints(setBreakpointsArguments);
+        Assert.assertEquals(setBreakpointsResponse.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
         Thread.sleep(HALF_SECOND);
     }
 
@@ -168,20 +168,20 @@ public class GdbDebugServerTest {
         SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
         sourceBreakpoint.setLine(Long.valueOf(9));
 
-        SetBreakpointsArguments request = new SetBreakpointsArguments();
-        request.setSource(source);
-        request.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
+        SetBreakpointsArguments setBreakpointsArguments = new SetBreakpointsArguments();
+        setBreakpointsArguments.setSource(source);
+        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
 
-        SetBreakpointsResponse response = new SetBreakpointsResponse();
+        SetBreakpointsResponse setBreakpointsResponse = new SetBreakpointsResponse();
         List<Breakpoint> breakpoints = new ArrayList<>();
         Breakpoint breakpoint = new Breakpoint();
         breakpoint.setSource(source);
         breakpoint.setLine(Long.valueOf(9));
         breakpoints.add(breakpoint);
-        response.setBreakpoints(breakpoints.toArray(new Breakpoint[breakpoints.size()]));
+        setBreakpointsResponse.setBreakpoints(breakpoints.toArray(new Breakpoint[breakpoints.size()]));
 
-        CompletableFuture<?> future = server.setBreakpoints(request);
-        Assert.assertEquals(response.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
+        CompletableFuture<?> future = server.setBreakpoints(setBreakpointsArguments);
+        Assert.assertEquals(setBreakpointsResponse.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
         Thread.sleep(HALF_SECOND);
 
         future = server.launch(new HashMap<>());
@@ -207,20 +207,20 @@ public class GdbDebugServerTest {
         SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
         sourceBreakpoint.setLine(Long.valueOf(9));
 
-        SetBreakpointsArguments request = new SetBreakpointsArguments();
-        request.setSource(source);
-        request.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
+        SetBreakpointsArguments setBreakpointsArguments = new SetBreakpointsArguments();
+        setBreakpointsArguments.setSource(source);
+        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
 
-        SetBreakpointsResponse response = new SetBreakpointsResponse();
+        SetBreakpointsResponse setBreakpointsResponse = new SetBreakpointsResponse();
         List<Breakpoint> breakpoints = new ArrayList<>();
         Breakpoint breakpoint = new Breakpoint();
         breakpoint.setSource(source);
         breakpoint.setLine(Long.valueOf(9));
         breakpoints.add(breakpoint);
-        response.setBreakpoints(breakpoints.toArray(new Breakpoint[breakpoints.size()]));
+        setBreakpointsResponse.setBreakpoints(breakpoints.toArray(new Breakpoint[breakpoints.size()]));
 
-        CompletableFuture<?> future = server.setBreakpoints(request);
-        Assert.assertEquals(response.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
+        CompletableFuture<?> future = server.setBreakpoints(setBreakpointsArguments);
+        Assert.assertEquals(setBreakpointsResponse.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
         Thread.sleep(HALF_SECOND);
 
         future = server.launch(new HashMap<>());
@@ -255,20 +255,20 @@ public class GdbDebugServerTest {
         SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
         sourceBreakpoint.setLine(Long.valueOf(22));
 
-        SetBreakpointsArguments request = new SetBreakpointsArguments();
-        request.setSource(source);
-        request.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
+        SetBreakpointsArguments setBreakpointsArguments = new SetBreakpointsArguments();
+        setBreakpointsArguments.setSource(source);
+        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
 
-        SetBreakpointsResponse response = new SetBreakpointsResponse();
+        SetBreakpointsResponse setBreakpointsResponse = new SetBreakpointsResponse();
         List<Breakpoint> breakpoints = new ArrayList<>();
         Breakpoint breakpoint = new Breakpoint();
         breakpoint.setSource(source);
         breakpoint.setLine(Long.valueOf(22));
         breakpoints.add(breakpoint);
-        response.setBreakpoints(breakpoints.toArray(new Breakpoint[breakpoints.size()]));
+        setBreakpointsResponse.setBreakpoints(breakpoints.toArray(new Breakpoint[breakpoints.size()]));
 
-        CompletableFuture<?> future = server.setBreakpoints(request);
-        Assert.assertEquals(response.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
+        CompletableFuture<?> future = server.setBreakpoints(setBreakpointsArguments);
+        Assert.assertEquals(setBreakpointsResponse.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
         Thread.sleep(HALF_SECOND);
 
         future = server.launch(new HashMap<>());
@@ -323,20 +323,20 @@ public class GdbDebugServerTest {
         SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
         sourceBreakpoint.setLine(Long.valueOf(22));
 
-        SetBreakpointsArguments request = new SetBreakpointsArguments();
-        request.setSource(source);
-        request.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
+        SetBreakpointsArguments setBreakpointsArguments = new SetBreakpointsArguments();
+        setBreakpointsArguments.setSource(source);
+        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
 
-        SetBreakpointsResponse response = new SetBreakpointsResponse();
+        SetBreakpointsResponse setBreakpointsResponse = new SetBreakpointsResponse();
         List<Breakpoint> breakpoints = new ArrayList<>();
         Breakpoint breakpoint = new Breakpoint();
         breakpoint.setSource(source);
         breakpoint.setLine(Long.valueOf(22));
         breakpoints.add(breakpoint);
-        response.setBreakpoints(breakpoints.toArray(new Breakpoint[breakpoints.size()]));
+        setBreakpointsResponse.setBreakpoints(breakpoints.toArray(new Breakpoint[breakpoints.size()]));
 
-        CompletableFuture<?> future = server.setBreakpoints(request);
-        Assert.assertEquals(response.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
+        CompletableFuture<?> future = server.setBreakpoints(setBreakpointsArguments);
+        Assert.assertEquals(setBreakpointsResponse.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
         Thread.sleep(HALF_SECOND);
 
         future = server.launch(new HashMap<>());
@@ -361,5 +361,61 @@ public class GdbDebugServerTest {
         Assert.assertEquals(Long.valueOf(100), scopesResponse.getScopes()[0].getVariablesReference());
         Assert.assertEquals("Arguments", scopesResponse.getScopes()[1].getName());
         Assert.assertEquals(Long.valueOf(101), scopesResponse.getScopes()[1].getVariablesReference());
+    }
+
+    @org.junit.Test
+    public void variables() throws InterruptedException, TimeoutException, ExecutionException {
+        Source source = new Source();
+        source.setPath(SOURCE_FILENAME);
+        source.setName(new File(SOURCE_FILENAME).getName());
+
+        SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
+        sourceBreakpoint.setLine(Long.valueOf(22));
+
+        SetBreakpointsArguments setBreakpointsArguments = new SetBreakpointsArguments();
+        setBreakpointsArguments.setSource(source);
+        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
+
+        SetBreakpointsResponse setBreakpointsResponse = new SetBreakpointsResponse();
+        List<Breakpoint> breakpoints = new ArrayList<>();
+        Breakpoint breakpoint = new Breakpoint();
+        breakpoint.setSource(source);
+        breakpoint.setLine(Long.valueOf(22));
+        breakpoints.add(breakpoint);
+        setBreakpointsResponse.setBreakpoints(breakpoints.toArray(new Breakpoint[breakpoints.size()]));
+
+        CompletableFuture<?> future = server.setBreakpoints(setBreakpointsArguments);
+        Assert.assertEquals(setBreakpointsResponse.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
+        Thread.sleep(HALF_SECOND);
+
+        future = server.launch(new HashMap<>());
+        Assert.assertEquals(null, future.get(TWO_SECONDS, TimeUnit.MILLISECONDS));
+
+        Thread.sleep(TWO_SECONDS);
+        Assert.assertTrue(client.isStopped());
+
+        StoppedEventArguments stoppedArgs = new StoppedEventArguments();
+        stoppedArgs.setReason(StoppedEventArgumentsReason.BREAKPOINT + ";bkptno=1");
+        stoppedArgs.setThreadId(Long.valueOf(1));
+        stoppedArgs.setAllThreadsStopped(true);
+        Assert.assertEquals(stoppedArgs.toString(), client.getStoppedEventArguments().toString());
+
+        ScopesArguments scopesArguments = new ScopesArguments();
+        scopesArguments.setFrameId(0L);
+        future = server.scopes(scopesArguments);
+        ScopesResponse scopesResponse = (ScopesResponse) future.get(TWO_SECONDS, TimeUnit.MILLISECONDS);
+
+        // The test (it is required that scopes is called before calling variables)
+        VariablesResponse variablesResponse = new VariablesResponse();
+        Variable variable = new Variable();
+        variable.setName("numPlanets");
+        variable.setValue(String.valueOf(8));
+        variablesResponse.setVariables(new Variable[]{variable});
+
+        VariablesArguments variablesArguments = new VariablesArguments();
+        variablesArguments.setVariablesReference(scopesResponse.getScopes()[0].getVariablesReference());
+        future = server.variables(variablesArguments);
+
+        Assert.assertEquals(variablesResponse.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
     }
 }

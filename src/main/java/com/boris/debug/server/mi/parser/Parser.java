@@ -34,7 +34,7 @@ public class Parser {
             else
                 return RecordType.OutOfBand;
         }
-        throw new RuntimeException("Can't process end of line");
+        throw new IllegalStateException("Can't process end of line");
     }
 
     public OutOfBandRecord parseOutOfBandRecord(String line) {
@@ -57,7 +57,7 @@ public class Parser {
                     asyncRecord = new NotifyAsyncOutput();
                     break;
                 default:
-                    throw new RuntimeException("expected an async character");
+                    throw new IllegalStateException("expected an async character");
             }
             asyncRecord.setToken(token);
             int i = buffer.toString().indexOf(',');

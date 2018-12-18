@@ -7,6 +7,8 @@ BACKLOG:
 * client should take arguments from user, e.g. target, attach or launch, working dir, etc.
 * client should take input and output streams as args
 * figure out (understand how it works) how to override threadpool like in DSPDebugTarget
+* cleanup params and args arraylist format for commands
+* cleanup OutputParser
 
 BUGS:
 

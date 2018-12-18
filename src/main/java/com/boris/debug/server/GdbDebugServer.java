@@ -304,19 +304,50 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
     @Override
     public CompletableFuture<VariablesResponse> variables(VariablesArguments args) {
-        // TODO get frameId from variablesArguments
+        // TODO define the variablesReference flow better
         String variablesReference = variablesReferenceMap.get(args.getVariablesReference());
         String[] tmp = variablesReference.split("_");
         String type = tmp[0];
         Long frameId = Long.valueOf(tmp[1]);
 
-        if ("Locals".equals(type)) {
+        StackSelectFrameCommand stackSelectFrameCommand = commandFactory.createStackSelectFrame(frameId);
+        queueCommand(stackSelectFrameCommand);
 
+        if ("Locals".equals(type)) {
+            StackListLocalsCommand stackListLocalsCommand = commandFactory.createStackListLocals();
+            final int token = queueCommand(stackListLocalsCommand);
+            Supplier<VariablesResponse> supplier = setVariablesResponseSupplier(token);
+            return CompletableFuture.supplyAsync(supplier, executor);
         }
         else if ("Arguments".equals(type)) {
-
+            // TODO
         }
-        return CompletableFuture.completedFuture(null);
+        throw new IllegalStateException("naughty naughty");
+//        return CompletableFuture.completedFuture(null);
+    }
+
+    private Supplier<VariablesResponse> setVariablesResponseSupplier(int token) {
+        return () -> {
+            // TODO start timer to flag any commandWrapper that doesn't get a response
+            while (true) {
+                if (readCommands.containsKey(token)) {
+                    CommandWrapper commandWrapper = readCommands.remove(token);
+                    return getVariablesResponse(commandWrapper);
+                }
+                try {
+                    Thread.sleep(200);
+                }
+                catch (InterruptedException ignored) {
+                }
+            }
+        };
+    }
+
+    private VariablesResponse getVariablesResponse(CommandWrapper commandWrapper) {
+        CommandResponse commandResponse = commandWrapper.getCommandResponse();
+        Output output = commandResponse.getOutput();
+        VariablesResponse response = OutputParser.parseVariablesResponse(output);
+        return response;
     }
 
     @Override
@@ -508,8 +539,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
                     break;
                 }
 
-                if (commandWrapper.getCommand().isRequiresResponse())
-                    writtenCommands.add(commandWrapper);
+                writtenCommands.add(commandWrapper);
 
                 StringBuilder commandBuilder = new StringBuilder();
                 if (commandWrapper.getCommand().isRequiresResponse())
@@ -581,13 +611,15 @@ public class GdbDebugServer implements IDebugProtocolServer {
                 if (commandWrapper != null) {
                     writtenCommands.remove(commandWrapper);
 
-                    Output output = new Output(resultRecord);
+                    if (!commandWrapper.getCommand().isIgnoreResponse()) {
+                        Output output = new Output(resultRecord);
 
-                    CommandResponse commandResponse = new CommandResponse(output);
-                    commandWrapper.setCommandResponse(commandResponse);
+                        CommandResponse commandResponse = new CommandResponse(output);
+                        commandWrapper.setCommandResponse(commandResponse);
 
-                    readCommands.put(token, commandWrapper);
-                    Utils.debug("received " + commandWrapper.getCommand().constructCommand());
+                        readCommands.put(token, commandWrapper);
+                        Utils.debug("received " + commandWrapper.getCommand().constructCommand());
+                    }
                 }
                 else {
                     // treat response as an event

@@ -13,12 +13,14 @@ public class CommandFactory {
     }
 
     public ExecRunCommand createExecRun() {
-        return new ExecRunCommand();
+        ExecRunCommand execRunCommand = new ExecRunCommand();
+        execRunCommand.setIgnoreResponse(true);
+        return execRunCommand;
     }
 
     public ExecContinueCommand createExecContinue() {
         ExecContinueCommand execContinueCommand = new ExecContinueCommand();
-        execContinueCommand.setRequiresResponse(true);
+        execContinueCommand.setIgnoreResponse(true);
         return execContinueCommand;
     }
 
@@ -36,13 +38,19 @@ public class CommandFactory {
 
     public ThreadSelectCommand createThreadSelect(Long threadNum) {
         ThreadSelectCommand threadSelectCommand = new ThreadSelectCommand(String.valueOf(threadNum));
-        threadSelectCommand.setRequiresResponse(true);
+        threadSelectCommand.setIgnoreResponse(true);
         return threadSelectCommand;
     }
 
     public StackSelectFrameCommand createStackSelectFrame(Long frameId) {
         StackSelectFrameCommand stackSelectFrameCommand = new StackSelectFrameCommand(String.valueOf(frameId));
-        stackSelectFrameCommand.setRequiresResponse(true);
+        stackSelectFrameCommand.setIgnoreResponse(true);
         return stackSelectFrameCommand;
+    }
+
+    public StackListLocalsCommand createStackListLocals() {
+        StackListLocalsCommand stackListLocalsCommand = new StackListLocalsCommand();
+        stackListLocalsCommand.setRequiresResponse(true);
+        return stackListLocalsCommand;
     }
 }

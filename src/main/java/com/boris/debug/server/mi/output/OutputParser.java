@@ -149,8 +149,38 @@ public class OutputParser {
         return stackFrame;
     }
 
-    public static ScopesResponse parseScopesResponse(Output output) {
-        ScopesResponse response = new ScopesResponse();
+    public static VariablesResponse parseVariablesResponse(Output output) {
+        VariablesResponse response = new VariablesResponse();
+        MIArg[] locals = new MIArg[0];
+
+        ResultRecord resultRecord = output.getResultRecord();
+        if (resultRecord.getResultClass() == ResultRecord.ResultClass.DONE) {
+            Result[] results = resultRecord.getResults();
+            for (Result result : results) {
+                String variable = result.getVariable();
+                if (variable.equals("locals")) {
+                    Value value = result.getValue();
+                    if (value instanceof MIList) {
+                        locals = MIArg.getMIArgs((MIList) value);
+                    }
+                    else if (value instanceof Tuple) {
+                        locals = MIArg.getMIArgs((Tuple) value);
+                    }
+                }
+            }
+        }
+
+        List<Variable> variables = new ArrayList<>();
+        for (MIArg local : locals) {
+            Variable v = new Variable();
+            v.setName(local.getName());
+            v.setValue(local.getValue());
+            variables.add(v);
+        }
+
+        if (!variables.isEmpty())
+            response.setVariables(variables.toArray(new Variable[variables.size()]));
+
         return response;
     }
 
