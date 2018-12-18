@@ -1,4 +1,4 @@
-package com.boris.debug.client.ui;
+package com.boris.debug.main.ui;
 
 import com.boris.debug.utils.Logger;
 import com.boris.debug.utils.Utils;
@@ -20,6 +20,8 @@ public class BreakpointsPanel extends JPanel implements IDebugProtocolClient {
     }
 
     public void init() {
+        setBorder(BorderFactory.createTitledBorder("Breakpoints"));
+
         model = new DefaultListModel();
         model.add(0, "bogus.cpp : 13");
         model.add(1,"main.cpp :16");
@@ -29,7 +31,7 @@ public class BreakpointsPanel extends JPanel implements IDebugProtocolClient {
         list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         list.setSelectedIndex(0);
         JScrollPane listScrollPane = new JScrollPane(list);
-        add(listScrollPane);
+        add(listScrollPane, BorderLayout.CENTER);
     }
 
     @Override
