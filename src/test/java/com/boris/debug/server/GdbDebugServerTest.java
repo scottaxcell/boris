@@ -418,4 +418,51 @@ public class GdbDebugServerTest {
 
         Assert.assertEquals(variablesResponse.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
     }
+
+    @org.junit.Test
+    public void continue_() throws InterruptedException, TimeoutException, ExecutionException {
+        Source source = new Source();
+        source.setPath(SOURCE_FILENAME);
+        source.setName(new File(SOURCE_FILENAME).getName());
+
+        SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
+        sourceBreakpoint.setLine(Long.valueOf(22));
+
+        SetBreakpointsArguments setBreakpointsArguments = new SetBreakpointsArguments();
+        setBreakpointsArguments.setSource(source);
+        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
+
+        SetBreakpointsResponse setBreakpointsResponse = new SetBreakpointsResponse();
+        List<Breakpoint> breakpoints = new ArrayList<>();
+        Breakpoint breakpoint = new Breakpoint();
+        breakpoint.setSource(source);
+        breakpoint.setLine(Long.valueOf(22));
+        breakpoints.add(breakpoint);
+        setBreakpointsResponse.setBreakpoints(breakpoints.toArray(new Breakpoint[breakpoints.size()]));
+
+        CompletableFuture<?> future = server.setBreakpoints(setBreakpointsArguments);
+        Assert.assertEquals(setBreakpointsResponse.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
+        Thread.sleep(HALF_SECOND);
+
+        future = server.launch(new HashMap<>());
+        Assert.assertEquals(null, future.get(TWO_SECONDS, TimeUnit.MILLISECONDS));
+
+        Thread.sleep(TWO_SECONDS);
+        Assert.assertTrue(client.isStopped());
+
+        StoppedEventArguments stoppedArgs = new StoppedEventArguments();
+        stoppedArgs.setReason(StoppedEventArgumentsReason.BREAKPOINT + ";bkptno=1");
+        stoppedArgs.setThreadId(Long.valueOf(1));
+        stoppedArgs.setAllThreadsStopped(true);
+        Assert.assertEquals(stoppedArgs.toString(), client.getStoppedEventArguments().toString());
+
+        // The test
+        ContinueResponse continueResponse = new ContinueResponse();
+        continueResponse.setAllThreadsContinued(true);
+
+        ContinueArguments continueArguments = new ContinueArguments();
+        future = server.continue_(continueArguments);
+
+        Assert.assertEquals(continueResponse.toString(), future.get(TWO_SECONDS, TimeUnit.MILLISECONDS).toString());
+    }
 }

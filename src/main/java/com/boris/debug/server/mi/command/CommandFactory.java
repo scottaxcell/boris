@@ -20,7 +20,7 @@ public class CommandFactory {
 
     public ExecContinueCommand createExecContinue() {
         ExecContinueCommand execContinueCommand = new ExecContinueCommand();
-        execContinueCommand.setIgnoreResponse(true);
+        execContinueCommand.setRequiresResponse(true);
         return execContinueCommand;
     }
 

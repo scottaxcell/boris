@@ -193,17 +193,34 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
     @Override
     public CompletableFuture<ContinueResponse> continue_(ContinueArguments args) {
+        // TODO add support for continuing a single thread
         ExecContinueCommand execContinue = commandFactory.createExecContinue();
-        queueCommand(execContinue);
-        Supplier<ContinueResponse> supplier = continueResponseSupplier(args);
+        final int token = queueCommand(execContinue);
+        Supplier<ContinueResponse> supplier = continueResponseSupplier(token);
         return CompletableFuture.supplyAsync(supplier, executor);
     }
 
-    private Supplier<ContinueResponse> continueResponseSupplier(ContinueArguments args) {
+    private Supplier<ContinueResponse> continueResponseSupplier(int token) {
         return () -> {
-            ContinueResponse response = new ContinueResponse();
-            return response;
+            // TODO start timer to flag any commandWrapper that doesn't get a response
+            while (true) {
+                if (readCommands.containsKey(token)) {
+                    CommandWrapper commandWrapper = readCommands.remove(token);
+                    return getContinueResponse(commandWrapper);
+                }
+                try {
+                    Thread.sleep(200);
+                }
+                catch (InterruptedException ignored) {
+                }
+            }
         };
+    }
+
+    private ContinueResponse getContinueResponse(CommandWrapper commandWrapper) {
+        ContinueResponse response = new ContinueResponse();
+        response.setAllThreadsContinued(true);
+        return response;
     }
 
     @Override
