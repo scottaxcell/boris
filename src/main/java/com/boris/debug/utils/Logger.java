@@ -21,7 +21,8 @@ public class Logger {
                 INSTANCE = java.util.logging.Logger.getLogger(LOGGER_NAME);
                 INSTANCE.addHandler(new FileHandler(LOG_FILE));
                 INSTANCE.info(LOGGER_NAME + " started");
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 e.printStackTrace();
             }
         }

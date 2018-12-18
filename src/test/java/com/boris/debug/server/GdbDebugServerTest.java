@@ -52,6 +52,7 @@ public class GdbDebugServerTest {
 
     /**
      * Exercise initialize handshake with server
+     *
      * @throws Exception
      */
     @org.junit.Before
@@ -106,6 +107,7 @@ public class GdbDebugServerTest {
 
     /**
      * Set a single breakpoint on a single source
+     *
      * @throws InterruptedException
      * @throws TimeoutException
      * @throws ExecutionException
@@ -122,7 +124,7 @@ public class GdbDebugServerTest {
 
         SetBreakpointsArguments setBreakpointsArguments = new SetBreakpointsArguments();
         setBreakpointsArguments.setSource(source);
-        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
+        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[]{sourceBreakpoint});
 
         SetBreakpointsResponse setBreakpointsResponse = new SetBreakpointsResponse();
         List<Breakpoint> breakpoints = new ArrayList<>();
@@ -139,6 +141,7 @@ public class GdbDebugServerTest {
 
     /**
      * Launch target and verify executable exits cleanly
+     *
      * @throws InterruptedException
      * @throws TimeoutException
      * @throws ExecutionException
@@ -155,6 +158,7 @@ public class GdbDebugServerTest {
 
     /**
      * Set a single breakpoint, launch target, and verify breakpoint is hit and stopped
+     *
      * @throws InterruptedException
      * @throws TimeoutException
      * @throws ExecutionException
@@ -170,7 +174,7 @@ public class GdbDebugServerTest {
 
         SetBreakpointsArguments setBreakpointsArguments = new SetBreakpointsArguments();
         setBreakpointsArguments.setSource(source);
-        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
+        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[]{sourceBreakpoint});
 
         SetBreakpointsResponse setBreakpointsResponse = new SetBreakpointsResponse();
         List<Breakpoint> breakpoints = new ArrayList<>();
@@ -209,7 +213,7 @@ public class GdbDebugServerTest {
 
         SetBreakpointsArguments setBreakpointsArguments = new SetBreakpointsArguments();
         setBreakpointsArguments.setSource(source);
-        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
+        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[]{sourceBreakpoint});
 
         SetBreakpointsResponse setBreakpointsResponse = new SetBreakpointsResponse();
         List<Breakpoint> breakpoints = new ArrayList<>();
@@ -257,7 +261,7 @@ public class GdbDebugServerTest {
 
         SetBreakpointsArguments setBreakpointsArguments = new SetBreakpointsArguments();
         setBreakpointsArguments.setSource(source);
-        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
+        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[]{sourceBreakpoint});
 
         SetBreakpointsResponse setBreakpointsResponse = new SetBreakpointsResponse();
         List<Breakpoint> breakpoints = new ArrayList<>();
@@ -325,7 +329,7 @@ public class GdbDebugServerTest {
 
         SetBreakpointsArguments setBreakpointsArguments = new SetBreakpointsArguments();
         setBreakpointsArguments.setSource(source);
-        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
+        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[]{sourceBreakpoint});
 
         SetBreakpointsResponse setBreakpointsResponse = new SetBreakpointsResponse();
         List<Breakpoint> breakpoints = new ArrayList<>();
@@ -374,7 +378,7 @@ public class GdbDebugServerTest {
 
         SetBreakpointsArguments setBreakpointsArguments = new SetBreakpointsArguments();
         setBreakpointsArguments.setSource(source);
-        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
+        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[]{sourceBreakpoint});
 
         SetBreakpointsResponse setBreakpointsResponse = new SetBreakpointsResponse();
         List<Breakpoint> breakpoints = new ArrayList<>();
@@ -430,7 +434,7 @@ public class GdbDebugServerTest {
 
         SetBreakpointsArguments setBreakpointsArguments = new SetBreakpointsArguments();
         setBreakpointsArguments.setSource(source);
-        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[] {sourceBreakpoint});
+        setBreakpointsArguments.setBreakpoints(new SourceBreakpoint[]{sourceBreakpoint});
 
         SetBreakpointsResponse setBreakpointsResponse = new SetBreakpointsResponse();
         List<Breakpoint> breakpoints = new ArrayList<>();

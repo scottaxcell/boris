@@ -1,20 +1,32 @@
 package com.boris.debug.main.ui;
 
+import com.boris.debug.main.model.Breakpoint;
+import com.boris.debug.main.model.BreakpointMgr;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.nio.file.Paths;
 
 public class Boris {
     /**
-     * TODO
+     * COMPONENTS
      * menubar (open file, run exe, debug exe, exit)
      * editor
      * breakpoints
      * varables
      * threads/stacks
      * console
+     * <p>
+     * TODO
+     * launch debug process somehow, maybe a DebugSession holds a gdbdebugclient
+     * - client should take target
+     * - initialize
+     * - setBreakpoints
+     * - launch
      */
+
     private JFrame frame;
     private JMenuBar menuBar;
     private JToolBar toolBar;
@@ -23,7 +35,11 @@ public class Boris {
     private BreakpointsPanel breakpointsPanel;
     private VariablesPanel variablesPanel;
 
+    private BreakpointMgr breakpointMgr;
+
     public Boris() {
+        breakpointMgr = new BreakpointMgr();
+
         SwingUtilities.invokeLater(() -> initGui());
     }
 
@@ -102,7 +118,38 @@ public class Boris {
 
         toolBar.add(debugAppButton);
 
+        JButton bogusBreakpointsButton = new JButton("Add Breakpoints");
+        bogusBreakpointsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addBogusBreakpoints();
+            }
+        });
+        toolBar.add(bogusBreakpointsButton);
+
+        JButton bogusVariablesButton = new JButton("Add Variables");
+        bogusBreakpointsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                addBogusVariables();
+            }
+        });
+        toolBar.add(bogusVariablesButton);
+
         contentPane.add(toolBar, BorderLayout.NORTH);
+    }
+
+    private void addBogusBreakpoints() {
+        breakpointMgr.addBreakpoint(new Breakpoint(Paths.get("/some/bogus/file.cpp"), 10L, true));
+        breakpointMgr.addBreakpoint(new Breakpoint(Paths.get("/some/bogus/file.cpp"), 32L, true));
+        breakpointMgr.addBreakpoint(new Breakpoint(Paths.get("/some/bogus/file/named/foo.cpp"), 4394L, false));
+    }
+
+    private void addBogusVariables() {
+        variablesPanel.addVariable(new VariablesPanel.Variable("count", "1"));
+        variablesPanel.addVariable(new VariablesPanel.Variable("isEarthFlat", "false"));
+        variablesPanel.addVariable(new VariablesPanel.Variable("numElephants", "32"));
+        variablesPanel.addVariable(new VariablesPanel.Variable("nameOfCoffee", "Kenyan"));
     }
 
     private void initGui() {
@@ -119,14 +166,24 @@ public class Boris {
         editorPanel = new EditorPanel();
         contentPane.add(editorPanel, BorderLayout.CENTER);
 
-        breakpointsPanel = new BreakpointsPanel();
+        breakpointsPanel = new BreakpointsPanel(getBreakpointMgr());
+        breakpointMgr.addBreakpointListener(breakpointsPanel);
         contentPane.add(breakpointsPanel, BorderLayout.WEST);
 
         variablesPanel = new VariablesPanel();
         contentPane.add(variablesPanel, BorderLayout.EAST);
 
         frame.setSize(new Dimension(720, 550));
-//        frame.pack();
+        frame.pack();
         frame.setVisible(true);
     }
+
+    public BreakpointMgr getBreakpointMgr() {
+        return breakpointMgr;
+    }
+
+    public void setBreakpointMgr(BreakpointMgr breakpointMgr) {
+        this.breakpointMgr = breakpointMgr;
+    }
+
 }

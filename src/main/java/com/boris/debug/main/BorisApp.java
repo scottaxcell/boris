@@ -1,7 +1,6 @@
 package com.boris.debug.main;
 
 import com.boris.debug.main.ui.Boris;
-import com.boris.debug.utils.Utils;
 
 public class BorisApp {
 

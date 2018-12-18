@@ -29,7 +29,8 @@ public class ExitedEvent extends Event {
                 String valueStr = ((MIConst) value).getcString();
                 try {
                     code = Integer.decode(valueStr.trim()).longValue();
-                } catch (NumberFormatException ignored) {
+                }
+                catch (NumberFormatException ignored) {
                 }
             }
         }

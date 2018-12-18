@@ -57,6 +57,7 @@ public class AssertingClientEndpoint implements Endpoint, IDebugProtocolClient {
     }
 
     private boolean initializedExercised = false;
+
     boolean isInitializedExercised() {
         return initializedExercised;
     }
@@ -67,6 +68,7 @@ public class AssertingClientEndpoint implements Endpoint, IDebugProtocolClient {
     }
 
     private long exitReturnCode = Long.MAX_VALUE;
+
     long exitedCleanly() {
         return exitReturnCode;
     }
@@ -77,11 +79,13 @@ public class AssertingClientEndpoint implements Endpoint, IDebugProtocolClient {
     }
 
     private boolean stopped = false;
+
     boolean isStopped() {
         return stopped;
     }
 
     private StoppedEventArguments stoppedEventArguments;
+
     StoppedEventArguments getStoppedEventArguments() {
         return stoppedEventArguments;
     }

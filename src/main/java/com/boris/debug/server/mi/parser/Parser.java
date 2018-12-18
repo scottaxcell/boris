@@ -11,6 +11,7 @@ import java.util.List;
 
 public class Parser {
     private static final String GDB_PROMPT = "(gdb)";
+
     public enum RecordType {
         OutOfBand,
         Result,

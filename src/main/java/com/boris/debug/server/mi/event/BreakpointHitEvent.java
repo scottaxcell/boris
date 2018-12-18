@@ -27,7 +27,7 @@ public class BreakpointHitEvent extends Event {
             Value value = result.getValue();
             String valueStr = "";
             if (value != null && value instanceof MIConst) {
-                valueStr = ((MIConst)value).getcString();
+                valueStr = ((MIConst) value).getcString();
             }
 
             if ("thread-id".equals(variable)) {

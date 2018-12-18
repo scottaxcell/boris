@@ -11,7 +11,9 @@ import java.util.List;
 
 public class GdbBackend {
     // TODO track state of affairs
-    public enum State {NOT_INITIALIZED, STARTED, TERMINATED}
+    public enum State {
+        NOT_INITIALIZED, STARTED, TERMINATED
+    }
 
     private Process gdbProcess;
     private Target target;

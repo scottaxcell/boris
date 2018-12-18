@@ -33,9 +33,7 @@ public class EditorPanel extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(editorPane);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        scrollPane.setPreferredSize(new Dimension(400, 320));
-        scrollPane.setMinimumSize(new Dimension(400, 320));
 
-        add(editorPane, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
     }
 }

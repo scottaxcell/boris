@@ -34,7 +34,7 @@ public class MIArg {
         Value[] values = miList.getValues();
         for (int i = 0; i < values.length; i++) {
             if (values[i] instanceof Tuple) {
-                MIArg arg = getMIArg((Tuple)values[i]);
+                MIArg arg = getMIArg((Tuple) values[i]);
                 if (arg != null) {
                     aList.add(arg);
                 }
@@ -44,7 +44,7 @@ public class MIArg {
         for (int i = 0; i < results.length; i++) {
             Value value = results[i].getValue();
             if (value instanceof MIConst) {
-                String str = ((MIConst)value).getcString();
+                String str = ((MIConst) value).getcString();
                 aList.add(new MIArg(str, "")); //$NON-NLS-1$
             }
         }
@@ -62,7 +62,7 @@ public class MIArg {
         Value[] values = miTuple.getValues();
         for (int i = 0; i < values.length; i++) {
             if (values[i] instanceof Tuple) {
-                MIArg arg = getMIArg((Tuple)values[i]);
+                MIArg arg = getMIArg((Tuple) values[i]);
                 if (arg != null) {
                     aList.add(arg);
                 }
@@ -72,12 +72,13 @@ public class MIArg {
         for (int i = 0; i < results.length; i++) {
             Value value = results[i].getValue();
             if (value instanceof MIConst) {
-                String str = ((MIConst)value).getcString();
+                String str = ((MIConst) value).getcString();
                 aList.add(new MIArg(str, "")); //$NON-NLS-1$
             }
         }
         return (aList.toArray(new MIArg[aList.size()]));
     }
+
     /**
      * Parsing a DsfMITuple of the form:
      * {name="xxx",value="yyy"}
@@ -91,8 +92,9 @@ public class MIArg {
             String aName = ""; //$NON-NLS-1$
             Value value = args[0].getValue();
             if (value != null && value instanceof MIConst) {
-                aName = ((MIConst)value).getcString();
-            } else {
+                aName = ((MIConst) value).getcString();
+            }
+            else {
                 aName = ""; //$NON-NLS-1$
             }
 
@@ -101,8 +103,9 @@ public class MIArg {
             if (args.length == 2) {
                 value = args[1].getValue();
                 if (value != null && value instanceof MIConst) {
-                    aValue = ((MIConst)value).getcString();
-                } else {
+                    aValue = ((MIConst) value).getcString();
+                }
+                else {
                     aValue = ""; //$NON-NLS-1$
                 }
             }

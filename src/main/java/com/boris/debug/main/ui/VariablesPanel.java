@@ -3,8 +3,12 @@ package com.boris.debug.main.ui;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VariablesPanel extends JPanel {
+    JTable table;
+    VariablesTableModel model;
 
     public VariablesPanel() {
         super(new BorderLayout());
@@ -13,6 +17,68 @@ public class VariablesPanel extends JPanel {
 
     private void init() {
         setBorder(BorderFactory.createTitledBorder("Variables"));
-        setMinimumSize(new Dimension(200, 320));
+
+        model = new VariablesTableModel();
+        table = new JTable(model);
+        add(new JScrollPane(table), BorderLayout.CENTER);
+    }
+
+    public void addVariable(Variable variable) {
+        if (model != null) {
+            model.addVariable(variable);
+        }
+    }
+
+    public static class Variable {
+        String name;
+        String value;
+
+        public Variable(String name, String variable) {
+            this.name = name;
+            this.value = variable;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getValue() {
+            return value;
+        }
+    }
+
+    private class VariablesTableModel extends AbstractTableModel {
+        private String[] columnNames = new String[]{"Name", "Value"};
+        List<Variable> variables = new ArrayList<>();
+
+        void addVariable(Variable variable) {
+            variables.add(variable);
+            fireTableDataChanged();
+        }
+
+        @Override
+        public int getRowCount() {
+            return variables.size();
+        }
+
+        @Override
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        @Override
+        public String getColumnName(int column) {
+            return columnNames[column];
+        }
+
+        @Override
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            if (columnIndex == 0) {
+                return variables.get(rowIndex).getName();
+            }
+            else {
+                return variables.get(rowIndex).getValue();
+            }
+        }
     }
 }

@@ -1,7 +1,8 @@
 package com.boris.debug.server;
 
 import com.boris.debug.server.mi.command.*;
-import com.boris.debug.server.mi.output.*;
+import com.boris.debug.server.mi.output.Output;
+import com.boris.debug.server.mi.output.OutputParser;
 import com.boris.debug.server.mi.parser.Parser;
 import com.boris.debug.server.mi.record.OutOfBandRecord;
 import com.boris.debug.server.mi.record.ResultRecord;
@@ -85,6 +86,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
         setInitializeRequestFinished(true);
 
+        // TODO wait for first gdb prompt before returning
         return CompletableFuture.completedFuture(capabilities);
     }
 
