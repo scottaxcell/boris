@@ -1,9 +1,12 @@
 TODO:
+* pull in lsp4e as reference
+* hook up debug button to run debugger on helloworld target
+* console should output all read and write from gdb server for temporary debugging
+
+BACKLOG:
 * finish up handling of running events ^running and *running
 * track whether or not debuggee is stopped or running
 * track current thread
-
-BACKLOG:
 * client should take arguments from user, e.g. target, attach or launch, working dir, etc.
 * client should take input and output streams as args
 * figure out (understand how it works) how to override threadpool like in DSPDebugTarget

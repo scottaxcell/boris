@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <category-def name="Language Server Support for Eclipse" label="Language Server Support for Eclipse IDE"/>
+   <bundle id="org.eclipse.lsp4e">
+      <category name="Language Server Support for Eclipse"/>
+   </bundle>
+   <bundle id="org.eclipse.lsp4e.debug">
+      <category name="Language Server Support for Eclipse"/>
+   </bundle>
+
+   <category-def name="Sources and Tests" label="Sources and Tests"/>
+   <bundle id="org.eclipse.lsp4e.source">
+      <category name="Sources and Tests"/>
+   </bundle>
+   <bundle id="org.eclipse.lsp4e.test">
+      <category name="Sources and Tests"/>
+   </bundle>
+   <bundle id="org.eclipse.lsp4e.test.source">
+      <category name="Sources and Tests"/>
+   </bundle>
+   <bundle id="org.eclipse.lsp4e.tests.mock">
+      <category name="Sources and Tests"/>
+   </bundle>
+   <bundle id="org.eclipse.lsp4e.tests.mock.source">
+      <category name="Sources and Tests"/>
+   </bundle>
+   
+   <category-def name="deps" label="Dependencies"/>
+   <bundle id="org.eclipse.lsp4j">
+     <category name="deps"/>
+   </bundle>
+   <bundle id="org.eclipse.lsp4j.jsonrpc">
+     <category name="deps"/>
+   </bundle>
+   <bundle id="org.eclipse.lsp4j.debug">
+     <category name="deps"/>
+   </bundle>
+   <bundle id="org.eclipse.lsp4j.jsonrpc.debug">
+     <category name="deps"/>
+   </bundle>
+   <bundle id="org.eclipse.xtext.xbase.lib">
+     <category name="deps"/>
+   </bundle>
+   <bundle id="com.google.gson">
+     <category name="deps"/>
+   </bundle>
+   <bundle id="org.eclipse.ui.genericeditor">
+     <category name="deps"/>
+   </bundle>  
+</site>
