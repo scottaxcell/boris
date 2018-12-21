@@ -5,10 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GUIEventMgr {
+    private static GUIEventMgr guiEventMgr;
     private List<GUIEventListener> listeners;
 
-    public GUIEventMgr() {
+    private GUIEventMgr() {
         listeners = new ArrayList<>();
+    }
+
+    public static GUIEventMgr getInstance() {
+        if (guiEventMgr == null)
+            guiEventMgr = new GUIEventMgr();
+        return guiEventMgr;
     }
 
     public void addListener(GUIEventListener listener) {

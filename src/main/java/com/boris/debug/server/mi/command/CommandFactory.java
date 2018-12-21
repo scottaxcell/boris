@@ -8,6 +8,12 @@ public class CommandFactory {
         return breakInsertCommand;
     }
 
+    public BreakDeleteCommand createBreakDelete() {
+        BreakDeleteCommand breakDeleteCommand = new BreakDeleteCommand();
+        breakDeleteCommand.setRequiresResponse(true);
+        return breakDeleteCommand;
+    }
+
     public GdbExitCommand createGdbExit() {
         return new GdbExitCommand();
     }

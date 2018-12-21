@@ -1,22 +1,21 @@
 package com.boris.debug.client;
 
-import com.boris.debug.main.model.IStackFrame;
-import com.boris.debug.main.model.IThread;
-import com.boris.debug.main.model.IVariable;
+import com.boris.debug.main.model.StackFrame;
+import com.boris.debug.main.model.Thread;
+import com.boris.debug.main.model.Variable;
 import org.eclipse.lsp4j.debug.Scope;
 import org.eclipse.lsp4j.debug.ScopesArguments;
-import org.eclipse.lsp4j.debug.StackFrame;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class DSPStackFrame extends DSPDebugElement implements IStackFrame {
+public class DSPStackFrame extends DSPDebugElement implements StackFrame {
     private DSPThread thread;
-    private StackFrame stackFrame;
+    private org.eclipse.lsp4j.debug.StackFrame stackFrame;
     private int depth;
 
-    public DSPStackFrame(DSPThread thread, StackFrame stackFrame, int depth) {
+    public DSPStackFrame(DSPThread thread, org.eclipse.lsp4j.debug.StackFrame stackFrame, int depth) {
         super(thread.getDebugClient());
         this.thread = thread;
         this.stackFrame = stackFrame;
@@ -29,7 +28,7 @@ public class DSPStackFrame extends DSPDebugElement implements IStackFrame {
     }
 
     @Override
-    public IVariable[] getVariables() {
+    public Variable[] getVariables() {
         ScopesArguments scopesArguments = new ScopesArguments();
         scopesArguments.setFrameId(stackFrame.getId());
         Scope[] scopes = complete(getDebugClient().getDebugServer().scopes(scopesArguments)).getScopes();
@@ -38,11 +37,11 @@ public class DSPStackFrame extends DSPDebugElement implements IStackFrame {
             DSPVariable variable = new DSPVariable(this, scope.getVariablesReference(), scope.getName(), "");
             variables.add(variable);
         }
-        return variables.toArray(new IVariable[variables.size()]);
+        return variables.toArray(new Variable[variables.size()]);
     }
 
     @Override
-    public IThread getThread() {
+    public Thread getThread() {
         return thread;
     }
 
@@ -51,7 +50,7 @@ public class DSPStackFrame extends DSPDebugElement implements IStackFrame {
         return stackFrame.getLine();
     }
 
-    public DSPStackFrame replace(StackFrame stackFrame, int depth) {
+    public DSPStackFrame replace(org.eclipse.lsp4j.debug.StackFrame stackFrame, int depth) {
         if (depth == this.depth && Objects.equals(stackFrame.getSource(), this.stackFrame.getSource())) {
             this.stackFrame = stackFrame;
             return this;

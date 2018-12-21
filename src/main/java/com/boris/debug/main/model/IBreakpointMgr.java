@@ -1,13 +1,15 @@
 package com.boris.debug.main.model;
 
 public interface IBreakpointMgr {
-    void addBreakpoint(IBreakpoint breakpoint);
+    void addBreakpoint(Breakpoint breakpoint);
 
-    void removeBreakpoint(IBreakpoint breakpoint);
+    void removeBreakpoint(Breakpoint breakpoint);
 
-    void addBreakpointListener(IBreakpointListener listener);
+    void addBreakpointListener(BreakpointListener listener);
 
-    void removeBreakpointListener(IBreakpointListener listener);
+    void removeBreakpointListener(BreakpointListener listener);
 
-    IBreakpoint[] getBreakpoints();
+    void setBreakpointEnabled(Breakpoint breakpoint, boolean enabled);
+
+    Breakpoint[] getBreakpoints();
 }

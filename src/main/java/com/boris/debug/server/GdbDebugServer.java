@@ -137,6 +137,9 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
     @Override
     public CompletableFuture<SetBreakpointsResponse> setBreakpoints(SetBreakpointsArguments args) {
+        BreakDeleteCommand breakDeleteCommand = commandFactory.createBreakDelete();
+        queueCommand(breakDeleteCommand);
+
         List<Integer> tokens = new ArrayList<>();
         Source source = args.getSource();
         String path = source.getPath();
@@ -479,11 +482,11 @@ public class GdbDebugServer implements IDebugProtocolServer {
     private int queueCommand(Command command) {
         int token = -1;
         final CommandWrapper commandWrapper = new CommandWrapper(command);
-        commandQueue.add(commandWrapper);
         if (commandWrapper.getCommand().isRequiresResponse()) {
             commandWrapper.generateToken();
             token = commandWrapper.getToken();
         }
+        commandQueue.add(commandWrapper);
         Utils.debug("queued.. " + commandWrapper.getCommand().constructCommand());
         return token;
     }
@@ -515,7 +518,8 @@ public class GdbDebugServer implements IDebugProtocolServer {
         // do not send events until initialized event has been sent to client
         if (!initialized.isDone())
             return;
-        executor.execute(() -> eventProcessor.eventReceived(output));
+//        executor.execute(() -> eventProcessor.eventReceived(output));
+        eventProcessor.eventReceived(output);
     }
 
     private CommandWrapper getWrittenCommand(int token) {

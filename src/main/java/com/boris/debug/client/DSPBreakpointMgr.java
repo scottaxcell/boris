@@ -1,7 +1,7 @@
 package com.boris.debug.client;
 
-import com.boris.debug.main.model.IBreakpoint;
-import com.boris.debug.main.model.IBreakpointListener;
+import com.boris.debug.main.model.Breakpoint;
+import com.boris.debug.main.model.BreakpointListener;
 import com.boris.debug.main.model.IBreakpointMgr;
 import org.eclipse.lsp4j.debug.SetBreakpointsArguments;
 import org.eclipse.lsp4j.debug.SetBreakpointsResponse;
@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 /**
  * DSPBreakpointMgr manages the breakpoints that are currently set.
  */
-public class DSPBreakpointMgr implements IBreakpointListener {
+public class DSPBreakpointMgr implements BreakpointListener {
     private Map<Source, List<SourceBreakpoint>> breakpoints = new HashMap<>();
     private IDebugProtocolServer debugProtocolServer;
     private IBreakpointMgr breakpointMgr;
@@ -33,48 +33,46 @@ public class DSPBreakpointMgr implements IBreakpointListener {
         return resendAllBreakpoints();
     }
 
-    private void addBreakpoint(IBreakpoint breakpoint) {
+    private void addBreakpoint(Breakpoint breakpoint) {
         if (breakpoint instanceof DSPBreakpoint) {
             Source source = new Source();
             source.setName(String.valueOf(breakpoint.getPath().getFileName()));
             source.setPath(breakpoint.getPath().toString());
 
             SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
-            sourceBreakpoint.setLine((Long) breakpoint.getLineNumber());
+            sourceBreakpoint.setLine(breakpoint.getLineNumber());
 
             addBreakpoint(source, sourceBreakpoint);
         }
     }
 
-    private void removeBreakpoint(IBreakpoint breakpoint) {
+    private void removeBreakpoint(Breakpoint breakpoint) {
         if (breakpoint instanceof DSPBreakpoint) {
             Source source = new Source();
             source.setName(String.valueOf(breakpoint.getPath().getFileName()));
             source.setPath(breakpoint.getPath().toString());
 
             SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
-            sourceBreakpoint.setLine((Long) breakpoint.getLineNumber());
+            sourceBreakpoint.setLine(breakpoint.getLineNumber());
 
             removeBreakpoint(source, sourceBreakpoint);
         }
     }
 
-    public void addBreakpoint(Source source, SourceBreakpoint sourceBreakpoint) {
+    private void addBreakpoint(Source source, SourceBreakpoint sourceBreakpoint) {
         List<SourceBreakpoint> sourceBreakpoints = breakpoints.computeIfAbsent(source, s -> new ArrayList<>());
         sourceBreakpoints.add(sourceBreakpoint);
-        sendBreakpoints();
     }
 
-    public void removeBreakpoint(Source source, SourceBreakpoint sourceBreakpoint) {
+    private void removeBreakpoint(Source source, SourceBreakpoint sourceBreakpoint) {
         if (breakpoints.containsKey(source)) {
             breakpoints.get(source).remove(sourceBreakpoint);
         }
-        sendBreakpoints();
     }
 
-    public CompletableFuture<Void> resendAllBreakpoints() {
-        IBreakpoint[] breakpoints = breakpointMgr.getBreakpoints();
-        for (IBreakpoint breakpoint : breakpoints) {
+    private CompletableFuture<Void> resendAllBreakpoints() {
+        Breakpoint[] breakpoints = breakpointMgr.getBreakpoints();
+        for (Breakpoint breakpoint : breakpoints) {
             if (breakpoint.isEnabled())
                 addBreakpoint(breakpoint);
             else
@@ -89,7 +87,7 @@ public class DSPBreakpointMgr implements IBreakpointListener {
             Source source = entry.getKey();
             List<SourceBreakpoint> breakpoints = entry.getValue();
             Long[] lines = breakpoints.stream()
-                    .map(sourceBreakpoint -> sourceBreakpoint.getLine())
+                    .map(SourceBreakpoint::getLine)
                     .toArray(Long[]::new);
             SourceBreakpoint[] sourceBreakpoints = breakpoints.toArray(new SourceBreakpoint[breakpoints.size()]);
 
@@ -105,20 +103,26 @@ public class DSPBreakpointMgr implements IBreakpointListener {
     }
 
     @Override
-    public void breakpointAdded(IBreakpoint breakpoint) {
+    public void breakpointAdded(Breakpoint breakpoint) {
         if (breakpoint.isEnabled()) {
             addBreakpoint(breakpoint);
-            sendBreakpoints();
         }
+        sendBreakpoints();
     }
 
     @Override
-    public void breakpointChanged(IBreakpoint breakpoint) {
-        // TODO
+    public void breakpointChanged(Breakpoint breakpoint) {
+        if (breakpoint.isEnabled()) {
+            addBreakpoint(breakpoint);
+        }
+        else {
+            removeBreakpoint(breakpoint);
+        }
+        sendBreakpoints();
     }
 
     @Override
-    public void breakpointRemoved(IBreakpoint breakpoint) {
+    public void breakpointRemoved(Breakpoint breakpoint) {
         removeBreakpoint(breakpoint);
         sendBreakpoints();
     }

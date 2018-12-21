@@ -25,13 +25,19 @@ public class ConsolePanel extends JPanel implements DebugEventListener {
 
     @Override
     public void handleEvent(DebugEvent event) {
-        if (event.getType() == DebugEvent.CONSOLE_OUTPUT) {
-            if (event.getObject() instanceof String) {
-                SwingUtilities.invokeLater(() -> {
-                    textArea.append((String) event.getObject());
-                    textArea.revalidate();
-                });
+        if (event.getObject() instanceof String) {
+            String prefix = null;
+            if (event.getType() == DebugEvent.CONSOLE_OUTPUT) {
+                prefix = "GDB DEBUG: ";
             }
+            else if (event.getType() == DebugEvent.TARGET_OUTPUT) {
+                prefix = "TARGET OUTPUT: ";
+            }
+            String finalPrefix = prefix;
+            SwingUtilities.invokeLater(() -> {
+                textArea.append(finalPrefix + (String) event.getObject());
+                textArea.revalidate();
+            });
         }
     }
 }

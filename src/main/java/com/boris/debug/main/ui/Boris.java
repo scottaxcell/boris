@@ -4,7 +4,7 @@ import com.boris.debug.client.GdbDebugClient;
 import com.boris.debug.main.event.DebugEventMgr;
 import com.boris.debug.client.DSPBreakpoint;
 import com.boris.debug.main.model.BreakpointMgr;
-import com.boris.debug.main.model.IBreakpointListener;
+import com.boris.debug.main.model.BreakpointListener;
 import com.boris.debug.main.ui.event.GUIEventMgr;
 import com.boris.debug.server.Target;
 
@@ -41,8 +41,8 @@ public class Boris {
     private VariablesPanel variablesPanel;
     private ConsolePanel consolePanel;
 
-    private static BreakpointMgr breakpointMgr = new BreakpointMgr();
-    private static GUIEventMgr guiEventMgr = new GUIEventMgr();
+    private static BreakpointMgr breakpointMgr;
+    private static GUIEventMgr guiEventMgr;
     private static DebugEventMgr debugEventMgr;
 
     private GdbDebugClient client;
@@ -168,8 +168,8 @@ public class Boris {
     }
 
     private void addBogusBreakpoints() {
-        getBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 8L, true));
-        getBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 11L, false));
+//        getBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 8L, true));
+//        getBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 11L, false));
         getBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 13L, true));
     }
 
@@ -210,7 +210,7 @@ public class Boris {
         contentPane.add(consolePanel);
 
         frame.setSize(new Dimension(1200, 1000));
-//        frame.pack();
+        frame.pack();
         frame.setVisible(true);
     }
 
@@ -221,14 +221,14 @@ public class Boris {
     }
 
     public static BreakpointMgr getBreakpointMgr() {
-        return breakpointMgr;
+        return breakpointMgr.getInstance();
     }
 
-    public void addBreakpointListener(IBreakpointListener listener) {
+    public void addBreakpointListener(BreakpointListener listener) {
         getBreakpointMgr().addBreakpointListener(listener);
     }
 
-    public void removeBreakpointListener(IBreakpointListener listener) {
+    public void removeBreakpointListener(BreakpointListener listener) {
         getBreakpointMgr().removeBreakpointListener(listener);
     }
 
@@ -237,6 +237,6 @@ public class Boris {
     }
 
     public static GUIEventMgr getGuiEventMgr() {
-        return guiEventMgr;
+        return guiEventMgr.getInstance();
     }
 }

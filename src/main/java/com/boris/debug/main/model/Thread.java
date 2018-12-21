@@ -3,10 +3,10 @@ package com.boris.debug.main.model;
 /**
 * Represents a thread in a process.
  */
-public interface IThread {
+public interface Thread {
     String getName();
 
-    IStackFrame[] getStackFrames();
+    StackFrame[] getStackFrames();
 
-    IStackFrame getTopStackFrame();
+    StackFrame getTopStackFrame();
 }

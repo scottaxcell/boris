@@ -1,14 +1,14 @@
 package com.boris.debug.main.ui;
 
-import com.boris.debug.main.model.IBreakpoint;
-import com.boris.debug.main.model.IBreakpointListener;
+import com.boris.debug.main.model.Breakpoint;
+import com.boris.debug.main.model.BreakpointListener;
 import com.boris.debug.main.model.IBreakpointMgr;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 
-public class BreakpointsPanel extends JPanel implements IBreakpointListener {
+public class BreakpointsPanel extends JPanel implements BreakpointListener {
     private IBreakpointMgr breakpointMgr;
     private JTable table;
     private BreakpointsTableModel model;
@@ -29,31 +29,31 @@ public class BreakpointsPanel extends JPanel implements IBreakpointListener {
         add(new JScrollPane(table), BorderLayout.CENTER);
     }
 
-    IBreakpoint[] getBreakpoints() {
+    Breakpoint[] getBreakpoints() {
         return breakpointMgr.getBreakpoints();
     }
 
     @Override
-    public void breakpointAdded(IBreakpoint breakpoint) {
+    public void breakpointAdded(Breakpoint breakpoint) {
         if (model != null)
             model.fireTableDataChanged();
     }
 
     @Override
-    public void breakpointChanged(IBreakpoint breakpoint) {
+    public void breakpointChanged(Breakpoint breakpoint) {
         if (model != null)
             model.fireTableDataChanged();
     }
 
     @Override
-    public void breakpointRemoved(IBreakpoint breakpoint) {
+    public void breakpointRemoved(Breakpoint breakpoint) {
         if (model != null)
             model.fireTableDataChanged();
     }
 
     private class BreakpointsTableModel extends AbstractTableModel {
-        private String[] columnNames = new String[]{"DSPBreakpoint", "Enabled"};
-        private Class[] columnClasses = new Class[]{String.class, Boolean.class};
+        private String[] columnNames = new String[]{"Enabled", "Breakpoint"};
+        private Class[] columnClasses = new Class[]{Boolean.class, String.class};
 
         @Override
         public int getRowCount() {
@@ -73,17 +73,19 @@ public class BreakpointsPanel extends JPanel implements IBreakpointListener {
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             if (columnIndex == 0) {
-                String value = String.format("%s [line: %s]", getBreakpoints()[rowIndex].getPath().getFileName(), String.valueOf(getBreakpoints()[rowIndex].getLineNumber()));
-                return value;
+                return getBreakpoints()[rowIndex].isEnabled();
             }
             else {
-                return getBreakpoints()[rowIndex].isEnabled();
+                String value = String.format("%s [line: %s]", getBreakpoints()[rowIndex].getPath().getFileName(), String.valueOf(getBreakpoints()[rowIndex].getLineNumber()));
+                return value;
             }
         }
 
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            getBreakpoints()[rowIndex].setEnabled((boolean) aValue);
+            Breakpoint breakpoint = getBreakpoints()[rowIndex];
+//            getBreakpoints()[rowIndex].setEnabled((boolean) aValue);
+            breakpointMgr.setBreakpointEnabled(breakpoint, (Boolean) aValue);
         }
 
         @Override
@@ -93,7 +95,7 @@ public class BreakpointsPanel extends JPanel implements IBreakpointListener {
 
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return columnIndex == 1;
+            return columnIndex == 0;
         }
     }
 

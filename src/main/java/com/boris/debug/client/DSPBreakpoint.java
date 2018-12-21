@@ -1,13 +1,13 @@
 package com.boris.debug.client;
 
-import com.boris.debug.main.model.IBreakpoint;
+import com.boris.debug.main.model.Breakpoint;
 
 import java.nio.file.Path;
 
-public class DSPBreakpoint implements IBreakpoint {
-    boolean isEnabled = false;
-    Long lineNumber = null;
-    Path path = null;
+public class DSPBreakpoint implements Breakpoint {
+    private boolean isEnabled = false;
+    private Long lineNumber = null;
+    private Path path = null;
 
     public DSPBreakpoint(Path path, Long lineNumber, boolean isEnabled) {
         this.path = path;

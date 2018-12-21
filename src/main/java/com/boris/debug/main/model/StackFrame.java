@@ -3,12 +3,12 @@ package com.boris.debug.main.model;
 /**
  * Represents an execution context in a suspended thread.
  */
-public interface IStackFrame {
+public interface StackFrame {
     String getName();
 
-    IVariable[] getVariables();
+    Variable[] getVariables();
 
-    IThread getThread();
+    Thread getThread();
 
     Long getLineNumber();
 }

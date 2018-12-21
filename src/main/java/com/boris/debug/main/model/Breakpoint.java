@@ -2,7 +2,7 @@ package com.boris.debug.main.model;
 
 import java.nio.file.Path;
 
-public interface IBreakpoint {
+public interface Breakpoint {
     boolean isEnabled();
 
     void setEnabled(boolean isEnabled);

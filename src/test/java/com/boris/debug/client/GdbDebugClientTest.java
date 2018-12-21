@@ -18,7 +18,7 @@ public class GdbDebugClientTest {
     private static final String SOURCE_FILENAME = String.format("%s/helloworld.cpp", TEST_CASE_DIR);
     private static final String TARGET_FILENAME = String.format("%s/helloworld", TEST_CASE_DIR);
     private Target target = new Target(TARGET_FILENAME);
-    private BreakpointMgr breakpointMgr = new BreakpointMgr();
+    private BreakpointMgr breakpointMgr = BreakpointMgr.getInstance();
 
     @org.junit.Before
     public void setUp() throws Exception {

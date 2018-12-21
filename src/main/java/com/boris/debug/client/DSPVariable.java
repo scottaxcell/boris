@@ -1,8 +1,8 @@
 package com.boris.debug.client;
 
-import com.boris.debug.main.model.IVariable;
+import com.boris.debug.main.model.Variable;
 
-public class DSPVariable extends DSPDebugElement implements IVariable {
+public class DSPVariable extends DSPDebugElement implements Variable {
     private String name;
     private String value;
     private Long variablesReference;
@@ -20,8 +20,8 @@ public class DSPVariable extends DSPDebugElement implements IVariable {
     }
 
     @Override
-    public IVariable[] getVariables() {
-        return new IVariable[0];
+    public Variable[] getVariables() {
+        return new Variable[0];
     }
 
     @Override
