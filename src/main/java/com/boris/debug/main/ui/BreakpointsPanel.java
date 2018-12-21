@@ -21,7 +21,7 @@ public class BreakpointsPanel extends JPanel implements IBreakpointListener {
         init();
     }
 
-    public void init() {
+    private void init() {
         setBorder(BorderFactory.createTitledBorder("Breakpoints"));
 
         model = new BreakpointsTableModel();

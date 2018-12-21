@@ -13,7 +13,7 @@ public class EditorPanel extends JPanel {
     private static final String SOURCE_FILENAME = String.format("%s/helloworld.cpp", TEST_CASE_DIR);
 
     public EditorPanel() {
-        super(new BorderLayout(0, 0));
+        super(new BorderLayout());
         init();
     }
 

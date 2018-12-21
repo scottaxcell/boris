@@ -34,6 +34,7 @@ public class Boris {
     private EditorPanel editorPanel;
     private BreakpointsPanel breakpointsPanel;
     private VariablesPanel variablesPanel;
+    private ConsolePanel consolePanel;
 
     private BreakpointMgr breakpointMgr;
 
@@ -173,8 +174,11 @@ public class Boris {
         variablesPanel = new VariablesPanel();
         contentPane.add(variablesPanel, BorderLayout.EAST);
 
-        frame.setSize(new Dimension(720, 550));
-        frame.pack();
+        consolePanel = new ConsolePanel();
+        contentPane.add(consolePanel, BorderLayout.SOUTH);
+
+        frame.setSize(new Dimension(1200, 720));
+//        frame.pack();
         frame.setVisible(true);
     }
 

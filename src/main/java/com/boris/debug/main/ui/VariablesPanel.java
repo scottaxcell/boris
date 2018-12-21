@@ -1,14 +1,19 @@
 package com.boris.debug.main.ui;
 
+import com.boris.debug.client.GdbDebugClient;
+import com.boris.debug.main.ui.event.IMyEventListener;
+import com.boris.debug.main.ui.event.MyEvent;
+
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VariablesPanel extends JPanel {
+public class VariablesPanel extends JPanel implements IMyEventListener {
     JTable table;
     VariablesTableModel model;
+    GdbDebugClient client;
 
     public VariablesPanel() {
         super(new BorderLayout());
@@ -27,6 +32,19 @@ public class VariablesPanel extends JPanel {
         if (model != null) {
             model.addVariable(variable);
         }
+    }
+
+    public GdbDebugClient getClient() {
+        return client;
+    }
+
+    public void setClient(GdbDebugClient client) {
+        this.client = client;
+    }
+
+    @Override
+    public void handleEvent(MyEvent event) {
+        // TODO
     }
 
     public static class Variable {
