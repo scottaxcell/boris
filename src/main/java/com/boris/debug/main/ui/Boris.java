@@ -43,7 +43,7 @@ public class Boris {
 
     private static BreakpointMgr breakpointMgr = new BreakpointMgr();
     private static GUIEventMgr guiEventMgr = new GUIEventMgr();
-    private static DebugEventMgr debugEventMgr = new DebugEventMgr();
+    private static DebugEventMgr debugEventMgr;
 
     private GdbDebugClient client;
 
@@ -164,13 +164,13 @@ public class Boris {
         });
         toolBar.add(bogusVariablesButton);
 
-        contentPane.add(toolBar, BorderLayout.NORTH);
+        contentPane.add(toolBar);
     }
 
     private void addBogusBreakpoints() {
-        breakpointMgr.addBreakpoint(new DSPBreakpoint(Paths.get("/some/bogus/file.cpp"), 10L, true));
-        breakpointMgr.addBreakpoint(new DSPBreakpoint(Paths.get("/some/bogus/file.cpp"), 32L, true));
-        breakpointMgr.addBreakpoint(new DSPBreakpoint(Paths.get("/some/bogus/file/named/foo.cpp"), 4394L, false));
+        getBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 8L, true));
+        getBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 11L, false));
+        getBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 13L, true));
     }
 
     private void addBogusVariables() {
@@ -187,30 +187,34 @@ public class Boris {
         initMenuBar();
 
         contentPane = frame.getContentPane();
-        contentPane.setLayout(new BorderLayout());
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
 
         initToolBar();
 
-        editorPanel = new EditorPanel();
-        contentPane.add(editorPanel, BorderLayout.CENTER);
-
         breakpointsPanel = new BreakpointsPanel(getBreakpointMgr());
+        breakpointsPanel.setPreferredSize(new Dimension(1200, 100));
         addBreakpointListener(breakpointsPanel);
-        contentPane.add(breakpointsPanel, BorderLayout.WEST);
+        contentPane.add(breakpointsPanel);
+
+        editorPanel = new EditorPanel();
+        editorPanel.setPreferredSize(new Dimension(1200, 300));
+        contentPane.add(editorPanel);
 
         variablesPanel = new VariablesPanel();
-        contentPane.add(variablesPanel, BorderLayout.EAST);
+        variablesPanel.setPreferredSize(new Dimension(1200, 100));
+        contentPane.add(editorPanel);
+        contentPane.add(variablesPanel);
 
         consolePanel = new ConsolePanel();
-        contentPane.add(consolePanel, BorderLayout.SOUTH);
+        consolePanel.setPreferredSize(new Dimension(1200, 300));
+        contentPane.add(consolePanel);
 
-        frame.setSize(new Dimension(1200, 720));
+        frame.setSize(new Dimension(1200, 1000));
 //        frame.pack();
         frame.setVisible(true);
     }
 
     private void debugTarget() {
-        getBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 8L, true));
         Target target = new Target(TARGET_FILENAME);
         client = new GdbDebugClient(target, getBreakpointMgr());
         client.initialize(42);
@@ -229,7 +233,7 @@ public class Boris {
     }
 
     public static DebugEventMgr getDebugEventMgr() {
-        return debugEventMgr;
+        return debugEventMgr.getInstance();
     }
 
     public static GUIEventMgr getGuiEventMgr() {

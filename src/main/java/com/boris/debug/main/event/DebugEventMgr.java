@@ -4,14 +4,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DebugEventMgr {
+    private static DebugEventMgr debugEventMgr;
+
     private List<DebugEventListener> listeners;
 
-    public DebugEventMgr() {
+    private DebugEventMgr() {
         listeners = new ArrayList<>();
     }
 
+    public static DebugEventMgr getInstance() {
+        if (debugEventMgr == null)
+            debugEventMgr = new DebugEventMgr();
+        return debugEventMgr;
+    }
+
     public void addListener(DebugEventListener listener) {
-        if (listeners.contains(listener))
+        if (!listeners.contains(listener))
             listeners.add(listener);
     }
 

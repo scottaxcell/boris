@@ -9,6 +9,7 @@ import com.boris.debug.server.mi.record.OutOfBandRecord;
 import com.boris.debug.server.mi.record.ResultRecord;
 import com.boris.debug.utils.Utils;
 import org.eclipse.lsp4j.debug.ContinuedEventArguments;
+import org.eclipse.lsp4j.debug.OutputEventArguments;
 import org.eclipse.lsp4j.debug.TerminatedEventArguments;
 import org.eclipse.lsp4j.debug.services.IDebugProtocolClient;
 
@@ -45,6 +46,15 @@ public class EventProcessor {
         else if (outOfBandRecord instanceof NotifyAsyncOutput) {
             // TODO
         }
+        else if (outOfBandRecord instanceof ConsoleStreamOutput) {
+            processConsoleStreamOutput((ConsoleStreamOutput) outOfBandRecord);
+        }
+        else if (outOfBandRecord instanceof TargetStreamOutput) {
+            processTargetStreamOutput((TargetStreamOutput) outOfBandRecord);
+        }
+        else if (outOfBandRecord instanceof LogStreamOutput) {
+            processLogStreamOutput((LogStreamOutput) outOfBandRecord);
+        }
     }
 
     private void processExecAsyncOutput(ExecAsyncOutput execAsyncOutput) {
@@ -60,10 +70,25 @@ public class EventProcessor {
                 if (value instanceof MIConst) {
                     String reason = ((MIConst) value).getcString();
                     Event event = createEvent(execAsyncOutput, reason);
-                    dispatchEvent(event);
+                    fireEvent(event);
                 }
             }
         }
+    }
+
+    private void processConsoleStreamOutput(ConsoleStreamOutput consoleStreamOutput) {
+        String output = consoleStreamOutput.getcString();
+        notifyClientOfStreamOutput(output, "console");
+    }
+
+    private void processTargetStreamOutput(TargetStreamOutput targetStreamOutput) {
+        String output = targetStreamOutput.getcString();
+        notifyClientOfStreamOutput(output, "target");
+    }
+
+    private void processLogStreamOutput(LogStreamOutput logStreamOutput) {
+        String output = logStreamOutput.getcString();
+        notifyClientOfStreamOutput(output, "log");
     }
 
     private Event createEvent(ExecAsyncOutput execAsyncOutput, String reason) {
@@ -101,7 +126,7 @@ public class EventProcessor {
         }
     }
 
-    private void dispatchEvent(Event event) {
+    private void fireEvent(Event event) {
         if (event instanceof ExitedEvent) {
             notifyClientOfExitOutOfBandRecord((ExitedEvent) event);
         }
@@ -149,5 +174,14 @@ public class EventProcessor {
         if (getClient() == null)
             return;
         getClient().initialized();
+    }
+
+    private void notifyClientOfStreamOutput(String output, String category) {
+        if (getClient() == null)
+            return;
+        OutputEventArguments outputEventArguments = new OutputEventArguments();
+        outputEventArguments.setOutput(output);
+        outputEventArguments.setCategory(category);
+        getClient().output(outputEventArguments);
     }
 }

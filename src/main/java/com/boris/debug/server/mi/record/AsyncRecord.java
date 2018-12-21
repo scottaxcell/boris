@@ -7,8 +7,8 @@ import com.boris.debug.server.mi.output.Result;
  */
 public class AsyncRecord extends OutOfBandRecord {
     private int token;
-    Result[] results;
-    String asyncClass; // TODO turn into enum?
+    private Result[] results;
+    private String asyncClass; // TODO turn into enum?
 
     public AsyncRecord() {
         token = -1;

@@ -4,6 +4,7 @@ import com.boris.debug.server.mi.output.*;
 import com.boris.debug.server.mi.record.AsyncRecord;
 import com.boris.debug.server.mi.record.OutOfBandRecord;
 import com.boris.debug.server.mi.record.ResultRecord;
+import com.boris.debug.server.mi.record.StreamRecord;
 import com.boris.debug.utils.Utils;
 
 import java.util.ArrayList;
@@ -75,37 +76,34 @@ public class Parser {
             asyncRecord.setResults(results);
             outOfBandRecord = asyncRecord;
         }
-        // TODO
-//        else if (c == '~' || c == '@' || c == '&') {
-//            buffer.deleteCharAt(0);
-//            StreamRecord stream = null;
-//            switch (c) {
-//                case '~':
-//                    stream = new ConsoleStreamOutput();
-//                    break;
-
-//                case '@':
-//                    stream = new TargetStreamOutput();
-//                    break;
-
-//                case '&':
-//                    stream = new LogStreamOutput();
-//                    break;
-//                default:
-//                    assert false;
-//                    stream = new ConsoleStreamOutput();
-//            }
-//            if (buffer.length() > 0 && buffer.charAt(0) == '"')
-//                buffer.deleteCharAt(0);
-//            stream.setCString(parseCString(buffer);
-//            outOfBandRecord = stream;
-//        }
-//        else {
-//            // Badly format MI line, just pass it to the user as target stream
-//            StreamRecord stream = new TargetStreamOutput();
-//            stream.setCString(line + "\n");
-//            outOfBandRecord = stream;
-//        }
+        else if (c == '~' || c == '@' || c == '&') {
+            buffer.deleteCharAt(0);
+            StreamRecord stream = null;
+            switch (c) {
+                case '~':
+                    stream = new ConsoleStreamOutput();
+                    break;
+                case '@':
+                    stream = new TargetStreamOutput();
+                    break;
+                case '&':
+                    stream = new LogStreamOutput();
+                    break;
+                default:
+                    assert false;
+                    stream = new ConsoleStreamOutput();
+            }
+            if (buffer.length() > 0 && buffer.charAt(0) == '"')
+                buffer.deleteCharAt(0);
+            stream.setcString(parseCString(buffer));
+            outOfBandRecord = stream;
+        }
+        else {
+            // Unable to identify line, assume it's from the target
+            StreamRecord stream = new TargetStreamOutput();
+            stream.setcString(line + "\n");
+            outOfBandRecord = stream;
+        }
         return outOfBandRecord;
     }
 

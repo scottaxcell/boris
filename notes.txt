@@ -1,9 +1,8 @@
 TODO:
-* pull in lsp4e as reference
-* hook up debug button to run debugger on helloworld target
-* console should output all read and write from gdb server for temporary debugging
-
+* queue events so that they are handled in the ordered they are received see eventprocessor and debugeventmgr
 BACKLOG:
+* add right click in editor to add/remove breakpoint
+* refactor class names and package structure
 * finish up handling of running events ^running and *running
 * track whether or not debuggee is stopped or running
 * track current thread

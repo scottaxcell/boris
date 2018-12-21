@@ -8,4 +8,13 @@ public class StreamRecord extends OutOfBandRecord {
     public static char TARGET_OUTPUT_PREFIX = '@';
     public static char LOG_OUTPUT_PREFIX = '&';
 
+    private String cString;
+
+    public String getcString() {
+        return cString;
+    }
+
+    public void setcString(String cString) {
+        this.cString = cString;
+    }
 }

@@ -8,10 +8,9 @@ import com.boris.debug.server.mi.output.Tuple;
  */
 public class ResultRecord {
     public static char RESULT_RECORD_PREFIX = '^';
-
     private int token;
     private ResultClass resultClass;
-    Tuple value;
+    private Tuple value;
 
     public ResultRecord() {
         token = -1;

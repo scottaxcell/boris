@@ -176,6 +176,13 @@ public class GdbDebugClient implements IDebugProtocolClient {
         Boris.getDebugEventMgr().fireEvent(event);
     }
 
+    @Override
+    public void output(OutputEventArguments args) {
+        Utils.debug(this.getClass().getSimpleName() + ": output: " + args.getOutput());
+        DebugEvent event = new DebugEvent(DebugEvent.CONSOLE_OUTPUT, this, args.getOutput());
+        Boris.getDebugEventMgr().fireEvent(event);
+    }
+
     public GdbDebugServer getDebugServer() {
         return debugServer;
     }

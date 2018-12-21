@@ -11,6 +11,7 @@ public class ConsolePanel extends JPanel implements DebugEventListener {
 
     public ConsolePanel() {
         super(new BorderLayout());
+        Boris.getDebugEventMgr().addListener(this);
         init();
     }
 
@@ -18,7 +19,6 @@ public class ConsolePanel extends JPanel implements DebugEventListener {
         setBorder(BorderFactory.createTitledBorder("Console"));
 
         textArea = new JTextArea();
-        textArea.setMinimumSize(new Dimension(300, 300));
         add(new JScrollPane(textArea));
     }
 
