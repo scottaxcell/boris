@@ -52,7 +52,7 @@ public class BreakpointsPanel extends JPanel implements IBreakpointListener {
     }
 
     private class BreakpointsTableModel extends AbstractTableModel {
-        private String[] columnNames = new String[]{"Breakpoint", "Enabled"};
+        private String[] columnNames = new String[]{"DSPBreakpoint", "Enabled"};
         private Class[] columnClasses = new Class[]{String.class, Boolean.class};
 
         @Override

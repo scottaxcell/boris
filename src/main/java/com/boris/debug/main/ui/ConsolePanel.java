@@ -1,12 +1,12 @@
 package com.boris.debug.main.ui;
 
-import com.boris.debug.main.ui.event.IMyEventListener;
-import com.boris.debug.main.ui.event.MyEvent;
+import com.boris.debug.main.event.DebugEvent;
+import com.boris.debug.main.event.DebugEventListener;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class ConsolePanel extends JPanel implements IMyEventListener {
+public class ConsolePanel extends JPanel implements DebugEventListener {
     JTextArea textArea;
 
     public ConsolePanel() {
@@ -24,8 +24,8 @@ public class ConsolePanel extends JPanel implements IMyEventListener {
 
 
     @Override
-    public void handleEvent(MyEvent event) {
-        if (event.getType() == MyEvent.CONSOLE_OUTPUT) {
+    public void handleEvent(DebugEvent event) {
+        if (event.getType() == DebugEvent.CONSOLE_OUTPUT) {
             if (event.getObject() instanceof String) {
                 SwingUtilities.invokeLater(() -> {
                     textArea.append((String) event.getObject());

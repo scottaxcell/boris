@@ -1,7 +1,12 @@
 package com.boris.debug.main.ui;
 
-import com.boris.debug.main.model.Breakpoint;
+import com.boris.debug.client.GdbDebugClient;
+import com.boris.debug.main.event.DebugEventMgr;
+import com.boris.debug.client.DSPBreakpoint;
 import com.boris.debug.main.model.BreakpointMgr;
+import com.boris.debug.main.model.IBreakpointListener;
+import com.boris.debug.main.ui.event.GUIEventMgr;
+import com.boris.debug.server.Target;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,11 +41,23 @@ public class Boris {
     private VariablesPanel variablesPanel;
     private ConsolePanel consolePanel;
 
-    private BreakpointMgr breakpointMgr;
+    private static BreakpointMgr breakpointMgr = new BreakpointMgr();
+    private static GUIEventMgr guiEventMgr = new GUIEventMgr();
+    private static DebugEventMgr debugEventMgr = new DebugEventMgr();
+
+    private GdbDebugClient client;
+
+    /**
+     * FOR DEBUG/DEVELOPMENT
+     */
+    private static final String TEST_CASE_DIR = "/home/saxcell/dev/boris/testcases/helloworld";
+    private static final String SOURCE_FILENAME = String.format("%s/helloworld.cpp", TEST_CASE_DIR);
+    private static final String TARGET_FILENAME = String.format("%s/helloworld", TEST_CASE_DIR);
+    /**
+     * END FOR DEBUG/DEVELOPMENT
+     */
 
     public Boris() {
-        breakpointMgr = new BreakpointMgr();
-
         SwingUtilities.invokeLater(() -> initGui());
     }
 
@@ -86,7 +103,7 @@ public class Boris {
         debugAppMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(frame, "IMPLEMENT ME");
+                debugTarget();
             }
         });
         runMenu.add(debugAppMenuItem);
@@ -113,11 +130,21 @@ public class Boris {
         debugAppButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(frame, "IMPLEMENT ME");
+                debugTarget();
             }
         });
-
         toolBar.add(debugAppButton);
+
+        JButton continueAppButton = new JButton("Continue");
+        continueAppButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (client != null) {
+                    client.continueAllThreads();
+                }
+            }
+        });
+        toolBar.add(continueAppButton);
 
         JButton bogusBreakpointsButton = new JButton("Add Breakpoints");
         bogusBreakpointsButton.addActionListener(new ActionListener() {
@@ -141,9 +168,9 @@ public class Boris {
     }
 
     private void addBogusBreakpoints() {
-        breakpointMgr.addBreakpoint(new Breakpoint(Paths.get("/some/bogus/file.cpp"), 10L, true));
-        breakpointMgr.addBreakpoint(new Breakpoint(Paths.get("/some/bogus/file.cpp"), 32L, true));
-        breakpointMgr.addBreakpoint(new Breakpoint(Paths.get("/some/bogus/file/named/foo.cpp"), 4394L, false));
+        breakpointMgr.addBreakpoint(new DSPBreakpoint(Paths.get("/some/bogus/file.cpp"), 10L, true));
+        breakpointMgr.addBreakpoint(new DSPBreakpoint(Paths.get("/some/bogus/file.cpp"), 32L, true));
+        breakpointMgr.addBreakpoint(new DSPBreakpoint(Paths.get("/some/bogus/file/named/foo.cpp"), 4394L, false));
     }
 
     private void addBogusVariables() {
@@ -154,7 +181,7 @@ public class Boris {
     }
 
     private void initGui() {
-        frame = new JFrame("Boris -- GDB Debugger Prototype");
+        frame = new JFrame("Boris");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         initMenuBar();
@@ -168,7 +195,7 @@ public class Boris {
         contentPane.add(editorPanel, BorderLayout.CENTER);
 
         breakpointsPanel = new BreakpointsPanel(getBreakpointMgr());
-        breakpointMgr.addBreakpointListener(breakpointsPanel);
+        addBreakpointListener(breakpointsPanel);
         contentPane.add(breakpointsPanel, BorderLayout.WEST);
 
         variablesPanel = new VariablesPanel();
@@ -182,12 +209,30 @@ public class Boris {
         frame.setVisible(true);
     }
 
-    public BreakpointMgr getBreakpointMgr() {
+    private void debugTarget() {
+        getBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 8L, true));
+        Target target = new Target(TARGET_FILENAME);
+        client = new GdbDebugClient(target, getBreakpointMgr());
+        client.initialize(42);
+    }
+
+    public static BreakpointMgr getBreakpointMgr() {
         return breakpointMgr;
     }
 
-    public void setBreakpointMgr(BreakpointMgr breakpointMgr) {
-        this.breakpointMgr = breakpointMgr;
+    public void addBreakpointListener(IBreakpointListener listener) {
+        getBreakpointMgr().addBreakpointListener(listener);
     }
 
+    public void removeBreakpointListener(IBreakpointListener listener) {
+        getBreakpointMgr().removeBreakpointListener(listener);
+    }
+
+    public static DebugEventMgr getDebugEventMgr() {
+        return debugEventMgr;
+    }
+
+    public static GUIEventMgr getGuiEventMgr() {
+        return guiEventMgr;
+    }
 }

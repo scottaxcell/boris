@@ -2,8 +2,9 @@ package com.boris.debug.main.ui;
 
 import com.boris.debug.client.DSPThread;
 import com.boris.debug.client.GdbDebugClient;
-import com.boris.debug.main.ui.event.IMyEventListener;
-import com.boris.debug.main.ui.event.MyEvent;
+import com.boris.debug.main.event.DebugEvent;
+import com.boris.debug.main.event.DebugEventListener;
+import com.boris.debug.utils.Utils;
 
 import javax.swing.*;
 import javax.swing.event.TreeModelListener;
@@ -12,15 +13,20 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.util.List;
 
-public class ThreadsPanel extends JPanel implements IMyEventListener {
+public class ThreadsPanel extends JPanel implements DebugEventListener {
     GdbDebugClient client;
 
     public ThreadsPanel() {
         super(new BorderLayout());
+        Boris.getDebugEventMgr().addListener(this);
         init();
     }
 
     private void init() {
+    }
+
+    public void cleanup() {
+        Boris.getDebugEventMgr().removeListener(this);
     }
 
     public GdbDebugClient getClient() {
@@ -32,8 +38,15 @@ public class ThreadsPanel extends JPanel implements IMyEventListener {
     }
 
     @Override
-    public void handleEvent(MyEvent event) {
-        // TODO on debuggee stopped event update model
+    public void handleEvent(DebugEvent event) {
+        if (event.getType() == DebugEvent.STOPPED) {
+            // TODO on debuggee stopped event update model
+            DSPThread[] threads = client.getThreads();
+            Utils.debug("stopped event in threadspanel");
+        }
+        else if (event.getType() == DebugEvent.CONTINUED) {
+            // TODO
+        }
     }
 
     private static class ThreadTreeModel implements TreeModel {

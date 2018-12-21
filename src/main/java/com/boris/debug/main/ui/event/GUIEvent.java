@@ -1,24 +1,19 @@
 package com.boris.debug.main.ui.event;
 
-public class MyEvent {
-    public static final int DEBUGEE_STOPPED = 0;
-    public static final int DEBUGEE_CONTINUED = 1;
-    public static final int DEBUGEE_EXITED = 2;
-    public static final int DEBUGEE_TERMINATED = 3;
-    public static final int CONSOLE_OUTPUT = 4;
+public class GUIEvent {
 
     private int type;
     private Object source;
     private Object object;
     private boolean after;
 
-    public MyEvent(int type, Object source) {
+    public GUIEvent(int type, Object source) {
         this.type = type;
         this.source = source;
         this.after = true;
     }
 
-    public MyEvent(int type, Object source, Object object) {
+    public GUIEvent(int type, Object source, Object object) {
         this.type = type;
         this.source = source;
         this.object = object;

@@ -1,8 +1,8 @@
 package com.boris.debug.main.ui;
 
 import com.boris.debug.client.GdbDebugClient;
-import com.boris.debug.main.ui.event.IMyEventListener;
-import com.boris.debug.main.ui.event.MyEvent;
+import com.boris.debug.main.event.DebugEvent;
+import com.boris.debug.main.event.DebugEventListener;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -10,7 +10,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VariablesPanel extends JPanel implements IMyEventListener {
+public class VariablesPanel extends JPanel implements DebugEventListener {
     JTable table;
     VariablesTableModel model;
     GdbDebugClient client;
@@ -43,8 +43,10 @@ public class VariablesPanel extends JPanel implements IMyEventListener {
     }
 
     @Override
-    public void handleEvent(MyEvent event) {
-        // TODO
+    public void handleEvent(DebugEvent event) {
+        if (event.getType() == DebugEvent.STOPPED) {
+            // TODO ask client for variables
+        }
     }
 
     public static class Variable {

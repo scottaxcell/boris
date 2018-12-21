@@ -30,16 +30,33 @@ public class DSPBreakpointMgr implements IBreakpointListener {
 
     public CompletableFuture<Void> initialize() {
         breakpointMgr.addBreakpointListener(this);
-        // TODO send breakpoints to server
-        return CompletableFuture.completedFuture(null);
+        return resendAllBreakpoints();
     }
 
-    private void addBreakpointToMap(IBreakpoint breakpoint) {
-        // TODO
+    private void addBreakpoint(IBreakpoint breakpoint) {
+        if (breakpoint instanceof DSPBreakpoint) {
+            Source source = new Source();
+            source.setName(String.valueOf(breakpoint.getPath().getFileName()));
+            source.setPath(breakpoint.getPath().toString());
+
+            SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
+            sourceBreakpoint.setLine((Long) breakpoint.getLineNumber());
+
+            addBreakpoint(source, sourceBreakpoint);
+        }
     }
 
-    private void removeBreakpointFromMap(IBreakpoint breakpoint) {
-        // TODO
+    private void removeBreakpoint(IBreakpoint breakpoint) {
+        if (breakpoint instanceof DSPBreakpoint) {
+            Source source = new Source();
+            source.setName(String.valueOf(breakpoint.getPath().getFileName()));
+            source.setPath(breakpoint.getPath().toString());
+
+            SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
+            sourceBreakpoint.setLine((Long) breakpoint.getLineNumber());
+
+            removeBreakpoint(source, sourceBreakpoint);
+        }
     }
 
     public void addBreakpoint(Source source, SourceBreakpoint sourceBreakpoint) {
@@ -59,15 +76,15 @@ public class DSPBreakpointMgr implements IBreakpointListener {
         IBreakpoint[] breakpoints = breakpointMgr.getBreakpoints();
         for (IBreakpoint breakpoint : breakpoints) {
             if (breakpoint.isEnabled())
-                addBreakpointToMap(breakpoint);
+                addBreakpoint(breakpoint);
             else
-                removeBreakpointFromMap(breakpoint);
+                removeBreakpoint(breakpoint);
         }
         return sendBreakpoints();
     }
 
     private CompletableFuture<Void> sendBreakpoints() {
-        List<CompletableFuture<SetBreakpointsResponse>> all = new ArrayList<>();
+        List<CompletableFuture<SetBreakpointsResponse>> setBreakpointResponses = new ArrayList<>();
         for (Map.Entry<Source, List<SourceBreakpoint>> entry : breakpoints.entrySet()) {
             Source source = entry.getKey();
             List<SourceBreakpoint> breakpoints = entry.getValue();
@@ -82,15 +99,15 @@ public class DSPBreakpointMgr implements IBreakpointListener {
             arguments.setBreakpoints(sourceBreakpoints);
             arguments.setSourceModified(false);
             CompletableFuture<SetBreakpointsResponse> future = debugProtocolServer.setBreakpoints(arguments);
-            all.add(future);
+            setBreakpointResponses.add(future);
         }
-        return CompletableFuture.allOf(all.toArray(new CompletableFuture[all.size()]));
+        return CompletableFuture.allOf(setBreakpointResponses.toArray(new CompletableFuture[setBreakpointResponses.size()]));
     }
 
     @Override
     public void breakpointAdded(IBreakpoint breakpoint) {
         if (breakpoint.isEnabled()) {
-            addBreakpointToMap(breakpoint);
+            addBreakpoint(breakpoint);
             sendBreakpoints();
         }
     }
@@ -102,7 +119,7 @@ public class DSPBreakpointMgr implements IBreakpointListener {
 
     @Override
     public void breakpointRemoved(IBreakpoint breakpoint) {
-        removeBreakpointFromMap(breakpoint);
+        removeBreakpoint(breakpoint);
         sendBreakpoints();
     }
 }

@@ -4,23 +4,23 @@ import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyEventMgr {
-    private List<IMyEventListener> listeners;
+public class GUIEventMgr {
+    private List<GUIEventListener> listeners;
 
-    public MyEventMgr() {
+    public GUIEventMgr() {
         listeners = new ArrayList<>();
     }
 
-    public void addListener(IMyEventListener listener) {
+    public void addListener(GUIEventListener listener) {
         if (listeners.contains(listener))
             listeners.add(listener);
     }
 
-    public void removeListener(IMyEventListener listener) {
+    public void removeListener(GUIEventListener listener) {
         listeners.remove(listener);
     }
 
-    public void fireEvent(final MyEvent event) {
+    public void fireEvent(final GUIEvent event) {
         if (SwingUtilities.isEventDispatchThread()) {
             fireEvent_(event);
         }
@@ -29,8 +29,8 @@ public class MyEventMgr {
         }
     }
 
-    private void fireEvent_(MyEvent event) {
-        for (IMyEventListener listener : listeners) {
+    private void fireEvent_(GUIEvent event) {
+        for (GUIEventListener listener : listeners) {
             listener.handleEvent(event);
         }
     }

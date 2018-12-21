@@ -1,5 +1,6 @@
 package com.boris.debug.server;
 
+import com.boris.debug.client.GdbDebugClient;
 import com.boris.debug.server.mi.command.*;
 import com.boris.debug.server.mi.output.Output;
 import com.boris.debug.server.mi.output.OutputParser;
@@ -30,8 +31,10 @@ public class GdbDebugServer implements IDebugProtocolServer {
     private IDebugProtocolClient client;
     private ExecutorService executor = Executors.newCachedThreadPool();
     private EventProcessor eventProcessor = new EventProcessor();
-    private boolean initialized = false;
-    private boolean initializeRequestFinished = false;
+    /**
+     * The initialized event will mark this as complete
+     */
+    private CompletableFuture<Void> initialized = new CompletableFuture<>();
     /**
      * Commands that need to be processed
      */
@@ -62,6 +65,12 @@ public class GdbDebugServer implements IDebugProtocolServer {
         this.target = target;
     }
 
+    public GdbDebugServer(Target target, GdbDebugClient client) {
+        this.target = target;
+        this.client = client;
+        eventProcessor.setClient(client);
+    }
+
     @Override
     public CompletableFuture<RunInTerminalResponse> runInTerminal(RunInTerminalRequestArguments args) {
         return CompletableFuture.completedFuture(null);
@@ -84,10 +93,9 @@ public class GdbDebugServer implements IDebugProtocolServer {
         capabilities.setSupportsFunctionBreakpoints(false);
         capabilities.setSupportsConditionalBreakpoints(false);
 
-        setInitializeRequestFinished(true);
-
-        // TODO wait for first gdb prompt before returning
-        return CompletableFuture.completedFuture(capabilities);
+        return initialized.thenCompose((v) -> {
+            return CompletableFuture.completedFuture(capabilities);
+        });
     }
 
     @Override
@@ -456,15 +464,6 @@ public class GdbDebugServer implements IDebugProtocolServer {
         return CompletableFuture.completedFuture(null);
     }
 
-
-    public void setInitialized(boolean initialized) {
-        this.initialized = initialized;
-    }
-
-    public boolean isInitialized() {
-        return initialized;
-    }
-
     public void setRemoteProxy(IDebugProtocolClient client) {
         this.client = client;
         eventProcessor.setClient(client);
@@ -490,7 +489,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
     }
 
     private void notifyClientOfInitialized() {
-        if (!isInitializeRequestFinished() || eventProcessor == null)
+        if (!initialized.isDone() || eventProcessor == null)
             return;
         eventProcessor.notifyClientOfInitialized();
     }
@@ -512,17 +511,9 @@ public class GdbDebugServer implements IDebugProtocolServer {
         return -1;
     }
 
-    public boolean isInitializeRequestFinished() {
-        return initializeRequestFinished;
-    }
-
-    public void setInitializeRequestFinished(boolean initializeRequestFinished) {
-        this.initializeRequestFinished = initializeRequestFinished;
-    }
-
     private void processEvent(Output output) {
         // do not send events until initialized event has been sent to client
-        if (!isInitialized())
+        if (!initialized.isDone())
             return;
         executor.execute(() -> eventProcessor.eventReceived(output));
     }
@@ -647,8 +638,8 @@ public class GdbDebugServer implements IDebugProtocolServer {
                 }
             }
             else if (recordType == Parser.RecordType.GdbPrompt) {
-                if (!isInitialized()) {
-                    setInitialized(true);
+                if (!initialized.isDone()) {
+                    initialized.complete(null);
                     notifyClientOfInitialized();
                 }
                 // TODO should fire off output event to client
