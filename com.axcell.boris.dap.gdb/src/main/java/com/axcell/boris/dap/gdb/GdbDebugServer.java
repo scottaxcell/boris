@@ -41,11 +41,11 @@ public class GdbDebugServer implements IDebugProtocolServer {
     /**
      * Commands that have been written to the GDB stream
      */
-    private final List<CommandWrapper> writtenCommands = new ArrayList<>();
+    private final List<CommandWrapper> writtenCommands = Collections.synchronizedList(new ArrayList<>());
     /**
      * Commands that have been read from the GDB stream
      */
-    private final Map<Integer, CommandWrapper> readCommands = Collections.synchronizedMap(new HashMap<Integer, CommandWrapper>());
+    private final Map<Integer, CommandWrapper> readCommands = Collections.synchronizedMap(new HashMap<>());
     /**
      * Aligns commandWrapper requests with commandWrapper responses
      */
@@ -527,9 +527,11 @@ public class GdbDebugServer implements IDebugProtocolServer {
     }
 
     private CommandWrapper getWrittenCommand(int token) {
-        for (CommandWrapper commandWrapper : writtenCommands) {
-            if (commandWrapper.getToken() == token)
-                return commandWrapper;
+        synchronized (writtenCommands) {
+            for (CommandWrapper commandWrapper : writtenCommands) {
+                if (commandWrapper.getToken() == token)
+                    return commandWrapper;
+            }
         }
         return null;
     }
@@ -557,7 +559,9 @@ public class GdbDebugServer implements IDebugProtocolServer {
                     break;
                 }
 
-                writtenCommands.add(commandWrapper);
+                synchronized (writtenCommands) {
+                    writtenCommands.add(commandWrapper);
+                }
 
                 StringBuilder commandBuilder = new StringBuilder();
                 if (commandWrapper.getCommand().isRequiresResponse())
@@ -602,7 +606,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     if (line.length() != 0) {
-                        Utils.debug("reading line: " + line);
+//                        Utils.debug("reading line: " + line);
                         handleOutput(line);
                     }
                 }
@@ -627,7 +631,9 @@ public class GdbDebugServer implements IDebugProtocolServer {
                 int token = resultRecord.getToken();
                 CommandWrapper commandWrapper = getWrittenCommand(token);
                 if (commandWrapper != null) {
-                    writtenCommands.remove(commandWrapper);
+                    synchronized (writtenCommands) {
+                        writtenCommands.remove(commandWrapper);
+                    }
 
                     if (!commandWrapper.getCommand().isIgnoreResponse()) {
                         Output output = new Output(resultRecord);
@@ -636,7 +642,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
                         commandWrapper.setCommandResponse(commandResponse);
 
                         readCommands.put(token, commandWrapper);
-                        Utils.debug("received " + commandWrapper.getCommand().constructCommand());
+                        Utils.debug(commandWrapper.getToken() + commandWrapper.getCommand().constructCommand().trim() + " received..");
                     }
                 }
                 else {
@@ -667,6 +673,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
         private Command command;
         private CommandResponse commandResponse;
         private int token;
+        private int hashCode;
 
         public CommandWrapper(Command command) {
             this.command = command;
@@ -699,6 +706,25 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
         public void setCommandResponse(CommandResponse commandResponse) {
             this.commandResponse = commandResponse;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj instanceof CommandWrapper) {
+                CommandWrapper other = (CommandWrapper) obj;
+                return Objects.equals(command, other.getCommand()) && token == other.getToken();
+            }
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = hashCode;
+            if (result == 0) {
+                result = Objects.hash(command, token);
+            }
+            hashCode = result;
+            return result;
         }
     }
 

@@ -12,6 +12,9 @@ public class DSPDebugElement {
         this.debugClient = client;
     }
 
+    public DSPDebugElement() {
+    }
+
     public GdbDebugClient getDebugClient() {
         return debugClient;
     }

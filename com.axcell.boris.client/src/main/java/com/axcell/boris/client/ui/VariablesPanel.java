@@ -1,11 +1,10 @@
 package com.axcell.boris.client.ui;
 
 import com.axcell.boris.client.GdbDebugClient;
-import com.axcell.boris.client.debug.dsp.DSPThread;
+import com.axcell.boris.client.debug.dsp.DSPVariable;
 import com.axcell.boris.client.debug.event.DebugEvent;
 import com.axcell.boris.client.debug.event.DebugEventListener;
-import com.axcell.boris.client.debug.model.StackFrame;
-import com.axcell.boris.client.debug.model.Variable;
+import com.axcell.boris.utils.Utils;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -45,7 +44,7 @@ public class VariablesPanel extends JPanel implements DebugEventListener {
         if (event.getType() == DebugEvent.STOPPED) {
             SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
                 @Override
-                protected Boolean doInBackground() throws Exception {
+                protected Boolean doInBackground() {
                     model.updateModel();
                     return true;
                 }
@@ -53,6 +52,12 @@ public class VariablesPanel extends JPanel implements DebugEventListener {
                 @Override
                 protected void done() {
                     SwingUtilities.invokeLater(() -> {
+                        StringBuilder sb = new StringBuilder("UPDATING variables panel..");
+                        for (DSPVariable v : model.variables) {
+                            sb.append(" Variable {" + v.getName() + " : " + v.getValue() + "}");
+                        }
+                        Utils.debug("SGA -- " + sb.toString());
+
                         model.fireTableDataChanged();
                     });
                 }
@@ -63,16 +68,15 @@ public class VariablesPanel extends JPanel implements DebugEventListener {
 
     private class VariablesTableModel extends AbstractTableModel {
         private String[] columnNames = new String[]{"Name", "Value"};
-        List<Variable> variables = new ArrayList<>();
+        private List<DSPVariable> variables = new ArrayList<>();
 
-        void addVariables(Variable[] variables) {
-            for (Variable variable : variables)
+        void addVariables(DSPVariable[] variables) {
+            for (DSPVariable variable : variables)
                 addVariable(variable);
         }
 
-        void addVariable(Variable variable) {
+        void addVariable(DSPVariable variable) {
             variables.add(variable);
-            fireTableDataChanged();
         }
 
         @Override
@@ -98,19 +102,12 @@ public class VariablesPanel extends JPanel implements DebugEventListener {
                 return variables.get(rowIndex).getValue();
         }
 
-        public void updateModel() {
-            if (client == null)
-                return;
-
-            DSPThread[] threads = client.getThreads();
-            for (DSPThread thread : threads) {
-                StackFrame[] stackFrames = thread.getStackFrames();
-                if (stackFrames.length != 0) {
-                    for (StackFrame stackFrame : stackFrames) {
-                        Variable[] variables = stackFrame.getVariables();
-                        addVariables(variables);
-                    }
-                }
+        void updateModel() {
+            if (client != null) {
+                variables.clear();
+                Utils.debug("VariablesPanel: client.getVariables()");
+                DSPVariable[] vars = client.getVariables();
+                addVariables(vars);
             }
         }
     }

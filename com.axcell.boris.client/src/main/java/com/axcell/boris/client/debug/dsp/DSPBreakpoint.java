@@ -3,6 +3,7 @@ package com.axcell.boris.client.debug.dsp;
 import com.axcell.boris.client.debug.model.Breakpoint;
 
 import java.nio.file.Path;
+import java.util.Objects;
 
 public class DSPBreakpoint implements Breakpoint {
     private boolean isEnabled;
@@ -43,5 +44,19 @@ public class DSPBreakpoint implements Breakpoint {
     @Override
     public void setLineNumber(Long lineNumber) {
         this.lineNumber = lineNumber;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof DSPBreakpoint) {
+            DSPBreakpoint other = (DSPBreakpoint) o;
+            return Objects.equals(lineNumber, other.getLineNumber()) && Objects.equals(path, other.getPath());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(lineNumber, path);
     }
 }

@@ -6,20 +6,20 @@ import com.axcell.boris.dap.gdb.mi.output.Value;
 import org.eclipse.lsp4j.debug.StoppedEventArguments;
 import org.eclipse.lsp4j.debug.StoppedEventArgumentsReason;
 
-public class BreakpointHitEvent extends Event {
+public class StoppedEvent extends Event {
     private StoppedEventArguments args;
 
-    public BreakpointHitEvent() {
+    public StoppedEvent() {
         args = new StoppedEventArguments();
-        args.setReason(StoppedEventArgumentsReason.BREAKPOINT);
+        args.setReason(StoppedEventArgumentsReason.STEP);
     }
 
     public StoppedEventArguments getArgs() {
         return args;
     }
 
-    public static BreakpointHitEvent parse(Result[] results) {
-        BreakpointHitEvent event = new BreakpointHitEvent();
+    public static StoppedEvent parse(Result[] results) {
+        StoppedEvent event = new StoppedEvent();
 
         for (Result result : results) {
             String variable = result.getVariable();
@@ -36,10 +36,6 @@ public class BreakpointHitEvent extends Event {
                 if ("all".equals(valueStr)) {
                     event.getArgs().setAllThreadsStopped(true);
                 }
-            }
-            else if ("bkptno".equals(variable)) {
-                String reason = event.getArgs().getReason();
-                event.getArgs().setReason(reason + ";bkptno=" + valueStr);
             }
         }
         return event;

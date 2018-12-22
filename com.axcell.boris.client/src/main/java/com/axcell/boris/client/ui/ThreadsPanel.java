@@ -1,11 +1,12 @@
 package com.axcell.boris.client.ui;
 
+import com.axcell.boris.client.GdbDebugClient;
 import com.axcell.boris.client.debug.dsp.DSPStackFrame;
 import com.axcell.boris.client.debug.dsp.DSPThread;
-import com.axcell.boris.client.GdbDebugClient;
 import com.axcell.boris.client.debug.event.DebugEvent;
 import com.axcell.boris.client.debug.event.DebugEventListener;
 import com.axcell.boris.client.debug.model.StackFrame;
+import com.axcell.boris.utils.Utils;
 
 import javax.swing.*;
 import javax.swing.tree.*;
@@ -16,7 +17,7 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
     private JTree tree;
     private ThreadTreeModel model;
 
-    public ThreadsPanel(GdbDebugClient client) {
+    ThreadsPanel(GdbDebugClient client) {
         super(new BorderLayout());
         this.client = client;
         Boris.getDebugEventMgr().addListener(this);
@@ -57,6 +58,17 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
                 @Override
                 protected void done() {
                     SwingUtilities.invokeLater(() -> {
+                        StringBuilder sb = new StringBuilder("UPDATING threads panel..");
+                        for (DSPThread t : model.threads) {
+                            String s = String.format("Thread {[%s] %s}", t.getId(), t.getName());
+                            sb.append(s);
+                            for (StackFrame sf : t.getStackFrames()) {
+                                s = String.format(" StackFrame {%s %s}", ((DSPStackFrame) sf).getDepth(), sf.getName());
+                                sb.append(s);
+                            }
+                        }
+                        Utils.debug("SGA -- " + sb.toString());
+
                         tree.setModel(model);
                         for (int i = 0; i < tree.getRowCount(); i++)
                             tree.expandRow(i);
@@ -73,11 +85,11 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
     private class ThreadTreeModel extends DefaultTreeModel {
         private DSPThread[] threads;
 
-        public ThreadTreeModel(ThreadTreeNode root) {
+        ThreadTreeModel(ThreadTreeNode root) {
             super(root);
         }
 
-        public void updateModel() {
+        void updateModel() {
             if (client == null)
                 return;
 
@@ -85,6 +97,7 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
             for (int i = 0; i < numChildren; i++)
                 removeNodeFromParent((MutableTreeNode) root.getChildAt(i));
 
+            Utils.debug("ThreadsPanel: client.getThreads()");
             threads = client.getThreads();
             for (DSPThread thread : threads) {
                 ThreadTreeNode threadNode = new ThreadTreeNode(thread);
@@ -104,11 +117,11 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
     private class ThreadTreeNode extends DefaultMutableTreeNode {
         private Object object;
 
-        public ThreadTreeNode(Object object) {
+        ThreadTreeNode(Object object) {
             this.object = object;
         }
 
-        public Object getObject() {
+        Object getObject() {
             return object;
         }
     }

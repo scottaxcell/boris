@@ -172,9 +172,6 @@ public class Parser {
     }
 
     private Result[] parseResults(StringBuffer buffer) {
-        if (buffer.toString().contains("stopped")) {
-            Utils.debug(buffer.toString());
-        }
         List<Result> results = new ArrayList<>();
         Result result = parseResult(buffer);
         if (result != null)

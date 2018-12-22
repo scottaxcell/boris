@@ -2,6 +2,8 @@ package com.axcell.boris.client.debug.dsp;
 
 import com.axcell.boris.client.debug.model.Variable;
 
+import java.util.Objects;
+
 public class DSPVariable extends DSPDebugElement implements Variable {
     private org.eclipse.lsp4j.debug.Variable variable;
 
@@ -32,5 +34,18 @@ public class DSPVariable extends DSPDebugElement implements Variable {
 
     public String getName() {
         return variable.getName();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DSPVariable that = (DSPVariable) o;
+        return Objects.equals(variable, that.variable);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(variable);
     }
 }

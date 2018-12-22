@@ -1,13 +1,9 @@
 package com.axcell.boris.dap.gdb.mi.command;
 
-import com.axcell.boris.dap.gdb.mi.event.BreakpointHitEvent;
-import com.axcell.boris.dap.gdb.mi.event.Event;
-import com.axcell.boris.dap.gdb.mi.event.ExitedEvent;
-import com.axcell.boris.dap.gdb.mi.event.RunningEvent;
+import com.axcell.boris.dap.gdb.mi.event.*;
 import com.axcell.boris.dap.gdb.mi.output.*;
 import com.axcell.boris.dap.gdb.mi.record.OutOfBandRecord;
 import com.axcell.boris.dap.gdb.mi.record.ResultRecord;
-import com.axcell.boris.utils.Utils;
 import org.eclipse.lsp4j.debug.ContinuedEventArguments;
 import org.eclipse.lsp4j.debug.OutputEventArguments;
 import org.eclipse.lsp4j.debug.TerminatedEventArguments;
@@ -36,7 +32,7 @@ public class EventProcessor {
     }
 
     private void processOutOfBandResponseEvent(OutOfBandRecord outOfBandRecord) {
-        Utils.debug("processing out-of-band record event " + outOfBandRecord.toString());
+//        Utils.debug("processing out-of-band record event " + outOfBandRecord.toString());
         if (outOfBandRecord instanceof ExecAsyncOutput) {
             processExecAsyncOutput((ExecAsyncOutput) outOfBandRecord);
         }
@@ -99,12 +95,15 @@ public class EventProcessor {
         else if ("breakpoint-hit".equals(reason)) {
             event = BreakpointHitEvent.parse(execAsyncOutput.getResults());
         }
+        else if ("end-stepping-range".equals(reason)) {
+            event = StoppedEvent.parse(execAsyncOutput.getResults());
+        }
 
         return event;
     }
 
     private void processResultRecordEvent(ResultRecord resultRecord) {
-        Utils.debug("processing result record event " + resultRecord.toString());
+//        Utils.debug("processing result record event " + resultRecord.toString());
         ResultRecord.ResultClass resultClass = resultRecord.getResultClass();
         switch (resultClass) {
             case CONNECTED:
@@ -133,38 +132,48 @@ public class EventProcessor {
         else if (event instanceof BreakpointHitEvent) {
             notifyClientOfBreakpointHit((BreakpointHitEvent) event);
         }
+        else if (event instanceof StoppedEvent) {
+            notifyClientOfStopped((StoppedEvent) event);
+        }
     }
 
     private void notifyClientOfGdbExit() {
-        Utils.debug("notifying client of gdb exit");
+//        Utils.debug("notifying client of gdb exit");
         if (getClient() == null)
             return;
         getClient().terminated(new TerminatedEventArguments());
     }
 
     private void notifyClientOfExitOutOfBandRecord(ExitedEvent event) {
-        Utils.debug("notifying client of exit with code = " + event.getArgs().getExitCode());
+//        Utils.debug("notifying client of exit with code = " + event.getArgs().getExitCode());
         if (getClient() == null)
             return;
         getClient().exited(event.getArgs());
     }
 
     private void notifyClientOfBreakpointHit(BreakpointHitEvent event) {
-        Utils.debug("notifying client of breakpoint hit");
+//        Utils.debug("notifying client of breakpoint hit");
+        if (getClient() == null)
+            return;
+        getClient().stopped(event.getArgs());
+    }
+
+    private void notifyClientOfStopped(StoppedEvent event) {
+//        Utils.debug("notifying client of stopped event");
         if (getClient() == null)
             return;
         getClient().stopped(event.getArgs());
     }
 
     private void notifyClientOfRunningOutOfBandRecord(RunningEvent event) {
-        Utils.debug("notifying client of running");
+//        Utils.debug("notifying client of running");
         if (getClient() == null)
             return;
         getClient().continued(event.getArgs());
     }
 
     private void notifyClientOfRunning() {
-        Utils.debug("notifying client of running");
+//        Utils.debug("notifying client of running");
         if (getClient() == null)
             return;
         getClient().continued(new ContinuedEventArguments());

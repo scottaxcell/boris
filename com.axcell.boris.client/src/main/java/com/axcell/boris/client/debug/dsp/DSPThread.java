@@ -8,14 +8,17 @@ import org.eclipse.lsp4j.debug.StackTraceArguments;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DSPThread extends DSPDebugElement implements Thread {
     private Long id;
     private String name;
-    private List<DSPStackFrame> stackFrames = Collections.synchronizedList(new ArrayList<>());
+    private final List<DSPStackFrame> stackFrames = Collections.synchronizedList(new ArrayList<>());
     private AtomicBoolean refreshFrames = new AtomicBoolean(true);
 
     public DSPThread(GdbDebugClient client, org.eclipse.lsp4j.debug.Thread thread) {
@@ -40,7 +43,6 @@ public class DSPThread extends DSPDebugElement implements Thread {
                 return stackFrames.toArray(new DSPStackFrame[stackFrames.size()]);
             }
         }
-
         try {
             StackTraceArguments stackTraceArguments = new StackTraceArguments();
             stackTraceArguments.setThreadId(id);
@@ -60,7 +62,14 @@ public class DSPThread extends DSPDebugElement implements Thread {
                             return stackFrames.toArray(new DSPStackFrame[stackFrames.size()]);
                         }
                     });
-            return future.get();
+            try {
+                return future.get(2000, TimeUnit.MILLISECONDS);
+//                return future.get();
+            }
+            catch (TimeoutException e) {
+                e.printStackTrace();
+                return new DSPStackFrame[0];
+            }
         }
         catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -75,5 +84,19 @@ public class DSPThread extends DSPDebugElement implements Thread {
             return stackFrames[0];
         else
             return null;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DSPThread thread = (DSPThread) o;
+        return Objects.equals(id, thread.id) &&
+                Objects.equals(name, thread.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 }

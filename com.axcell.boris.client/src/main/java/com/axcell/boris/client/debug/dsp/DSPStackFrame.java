@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DSPStackFrame extends DSPDebugElement implements StackFrame {
@@ -41,9 +43,6 @@ public class DSPStackFrame extends DSPDebugElement implements StackFrame {
                 return variables.toArray(new DSPVariable[variables.size()]);
             }
         }
-
-        variables.clear();
-
         try {
             ScopesArguments scopesArguments = new ScopesArguments();
             scopesArguments.setFrameId(stackFrame.getId());
@@ -56,6 +55,7 @@ public class DSPStackFrame extends DSPDebugElement implements StackFrame {
             CompletableFuture<DSPVariable[]> future = getDebugClient().getDebugServer().variables(variablesArguments)
                     .thenApply(response -> {
                         synchronized (variables) {
+                            variables.clear();
                             org.eclipse.lsp4j.debug.Variable[] responseVariables = response.getVariables();
                             for (org.eclipse.lsp4j.debug.Variable responseVariable : responseVariables) {
                                 DSPVariable variable = new DSPVariable(this, responseVariable);
@@ -64,7 +64,14 @@ public class DSPStackFrame extends DSPDebugElement implements StackFrame {
                             return this.variables.toArray(new DSPVariable[this.variables.size()]);
                         }
                     });
-            return future.get();
+            try {
+                return future.get(2000, TimeUnit.MILLISECONDS);
+//                return future.get();
+            }
+            catch (TimeoutException e) {
+                e.printStackTrace();
+                return new DSPVariable[0];
+            }
         }
         catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
@@ -92,5 +99,20 @@ public class DSPStackFrame extends DSPDebugElement implements StackFrame {
 
     public int getDepth() {
         return depth;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DSPStackFrame that = (DSPStackFrame) o;
+        return depth == that.depth &&
+                Objects.equals(thread, that.thread) &&
+                Objects.equals(stackFrame, that.stackFrame);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(thread, stackFrame, depth);
     }
 }

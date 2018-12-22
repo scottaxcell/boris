@@ -2,6 +2,7 @@ package com.axcell.boris.dap.gdb.mi.command;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Command {
     private String operation;
@@ -9,6 +10,7 @@ public class Command {
     private List<String> options;
     private boolean requiresResponse;
     private boolean ignoreResponse;
+    private int hashCode;
 
     public Command(String operation) {
         this.operation = operation;
@@ -90,5 +92,28 @@ public class Command {
         for (String parameter : parameters)
             stringBuilder.append(' ').append(parameter);
         return stringBuilder.toString().trim();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Command) {
+            Command other = (Command) obj;
+            return Objects.equals(operation, other.operation)
+                    && Objects.equals(parameters, other.getParameters())
+                    && Objects.equals(options, other.getOptions())
+                    && requiresResponse == other.isRequiresResponse()
+                    && ignoreResponse == other.isIgnoreResponse();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = hashCode;
+        if (result == 0) {
+            result = Objects.hash(operation, parameters, options, requiresResponse, ignoreResponse);
+        }
+        hashCode = result;
+        return result;
     }
 }

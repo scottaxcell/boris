@@ -1,10 +1,9 @@
 package com.axcell.boris.client;
 
-import com.axcell.boris.client.debug.dsp.DSPBreakpointMgr;
-import com.axcell.boris.client.debug.dsp.DSPThread;
+import com.axcell.boris.client.debug.dsp.*;
 import com.axcell.boris.client.debug.event.DebugEvent;
-import com.axcell.boris.client.debug.model.GlobalBreakpointMgr;
 import com.axcell.boris.client.debug.model.BreakpointMgr;
+import com.axcell.boris.client.debug.model.GlobalBreakpointMgr;
 import com.axcell.boris.client.ui.Boris;
 import com.axcell.boris.dap.gdb.GdbDebugServer;
 import com.axcell.boris.dap.gdb.Target;
@@ -20,13 +19,10 @@ import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class GdbDebugClient implements IDebugProtocolClient {
+public class GdbDebugClient extends DSPDebugElement implements IDebugProtocolClient {
     /**
      * lsp4e DSPDebugTarget for reference:
      * https://github.com/vladdu/lsp4e/blob/6f48292b40bb66593790e8c11415722cdeb9c4e3/org.eclipse.lsp4e.debug/src/org/eclipse/lsp4e/debug/debugmodel/DSPDebugTarget.java
@@ -43,7 +39,7 @@ public class GdbDebugClient implements IDebugProtocolClient {
     private PipedInputStream inServer = new PipedInputStream();
     private PipedOutputStream outServer = new PipedOutputStream();
 
-    private ExecutorService threadPool;
+    private ExecutorService threadPool = Executors.newCachedThreadPool();
     private Capabilities capabilities;
     /**
      * Global breakpoint manager
@@ -57,7 +53,7 @@ public class GdbDebugClient implements IDebugProtocolClient {
     /**
      * Synchronized cached set of current threads.
      */
-    private Map<Long, DSPThread> threads = Collections.synchronizedMap(new TreeMap<>());
+    private final Map<Long, DSPThread> threads = Collections.synchronizedMap(new TreeMap<>());
     /**
      * Update the threads list from the dsp adapter
      */
@@ -65,6 +61,7 @@ public class GdbDebugClient implements IDebugProtocolClient {
 
 
     public GdbDebugClient(Target target, GlobalBreakpointMgr globalBreakpointMgr) {
+        super();
         this.target = target;
         this.globalBreakpointMgr = globalBreakpointMgr;
     }
@@ -184,6 +181,7 @@ public class GdbDebugClient implements IDebugProtocolClient {
     @Override
     public void stopped(StoppedEventArguments args) {
         Utils.debug(this.getClass().getSimpleName() + ": stopped");
+        refreshThreads.set(true);
         DebugEvent event = new DebugEvent(DebugEvent.STOPPED, this, args);
         Boris.getDebugEventMgr().fireEvent(event);
     }
@@ -231,15 +229,47 @@ public class GdbDebugClient implements IDebugProtocolClient {
                         }
                     }
                     Collection<DSPThread> values = threads.values();
+//                    Utils.out("SGA new threads");
                     return values.toArray(new DSPThread[values.size()]);
                 }
             });
-            return future.get();
+            try {
+                return future.get(2000, TimeUnit.MILLISECONDS);
+//                return future.get();
+            }
+            catch (TimeoutException e) {
+                e.printStackTrace();
+                return new DSPThread[0];
+            }
         }
         catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return new DSPThread[0];
         }
+    }
+
+    public DSPStackFrame[] getStackFrames() {
+        List<DSPStackFrame> stackFrames = new ArrayList<>();
+        DSPThread[] threads = getThreads();
+        for (DSPThread thread : threads)
+            stackFrames.addAll(Arrays.asList(getStackFrames(thread)));
+        return stackFrames.toArray(new DSPStackFrame[stackFrames.size()]);
+    }
+
+    public DSPStackFrame[] getStackFrames(DSPThread thread) {
+        return (DSPStackFrame[]) thread.getStackFrames();
+    }
+
+    public DSPVariable[] getVariables() {
+        List<DSPVariable> variables = new ArrayList<>();
+        DSPStackFrame[] stackFrames = getStackFrames();
+        for (DSPStackFrame stackFrame : stackFrames)
+            variables.addAll(Arrays.asList(getVariables(stackFrame)));
+        return variables.toArray(new DSPVariable[variables.size()]);
+    }
+
+    public DSPVariable[] getVariables(DSPStackFrame stackFrame) {
+        return (DSPVariable[]) stackFrame.getVariables();
     }
 
     public boolean isInitialized() {
@@ -248,5 +278,10 @@ public class GdbDebugClient implements IDebugProtocolClient {
 
     public Capabilities getCapabilities() {
         return capabilities;
+    }
+
+    @Override
+    public GdbDebugClient getDebugClient() {
+        return this;
     }
 }

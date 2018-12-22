@@ -58,16 +58,14 @@ public class Boris {
     /**
      * FOR DEBUG/DEVELOPMENT
      */
-    private static final String TEST_CASE_DIR = "/home/saxcell/dev/boris/testcases/helloworld";
-    private static final String SOURCE_FILENAME = String.format("%s/helloworld.cpp", TEST_CASE_DIR);
-    private static final String TARGET_FILENAME = String.format("%s/helloworld", TEST_CASE_DIR);
-
+    private static final String TEST_CASE_DIR = "/home/saxcell/dev/boris/testcases/threadexample";
+    private static final String SOURCE_FILENAME = String.format("%s/threadexample.cpp", TEST_CASE_DIR);
+    private static final String TARGET_FILENAME = String.format("%s/threadexample", TEST_CASE_DIR);
     /**
      * END FOR DEBUG/DEVELOPMENT
      */
 
     public Boris() {
-//        SwingUtilities.invokeLater(() -> initGui());
         SwingUtilities.invokeLater(() -> initDockableGui());
     }
 
@@ -167,85 +165,7 @@ public class Boris {
         });
         toolBar.add(continueAppButton);
 
-        JButton bogusBreakpointsButton = new JButton("Add Breakpoints");
-        bogusBreakpointsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addBogusBreakpoints();
-            }
-        });
-        toolBar.add(bogusBreakpointsButton);
-
-        JButton bogusVariablesButton = new JButton("Add Variables");
-        bogusBreakpointsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                addBogusVariables();
-            }
-        });
-        toolBar.add(bogusVariablesButton);
-
-        JButton threadsButton = new JButton("Threads");
-        threadsButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                threads();
-            }
-        });
-        toolBar.add(threadsButton);
-
         contentPane.add(toolBar);
-    }
-
-    private void addBogusBreakpoints() {
-//        getGlobalBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 8L, true));
-//        getGlobalBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 11L, false));
-        getGlobalBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 13L, true));
-    }
-
-    private void addBogusVariables() {
-//        variablesPanel.addVariable(new VariablesPanel.Variable("count", "1"));
-//        variablesPanel.addVariable(new VariablesPanel.Variable("isEarthFlat", "false"));
-//        variablesPanel.addVariable(new VariablesPanel.Variable("numElephants", "32"));
-//        variablesPanel.addVariable(new VariablesPanel.Variable("nameOfCoffee", "Kenyan"));
-    }
-
-    private void initGui() {
-        frame = new JFrame("Boris");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        initMenuBar();
-
-        contentPane = frame.getContentPane();
-        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
-
-        initToolBar();
-
-        breakpointsPanel = new BreakpointsPanel(getGlobalBreakpointMgr());
-        breakpointsPanel.setPreferredSize(new Dimension(1200, 100));
-        addBreakpointListener(breakpointsPanel);
-        contentPane.add(breakpointsPanel);
-
-        threadsPanel = new ThreadsPanel(client);
-        threadsPanel.setPreferredSize(new Dimension(1200, 150));
-        contentPane.add(threadsPanel);
-
-        editorPanel = new EditorPanel();
-        editorPanel.setPreferredSize(new Dimension(1200, 150));
-        contentPane.add(editorPanel);
-
-        variablesPanel = new VariablesPanel();
-        variablesPanel.setPreferredSize(new Dimension(1200, 100));
-        contentPane.add(editorPanel);
-        contentPane.add(variablesPanel);
-
-        consolePanel = new ConsolePanel();
-        consolePanel.setPreferredSize(new Dimension(1200, 200));
-        contentPane.add(consolePanel);
-
-        frame.setSize(new Dimension(1200, 1000));
-        frame.pack();
-        frame.setVisible(true);
     }
 
     private void initDockableGui() {
@@ -267,8 +187,6 @@ public class Boris {
         DefaultDockable threadsDockable = new DefaultDockable();
         threadsDockable.add(threadsPanel);
         grid.addDockable(0, 0, 1, 2, threadsDockable);
-
-//        grid.addDockable(0,1,1,1, new DefaultDockable("SW"));
 
         editorPanel = new EditorPanel();
         DefaultDockable editorDockable = new DefaultDockable();
@@ -296,27 +214,26 @@ public class Boris {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         contentPane.add(station.getComponent());
         frame.setSize(new Dimension(1200, 1000));
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
     private void debugTarget() {
-        Target target = new Target(TARGET_FILENAME);
-        client = new GdbDebugClient(target, getGlobalBreakpointMgr());
-        threadsPanel.setClient(client);
-        variablesPanel.setClient(client);
-        client.initialize(42);
+        SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+            @Override
+            protected Boolean doInBackground() throws Exception {
+                Target target = new Target(TARGET_FILENAME);
+                client = new GdbDebugClient(target, getGlobalBreakpointMgr());
+                threadsPanel.setClient(client);
+                variablesPanel.setClient(client);
+                editorPanel.setClient(client);
+                client.initialize(42);
+                return true;
+            }
+        };
+        worker.execute();
     }
 
-    private void threads() {
-        if (client != null) {
-            DSPThread[] threads = client.getThreads();
-            Utils.out("threads = " + threads.length);
-            for (DSPThread thread : threads) {
-                StackFrame[] stackFrames = thread.getStackFrames();
-                Utils.out("stackFrames = " + stackFrames.length);
-            }
-        }
-    }
     public static GlobalBreakpointMgr getGlobalBreakpointMgr() {
         return globalBreakpointMgr.getInstance();
     }
