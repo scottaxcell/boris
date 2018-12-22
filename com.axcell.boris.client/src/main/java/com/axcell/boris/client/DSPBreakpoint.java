@@ -5,9 +5,9 @@ import com.axcell.boris.client.model.Breakpoint;
 import java.nio.file.Path;
 
 public class DSPBreakpoint implements Breakpoint {
-    private boolean isEnabled = false;
-    private Long lineNumber = null;
-    private Path path = null;
+    private boolean isEnabled;
+    private Long lineNumber;
+    private Path path;
 
     public DSPBreakpoint(Path path, Long lineNumber, boolean isEnabled) {
         this.path = path;
