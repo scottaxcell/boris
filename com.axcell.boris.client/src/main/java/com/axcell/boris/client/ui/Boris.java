@@ -1,5 +1,9 @@
 package com.axcell.boris.client.ui;
 
+import bibliothek.gui.DockController;
+import bibliothek.gui.dock.DefaultDockable;
+import bibliothek.gui.dock.SplitDockStation;
+import bibliothek.gui.dock.station.split.SplitDockGrid;
 import com.axcell.boris.client.debug.dsp.DSPBreakpoint;
 import com.axcell.boris.client.debug.dsp.DSPThread;
 import com.axcell.boris.client.GdbDebugClient;
@@ -63,7 +67,8 @@ public class Boris {
      */
 
     public Boris() {
-        SwingUtilities.invokeLater(() -> initGui());
+//        SwingUtilities.invokeLater(() -> initGui());
+        SwingUtilities.invokeLater(() -> initDockableGui());
     }
 
     private void initMenuBar() {
@@ -240,6 +245,57 @@ public class Boris {
 
         frame.setSize(new Dimension(1200, 1000));
         frame.pack();
+        frame.setVisible(true);
+    }
+
+    private void initDockableGui() {
+        frame = new JFrame("Boris");
+
+        initMenuBar();
+
+        contentPane = frame.getContentPane();
+        contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.PAGE_AXIS));
+
+        initToolBar();
+
+        DockController controller = new DockController();
+        SplitDockStation station = new SplitDockStation();
+        controller.add(station);
+        SplitDockGrid grid = new SplitDockGrid();
+
+        threadsPanel = new ThreadsPanel(client);
+        DefaultDockable threadsDockable = new DefaultDockable();
+        threadsDockable.add(threadsPanel);
+        grid.addDockable(0, 0, 1, 2, threadsDockable);
+
+//        grid.addDockable(0,1,1,1, new DefaultDockable("SW"));
+
+        editorPanel = new EditorPanel();
+        DefaultDockable editorDockable = new DefaultDockable();
+        editorDockable.add(editorPanel);
+        grid.addDockable(1, 0, 1, 2, editorDockable);
+
+        variablesPanel = new VariablesPanel();
+        DefaultDockable variablesDockable = new DefaultDockable();
+        variablesDockable.add(variablesPanel);
+        grid.addDockable(2, 0, 1, 1, variablesDockable);
+
+        breakpointsPanel = new BreakpointsPanel(getGlobalBreakpointMgr());
+        addBreakpointListener(breakpointsPanel);
+        DefaultDockable breakpointsDockable = new DefaultDockable();
+        breakpointsDockable.add(breakpointsPanel);
+        grid.addDockable(2, 1, 1, 1, breakpointsDockable);
+
+        consolePanel = new ConsolePanel();
+        DefaultDockable consoleDockable = new DefaultDockable();
+        consoleDockable.add(consolePanel);
+        grid.addDockable(0, 2, 3, 1, consoleDockable);
+
+        station.dropTree(grid.toTree());
+
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        contentPane.add(station.getComponent());
+        frame.setSize(new Dimension(1200, 1000));
         frame.setVisible(true);
     }
 
