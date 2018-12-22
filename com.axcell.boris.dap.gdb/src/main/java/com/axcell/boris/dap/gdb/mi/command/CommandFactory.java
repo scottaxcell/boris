@@ -30,6 +30,12 @@ public class CommandFactory {
         return execContinueCommand;
     }
 
+    public ExecNextCommand createExecNext() {
+        ExecNextCommand execNextCommand = new ExecNextCommand();
+        execNextCommand.setIgnoreResponse(true);
+        return execNextCommand;
+    }
+
     public ThreadsInfoCommand createThreadsInfo() {
         ThreadsInfoCommand threadsInfoCommand = new ThreadsInfoCommand();
         threadsInfoCommand.setRequiresResponse(true);

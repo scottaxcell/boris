@@ -169,6 +169,16 @@ public class GdbDebugClient implements IDebugProtocolClient {
         }
     }
 
+    public void next() {
+        NextArguments args = new NextArguments();
+        try {
+            getDebugServer().next(args).get();
+        }
+        catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void stopped(StoppedEventArguments args) {
         Utils.debug(this.getClass().getSimpleName() + ": stopped");
@@ -183,7 +193,7 @@ public class GdbDebugClient implements IDebugProtocolClient {
             DebugEvent event = new DebugEvent(DebugEvent.CONSOLE_OUTPUT, this, args.getOutput());
             Boris.getDebugEventMgr().fireEvent(event);
         }
-        else if ("target".equals(args.getCategory())){
+        else if ("target".equals(args.getCategory())) {
             DebugEvent event = new DebugEvent(DebugEvent.TARGET_OUTPUT, this, args.getOutput());
             Boris.getDebugEventMgr().fireEvent(event);
         }

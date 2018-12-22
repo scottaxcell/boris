@@ -9,6 +9,7 @@ import org.eclipse.lsp4j.debug.ScopesArguments;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
 
 public class DSPStackFrame extends DSPDebugElement implements StackFrame {
     private DSPThread thread;
@@ -31,7 +32,13 @@ public class DSPStackFrame extends DSPDebugElement implements StackFrame {
     public Variable[] getVariables() {
         ScopesArguments scopesArguments = new ScopesArguments();
         scopesArguments.setFrameId(stackFrame.getId());
-        Scope[] scopes = complete(getDebugClient().getDebugServer().scopes(scopesArguments)).getScopes();
+        Scope[] scopes = new Scope[0];
+        try {
+            scopes = getDebugClient().getDebugServer().scopes(scopesArguments).get().getScopes();
+        }
+        catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
         List<DSPVariable> variables = new ArrayList<>();
         for (Scope scope : scopes) {
             DSPVariable variable = new DSPVariable(this, scope.getVariablesReference(), scope.getName(), "");
@@ -56,5 +63,9 @@ public class DSPStackFrame extends DSPDebugElement implements StackFrame {
             return this;
         }
         return new DSPStackFrame(thread, stackFrame, depth);
+    }
+
+    public int getDepth() {
+        return depth;
     }
 }

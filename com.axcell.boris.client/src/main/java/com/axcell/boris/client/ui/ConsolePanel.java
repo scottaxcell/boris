@@ -22,6 +22,9 @@ public class ConsolePanel extends JPanel implements DebugEventListener {
         add(new JScrollPane(textArea));
     }
 
+    private void cleanup() {
+        Boris.getDebugEventMgr().removeListener(this);
+    }
 
     @Override
     public void handleEvent(DebugEvent event) {

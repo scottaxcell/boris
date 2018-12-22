@@ -15,9 +15,7 @@ public class BreakpointsPanel extends JPanel implements BreakpointListener {
 
     public BreakpointsPanel(IBreakpointMgr breakpointMgr) {
         super(new BorderLayout());
-
         this.breakpointMgr = breakpointMgr;
-
         init();
     }
 
@@ -84,7 +82,6 @@ public class BreakpointsPanel extends JPanel implements BreakpointListener {
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
             Breakpoint breakpoint = getBreakpoints()[rowIndex];
-//            getBreakpoints()[rowIndex].setEnabled((boolean) aValue);
             breakpointMgr.setBreakpointEnabled(breakpoint, (Boolean) aValue);
         }
 
@@ -98,5 +95,4 @@ public class BreakpointsPanel extends JPanel implements BreakpointListener {
             return columnIndex == 0;
         }
     }
-
 }

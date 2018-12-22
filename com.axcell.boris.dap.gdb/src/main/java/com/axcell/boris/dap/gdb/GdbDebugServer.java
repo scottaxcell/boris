@@ -162,8 +162,10 @@ public class GdbDebugServer implements IDebugProtocolServer {
             while (commandResponses.size() != tokens.size()) {
                 for (Integer token : tokens) {
                     if (readCommands.containsKey(token)) {
-                        CommandWrapper commandWrapper = readCommands.remove(token);
-                        commandResponses.add(commandWrapper);
+                        synchronized (readCommands) {
+                            CommandWrapper commandWrapper = readCommands.remove(token);
+                            commandResponses.add(commandWrapper);
+                        }
                     }
                 }
                 try {
@@ -217,8 +219,10 @@ public class GdbDebugServer implements IDebugProtocolServer {
             // TODO start timer to flag any commandWrapper that doesn't get a response
             while (true) {
                 if (readCommands.containsKey(token)) {
-                    CommandWrapper commandWrapper = readCommands.remove(token);
-                    return getContinueResponse(commandWrapper);
+                    synchronized (readCommands) {
+                        CommandWrapper commandWrapper = readCommands.remove(token);
+                        return getContinueResponse(commandWrapper);
+                    }
                 }
                 try {
                     Thread.sleep(200);
@@ -237,8 +241,9 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
     @Override
     public CompletableFuture<Void> next(NextArguments args) {
-//        MIGdbNext miGdbNext = miCommandFactory.createGdbNext();
-//        queueCommand(miGdbNext);
+        // TODO add support handling threadId in args
+        ExecNextCommand miGdbNext = commandFactory.createExecNext();
+        queueCommand(miGdbNext);
         return CompletableFuture.completedFuture(null);
     }
 
@@ -486,7 +491,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
             token = commandWrapper.getToken();
         }
         commandQueue.add(commandWrapper);
-        Utils.debug("queued.. " + commandWrapper.getCommand().constructCommand());
+        Utils.debug("queued.. " + token + commandWrapper.getCommand().constructCommand());
         return token;
     }
 

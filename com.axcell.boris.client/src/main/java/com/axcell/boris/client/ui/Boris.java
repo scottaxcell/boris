@@ -1,12 +1,15 @@
 package com.axcell.boris.client.ui;
 
 import com.axcell.boris.client.DSPBreakpoint;
+import com.axcell.boris.client.DSPThread;
 import com.axcell.boris.client.GdbDebugClient;
 import com.axcell.boris.client.event.DebugEventMgr;
 import com.axcell.boris.client.model.BreakpointListener;
 import com.axcell.boris.client.model.BreakpointMgr;
+import com.axcell.boris.client.model.StackFrame;
 import com.axcell.boris.client.ui.event.GUIEventMgr;
 import com.axcell.boris.dap.gdb.Target;
+import com.axcell.boris.utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,6 +43,7 @@ public class Boris {
     private BreakpointsPanel breakpointsPanel;
     private VariablesPanel variablesPanel;
     private ConsolePanel consolePanel;
+    private ThreadsPanel threadsPanel;
 
     private static BreakpointMgr breakpointMgr;
     private static GUIEventMgr guiEventMgr;
@@ -136,6 +140,17 @@ public class Boris {
         });
         toolBar.add(debugAppButton);
 
+        JButton nextButton = new JButton("Next");
+        nextButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (client != null) {
+                    client.next();
+                }
+            }
+        });
+        toolBar.add(nextButton);
+
         JButton continueAppButton = new JButton("Continue");
         continueAppButton.addActionListener(new ActionListener() {
             @Override
@@ -164,6 +179,15 @@ public class Boris {
             }
         });
         toolBar.add(bogusVariablesButton);
+
+        JButton threadsButton = new JButton("Threads");
+        threadsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                threads();
+            }
+        });
+        toolBar.add(threadsButton);
 
         contentPane.add(toolBar);
     }
@@ -197,8 +221,12 @@ public class Boris {
         addBreakpointListener(breakpointsPanel);
         contentPane.add(breakpointsPanel);
 
+        threadsPanel = new ThreadsPanel(client);
+        threadsPanel.setPreferredSize(new Dimension(1200, 150));
+        contentPane.add(threadsPanel);
+
         editorPanel = new EditorPanel();
-        editorPanel.setPreferredSize(new Dimension(1200, 300));
+        editorPanel.setPreferredSize(new Dimension(1200, 150));
         contentPane.add(editorPanel);
 
         variablesPanel = new VariablesPanel();
@@ -207,7 +235,7 @@ public class Boris {
         contentPane.add(variablesPanel);
 
         consolePanel = new ConsolePanel();
-        consolePanel.setPreferredSize(new Dimension(1200, 300));
+        consolePanel.setPreferredSize(new Dimension(1200, 200));
         contentPane.add(consolePanel);
 
         frame.setSize(new Dimension(1200, 1000));
@@ -218,9 +246,20 @@ public class Boris {
     private void debugTarget() {
         Target target = new Target(TARGET_FILENAME);
         client = new GdbDebugClient(target, getBreakpointMgr());
+        threadsPanel.setClient(client);
         client.initialize(42);
     }
 
+    private void threads() {
+        if (client != null) {
+            DSPThread[] threads = client.getThreads();
+            Utils.out("threads = " + threads.length);
+            for (DSPThread thread : threads) {
+                StackFrame[] stackFrames = thread.getStackFrames();
+                Utils.out("stackFrames = " + stackFrames.length);
+            }
+        }
+    }
     public static BreakpointMgr getBreakpointMgr() {
         return breakpointMgr.getInstance();
     }
