@@ -6,6 +6,8 @@ public class DebugEvent {
     public static final int THREAD = 2;
     public static final int CONSOLE_OUTPUT = 3;
     public static final int TARGET_OUTPUT = 4;
+    public static final int TERMINATED = 5;
+    public static final int EXITED = 6;
 
     private int type;
     private Object source;

@@ -187,7 +187,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
             Breakpoint breakpoint = OutputParser.parseBreakpointsResponse(output);
             if (breakpoint != null)
                 breakpoints.add(breakpoint);
-            Utils.debug(this.getClass().getSimpleName() + " " + commandWrapper.getToken() + "." + commandWrapper.getCommand().constructCommand());
+            Utils.debug(this.getClass().getSimpleName() + " " + commandWrapper.getToken() + commandWrapper.getCommand().constructCommand());
         }
         // TODO parse commandWrapper response into set breakpoint reponse maintaining same order as original args
         if (!breakpoints.isEmpty())

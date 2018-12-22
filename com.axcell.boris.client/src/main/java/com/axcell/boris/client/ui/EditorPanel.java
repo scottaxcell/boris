@@ -5,24 +5,30 @@ import com.axcell.boris.client.debug.dsp.DSPBreakpoint;
 import com.axcell.boris.client.debug.event.DebugEvent;
 import com.axcell.boris.client.debug.event.DebugEventListener;
 import com.axcell.boris.client.debug.model.Breakpoint;
-import com.axcell.boris.utils.Utils;
 import com.google.common.base.Strings;
 
 import javax.swing.*;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
-import javax.swing.text.Utilities;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.Reader;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * TODO
+ * update textpane each time debugger stops
+ * remove bold when debugger terminates
+ */
 public class EditorPanel extends JPanel implements DebugEventListener {
-    private JEditorPane editorPane;
+    private String[] contents;
+    private JTextPane textPane;
     private GdbDebugClient client;
+    private Long currentDebugLineNumber;
 
     /**
      * FOR DEBUG/DEVELOPMENT
@@ -30,31 +36,74 @@ public class EditorPanel extends JPanel implements DebugEventListener {
     private static final String TEST_CASE_DIR = "/home/saxcell/dev/boris/testcases/threadexample";
     private static final String SOURCE_FILENAME = String.format("%s/threadexample.cpp", TEST_CASE_DIR);
     private static final String TARGET_FILENAME = String.format("%s/threadexample", TEST_CASE_DIR);
+
     /**
      * END FOR DEBUG/DEVELOPMENT
      */
 
     public EditorPanel() {
         super(new BorderLayout());
+        initContents();
+        Boris.getDebugEventMgr().addListener(this);
         init();
+    }
+
+    private void initContents() {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(SOURCE_FILENAME))) {
+            List<String> lines = new ArrayList<>();
+            String line = null;
+            while ((line = bufferedReader.readLine()) != null) {
+                lines.add(line);
+            }
+            contents = lines.toArray(new String[lines.size()]);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updateText(Long lineToBold) {
+        textPane.setText("");
+        Document document = textPane.getDocument();
+        for (int i = 0; i < contents.length; i++) {
+            if (lineToBold != null && lineToBold == (i + 1)) {
+                SimpleAttributeSet attributeSet = new SimpleAttributeSet();
+                attributeSet.addAttribute(StyleConstants.CharacterConstants.Bold, Boolean.TRUE);
+                try {
+                    document.insertString(document.getLength(), contents[i] + "\n", attributeSet);
+                }
+                catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
+            }
+            else {
+                SimpleAttributeSet attributeSet = new SimpleAttributeSet();
+                try {
+                    document.insertString(document.getLength(), contents[i] + "\n", attributeSet);
+                }
+                catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     private void init() {
         setBorder(BorderFactory.createTitledBorder("Editor"));
 
-        editorPane = new JEditorPane();
-        editorPane.setEditable(false);
+        textPane = new JTextPane();
+        textPane.setEditable(false);
 
-        editorPane.addMouseListener(new MouseListener() {
+        textPane.addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isRightMouseButton(e)) {
                     try {
                         Point point = e.getPoint();
-                        Document doc = editorPane.getDocument();
-                        int pos = editorPane.viewToModel(point);
-                        int rowStart = Utilities.getRowStart(editorPane, pos);
-                        int rowEnd = Utilities.getRowEnd(editorPane, pos);
+                        Document doc = textPane.getDocument();
+                        int pos = textPane.viewToModel(point);
+                        int rowStart = Utilities.getRowStart(textPane, pos);
+                        int rowEnd = Utilities.getRowEnd(textPane, pos);
                         String lineText = doc.getText(pos, rowEnd - rowStart);
                         if (Strings.isNullOrEmpty(lineText))
                             return;
@@ -99,15 +148,10 @@ public class EditorPanel extends JPanel implements DebugEventListener {
 
             }
         });
-        try {
-            Reader reader = new FileReader(SOURCE_FILENAME);
-            editorPane.read(reader, null);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        JScrollPane scrollPane = new JScrollPane(editorPane);
+        updateText(null);
+
+        JScrollPane scrollPane = new JScrollPane(textPane);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
         add(scrollPane, BorderLayout.CENTER);
@@ -119,25 +163,28 @@ public class EditorPanel extends JPanel implements DebugEventListener {
             SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
                 @Override
                 protected Boolean doInBackground() throws Exception {
-                    // TODO get line number from current frame
-//                    client.getStackFrames();
+                    if (client != null)
+                        currentDebugLineNumber = client.getThreads()[0].getTopStackFrame().getLineNumber();
+                    else
+                        currentDebugLineNumber = null;
                     return true;
                 }
 
                 @Override
                 protected void done() {
-                    // TODO paint label or something on to appropriate line to denote debugger has stopped here
-                    Document doc = editorPane.getDocument();
-                    for (int position = 0; position < doc.getLength(); position++) {
-                        Long lineNumber = Long.valueOf(doc.getDefaultRootElement().getElementIndex(position) + 1);
-//                        if (lineNumber == line number from stackframe) {
-//                           paint something on line
-//                           return;
-//                        }
-                    }
+                    SwingUtilities.invokeLater(() -> {
+                        updateText(currentDebugLineNumber);
+                    });
                 }
             };
-//            worker.execute();
+            worker.execute();
+        }
+        else if (event.getType() == DebugEvent.EXITED
+                || event.getType() == DebugEvent.TERMINATED) {
+            currentDebugLineNumber = null;
+            SwingUtilities.invokeLater(() -> {
+                updateText(currentDebugLineNumber);
+            });
         }
     }
 

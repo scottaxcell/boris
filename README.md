@@ -2,10 +2,14 @@
 GDB implementation of Debug Adapter Protocol as a proof of concept. This includes the GDB DAP server and a GDB Debugger GUI client.
 
 ### TODO
-* variables panel is not always updating, looks like threads panel is interferring with it's calls to the client/server
+* align client debug model with eclipse cdt model better
+* BUG - variables panel is not always updating, looks like threads panel is interferring with it's calls to the client/server
 
 ### BACKLOG
-* move helloworld testcase to server module under resources and restructure test so it is can be run anywhere
+* editor panel should not scroll to bottom each time it updates
+* variables panel should key off thread selected in threads panel
+* continue should key off selected thread in threads panel
+* next should key off selected thread in threads panel
 * add visible label? to denote where in the source code debugger has stopped
 * when program is running variables and threads panel need to update accordingly
 * when program ends variables and threads panel need to update accordingly

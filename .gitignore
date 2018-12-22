@@ -5,3 +5,4 @@ com.axcell.boris.client/target/*
 com.axcell.boris.dap.gdb/target/*
 com.axcell.boris.utils/target/*
 testcases/helloworld/helloworld
+testcases/threadexample/threadexample

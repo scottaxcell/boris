@@ -18,7 +18,7 @@ public class GdbDebugClientTest {
 
     private static final String[] makeCmdLine = {"make", "-f", "makefile"};
     private final String TEST_CASE_DIR = this.getClass().getResource("/threadexample").getPath();
-    private final String SOURCE_FILENAME = this.getClass().getResource("/threadexample/threadexample.cpp").getPath();
+    private final String SOURCE_FILENAME = this.getClass().getResource("/threadexample.cpp").getPath();
     private final String TARGET_FILENAME = String.format("%s/threadexample", TEST_CASE_DIR);
     private Target target = new Target(TARGET_FILENAME);
 

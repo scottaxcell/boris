@@ -141,11 +141,15 @@ public class GdbDebugClient extends DSPDebugElement implements IDebugProtocolCli
     @Override
     public void exited(ExitedEventArguments args) {
         Utils.debug(this.getClass().getSimpleName() + ": exited with code = " + args.getExitCode());
+        DebugEvent event = new DebugEvent(DebugEvent.EXITED, this, args);
+        Boris.getDebugEventMgr().fireEvent(event);
     }
 
     @Override
     public void terminated(TerminatedEventArguments args) {
         Utils.debug(this.getClass().getSimpleName() + ": terminated");
+        DebugEvent event = new DebugEvent(DebugEvent.TERMINATED, this, args);
+        Boris.getDebugEventMgr().fireEvent(event);
     }
 
     @Override
