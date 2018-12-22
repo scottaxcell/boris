@@ -1,6 +1,6 @@
-package com.axcell.boris.client.model;
+package com.axcell.boris.client.debug.model;
 
-public interface IBreakpointMgr {
+public interface BreakpointMgr {
     void addBreakpoint(Breakpoint breakpoint);
 
     void removeBreakpoint(Breakpoint breakpoint);

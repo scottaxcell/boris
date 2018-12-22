@@ -1,6 +1,6 @@
 package com.axcell.boris.client;
 
-import com.axcell.boris.client.model.BreakpointMgr;
+import com.axcell.boris.client.debug.model.GlobalBreakpointMgr;
 import com.axcell.boris.dap.gdb.Target;
 import org.eclipse.lsp4j.debug.Capabilities;
 import org.junit.Assert;
@@ -18,7 +18,7 @@ public class GdbDebugClientTest {
     private static final String SOURCE_FILENAME = String.format("%s/helloworld.cpp", TEST_CASE_DIR);
     private static final String TARGET_FILENAME = String.format("%s/helloworld", TEST_CASE_DIR);
     private Target target = new Target(TARGET_FILENAME);
-    private BreakpointMgr breakpointMgr = BreakpointMgr.getInstance();
+    private GlobalBreakpointMgr globalBreakpointMgr = GlobalBreakpointMgr.getInstance();
 
     @org.junit.Before
     public void setUp() throws Exception {
@@ -30,7 +30,7 @@ public class GdbDebugClientTest {
 
     @Test
     public void initialize() throws ExecutionException, InterruptedException {
-        GdbDebugClient client = new GdbDebugClient(target, breakpointMgr);
+        GdbDebugClient client = new GdbDebugClient(target, globalBreakpointMgr);
         client.initialize(42);
         Assert.assertTrue(client.isInitialized());
 

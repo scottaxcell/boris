@@ -1,11 +1,11 @@
 package com.axcell.boris.client.ui;
 
-import com.axcell.boris.client.DSPStackFrame;
-import com.axcell.boris.client.DSPThread;
+import com.axcell.boris.client.debug.dsp.DSPStackFrame;
+import com.axcell.boris.client.debug.dsp.DSPThread;
 import com.axcell.boris.client.GdbDebugClient;
-import com.axcell.boris.client.event.DebugEvent;
-import com.axcell.boris.client.event.DebugEventListener;
-import com.axcell.boris.client.model.StackFrame;
+import com.axcell.boris.client.debug.event.DebugEvent;
+import com.axcell.boris.client.debug.event.DebugEventListener;
+import com.axcell.boris.client.debug.model.StackFrame;
 
 import javax.swing.*;
 import javax.swing.tree.*;
@@ -51,7 +51,7 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
                 @Override
                 protected Boolean doInBackground() throws Exception {
                     model.updateModel();
-                    return false;
+                    return true;
                 }
 
                 @Override

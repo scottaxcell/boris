@@ -1,7 +1,7 @@
 package com.axcell.boris.client.ui;
 
-import com.axcell.boris.client.event.DebugEvent;
-import com.axcell.boris.client.event.DebugEventListener;
+import com.axcell.boris.client.debug.event.DebugEvent;
+import com.axcell.boris.client.debug.event.DebugEventListener;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,10 +31,10 @@ public class ConsolePanel extends JPanel implements DebugEventListener {
         if (event.getObject() instanceof String) {
             String prefix = null;
             if (event.getType() == DebugEvent.CONSOLE_OUTPUT) {
-                prefix = "GDB DEBUG: ";
+                prefix = "GDB: ";
             }
             else if (event.getType() == DebugEvent.TARGET_OUTPUT) {
-                prefix = "TARGET OUTPUT: ";
+                prefix = "TARGET: ";
             }
             String finalPrefix = prefix;
             SwingUtilities.invokeLater(() -> {

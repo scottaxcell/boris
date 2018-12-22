@@ -1,4 +1,5 @@
 TODO:
+* thread-info command is not getting a response after debugger has hit a stop event
 
 BACKLOG:
 * add right click in editor to add/remove breakpoint

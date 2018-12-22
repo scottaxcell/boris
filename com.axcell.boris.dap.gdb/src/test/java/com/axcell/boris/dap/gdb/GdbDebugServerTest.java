@@ -77,7 +77,7 @@ public class GdbDebugServerTest {
         clientListening = clientLauncher.startListening();
 
         InitializeRequestArguments initializeRequestArguments = new InitializeRequestArguments();
-        initializeRequestArguments.setClientID("com.boris.debug");
+        initializeRequestArguments.setClientID("com.boris.dsp");
         initializeRequestArguments.setAdapterID("adapterId");
         initializeRequestArguments.setPathFormat("path");
         initializeRequestArguments.setSupportsVariableType(true);

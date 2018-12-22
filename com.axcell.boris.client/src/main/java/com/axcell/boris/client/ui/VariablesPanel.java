@@ -1,8 +1,11 @@
 package com.axcell.boris.client.ui;
 
 import com.axcell.boris.client.GdbDebugClient;
-import com.axcell.boris.client.event.DebugEvent;
-import com.axcell.boris.client.event.DebugEventListener;
+import com.axcell.boris.client.debug.dsp.DSPThread;
+import com.axcell.boris.client.debug.event.DebugEvent;
+import com.axcell.boris.client.debug.event.DebugEventListener;
+import com.axcell.boris.client.debug.model.StackFrame;
+import com.axcell.boris.client.debug.model.Variable;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -17,6 +20,7 @@ public class VariablesPanel extends JPanel implements DebugEventListener {
 
     public VariablesPanel() {
         super(new BorderLayout());
+        Boris.getDebugEventMgr().addListener(this);
         init();
     }
 
@@ -26,12 +30,6 @@ public class VariablesPanel extends JPanel implements DebugEventListener {
         model = new VariablesTableModel();
         table = new JTable(model);
         add(new JScrollPane(table), BorderLayout.CENTER);
-    }
-
-    public void addVariable(Variable variable) {
-        if (model != null) {
-            model.addVariable(variable);
-        }
     }
 
     public GdbDebugClient getClient() {
@@ -45,31 +43,32 @@ public class VariablesPanel extends JPanel implements DebugEventListener {
     @Override
     public void handleEvent(DebugEvent event) {
         if (event.getType() == DebugEvent.STOPPED) {
-            // TODO ask client for variables
-        }
-    }
+            SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+                @Override
+                protected Boolean doInBackground() throws Exception {
+                    model.updateModel();
+                    return true;
+                }
 
-    public static class Variable {
-        String name;
-        String value;
-
-        public Variable(String name, String variable) {
-            this.name = name;
-            this.value = variable;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getValue() {
-            return value;
+                @Override
+                protected void done() {
+                    SwingUtilities.invokeLater(() -> {
+                        model.fireTableDataChanged();
+                    });
+                }
+            };
+            worker.execute();
         }
     }
 
     private class VariablesTableModel extends AbstractTableModel {
         private String[] columnNames = new String[]{"Name", "Value"};
         List<Variable> variables = new ArrayList<>();
+
+        void addVariables(Variable[] variables) {
+            for (Variable variable : variables)
+                addVariable(variable);
+        }
 
         void addVariable(Variable variable) {
             variables.add(variable);
@@ -93,11 +92,25 @@ public class VariablesPanel extends JPanel implements DebugEventListener {
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            if (columnIndex == 0) {
+            if (columnIndex == 0)
                 return variables.get(rowIndex).getName();
-            }
-            else {
+            else
                 return variables.get(rowIndex).getValue();
+        }
+
+        public void updateModel() {
+            if (client == null)
+                return;
+
+            DSPThread[] threads = client.getThreads();
+            for (DSPThread thread : threads) {
+                StackFrame[] stackFrames = thread.getStackFrames();
+                if (stackFrames.length != 0) {
+                    for (StackFrame stackFrame : stackFrames) {
+                        Variable[] variables = stackFrame.getVariables();
+                        addVariables(variables);
+                    }
+                }
             }
         }
     }

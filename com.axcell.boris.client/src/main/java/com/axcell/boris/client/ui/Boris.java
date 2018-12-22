@@ -1,12 +1,12 @@
 package com.axcell.boris.client.ui;
 
-import com.axcell.boris.client.DSPBreakpoint;
-import com.axcell.boris.client.DSPThread;
+import com.axcell.boris.client.debug.dsp.DSPBreakpoint;
+import com.axcell.boris.client.debug.dsp.DSPThread;
 import com.axcell.boris.client.GdbDebugClient;
-import com.axcell.boris.client.event.DebugEventMgr;
-import com.axcell.boris.client.model.BreakpointListener;
-import com.axcell.boris.client.model.BreakpointMgr;
-import com.axcell.boris.client.model.StackFrame;
+import com.axcell.boris.client.debug.event.DebugEventMgr;
+import com.axcell.boris.client.debug.model.BreakpointListener;
+import com.axcell.boris.client.debug.model.GlobalBreakpointMgr;
+import com.axcell.boris.client.debug.model.StackFrame;
 import com.axcell.boris.client.ui.event.GUIEventMgr;
 import com.axcell.boris.dap.gdb.Target;
 import com.axcell.boris.utils.Utils;
@@ -20,7 +20,7 @@ import java.nio.file.Paths;
 public class Boris {
     /**
      * COMPONENTS
-     * menubar (open file, run exe, debug exe, exit)
+     * menubar (open file, run exe, dsp exe, exit)
      * editor
      * breakpoints
      * varables
@@ -28,7 +28,7 @@ public class Boris {
      * console
      * <p>
      * TODO
-     * launch debug process somehow, maybe a DebugSession holds a gdbdebugclient
+     * launch dsp process somehow, maybe a DebugSession holds a gdbdebugclient
      * - client should take target
      * - initialize
      * - setBreakpoints
@@ -45,7 +45,7 @@ public class Boris {
     private ConsolePanel consolePanel;
     private ThreadsPanel threadsPanel;
 
-    private static BreakpointMgr breakpointMgr;
+    private static GlobalBreakpointMgr globalBreakpointMgr;
     private static GUIEventMgr guiEventMgr;
     private static DebugEventMgr debugEventMgr;
 
@@ -193,16 +193,16 @@ public class Boris {
     }
 
     private void addBogusBreakpoints() {
-//        getBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 8L, true));
-//        getBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 11L, false));
-        getBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 13L, true));
+//        getGlobalBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 8L, true));
+//        getGlobalBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 11L, false));
+        getGlobalBreakpointMgr().addBreakpoint(new DSPBreakpoint(Paths.get(SOURCE_FILENAME), 13L, true));
     }
 
     private void addBogusVariables() {
-        variablesPanel.addVariable(new VariablesPanel.Variable("count", "1"));
-        variablesPanel.addVariable(new VariablesPanel.Variable("isEarthFlat", "false"));
-        variablesPanel.addVariable(new VariablesPanel.Variable("numElephants", "32"));
-        variablesPanel.addVariable(new VariablesPanel.Variable("nameOfCoffee", "Kenyan"));
+//        variablesPanel.addVariable(new VariablesPanel.Variable("count", "1"));
+//        variablesPanel.addVariable(new VariablesPanel.Variable("isEarthFlat", "false"));
+//        variablesPanel.addVariable(new VariablesPanel.Variable("numElephants", "32"));
+//        variablesPanel.addVariable(new VariablesPanel.Variable("nameOfCoffee", "Kenyan"));
     }
 
     private void initGui() {
@@ -216,7 +216,7 @@ public class Boris {
 
         initToolBar();
 
-        breakpointsPanel = new BreakpointsPanel(getBreakpointMgr());
+        breakpointsPanel = new BreakpointsPanel(getGlobalBreakpointMgr());
         breakpointsPanel.setPreferredSize(new Dimension(1200, 100));
         addBreakpointListener(breakpointsPanel);
         contentPane.add(breakpointsPanel);
@@ -245,8 +245,9 @@ public class Boris {
 
     private void debugTarget() {
         Target target = new Target(TARGET_FILENAME);
-        client = new GdbDebugClient(target, getBreakpointMgr());
+        client = new GdbDebugClient(target, getGlobalBreakpointMgr());
         threadsPanel.setClient(client);
+        variablesPanel.setClient(client);
         client.initialize(42);
     }
 
@@ -260,16 +261,16 @@ public class Boris {
             }
         }
     }
-    public static BreakpointMgr getBreakpointMgr() {
-        return breakpointMgr.getInstance();
+    public static GlobalBreakpointMgr getGlobalBreakpointMgr() {
+        return globalBreakpointMgr.getInstance();
     }
 
     public void addBreakpointListener(BreakpointListener listener) {
-        getBreakpointMgr().addBreakpointListener(listener);
+        getGlobalBreakpointMgr().addBreakpointListener(listener);
     }
 
     public void removeBreakpointListener(BreakpointListener listener) {
-        getBreakpointMgr().removeBreakpointListener(listener);
+        getGlobalBreakpointMgr().removeBreakpointListener(listener);
     }
 
     public static DebugEventMgr getDebugEventMgr() {

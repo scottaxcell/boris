@@ -6,6 +6,7 @@ import java.util.List;
 /**
  * Represents a set name=value.
  */
+// TODO rename and rewrite in my style
 public class MIArg {
     String name;
     String value;

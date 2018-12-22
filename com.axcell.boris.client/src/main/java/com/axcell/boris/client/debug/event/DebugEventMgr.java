@@ -1,4 +1,4 @@
-package com.axcell.boris.client.event;
+package com.axcell.boris.client.debug.event;
 
 import java.util.ArrayList;
 import java.util.List;

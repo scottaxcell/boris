@@ -511,7 +511,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
 //                    token = commandWrapper.getToken();
 //                }
 ////                writtenCommands.add(commandWrapper);
-//                Utils.debug(commandWrapper.getCommand().constructCommand() + " processed..");
+//                Utils.dsp(commandWrapper.getCommand().constructCommand() + " processed..");
 //            }
 //        }
 //        return token;

@@ -1,8 +1,10 @@
 package com.axcell.boris.client;
 
-import com.axcell.boris.client.event.DebugEvent;
-import com.axcell.boris.client.model.BreakpointMgr;
-import com.axcell.boris.client.model.IBreakpointMgr;
+import com.axcell.boris.client.debug.dsp.DSPBreakpointMgr;
+import com.axcell.boris.client.debug.dsp.DSPThread;
+import com.axcell.boris.client.debug.event.DebugEvent;
+import com.axcell.boris.client.debug.model.GlobalBreakpointMgr;
+import com.axcell.boris.client.debug.model.BreakpointMgr;
 import com.axcell.boris.client.ui.Boris;
 import com.axcell.boris.dap.gdb.GdbDebugServer;
 import com.axcell.boris.dap.gdb.Target;
@@ -46,7 +48,7 @@ public class GdbDebugClient implements IDebugProtocolClient {
     /**
      * Global breakpoint manager
      */
-    private BreakpointMgr breakpointMgr;
+    private GlobalBreakpointMgr globalBreakpointMgr;
     private DSPBreakpointMgr dspBreakpointMgr;
     /**
      * The initialized event will mark this as complete
@@ -57,14 +59,14 @@ public class GdbDebugClient implements IDebugProtocolClient {
      */
     private Map<Long, DSPThread> threads = Collections.synchronizedMap(new TreeMap<>());
     /**
-     * Update the threads list from the debug adapter
+     * Update the threads list from the dsp adapter
      */
     private AtomicBoolean refreshThreads = new AtomicBoolean(true);
 
 
-    public GdbDebugClient(Target target, BreakpointMgr breakpointMgr) {
+    public GdbDebugClient(Target target, GlobalBreakpointMgr globalBreakpointMgr) {
         this.target = target;
-        this.breakpointMgr = breakpointMgr;
+        this.globalBreakpointMgr = globalBreakpointMgr;
     }
 
     public void initialize(int bogus) {
@@ -97,7 +99,7 @@ public class GdbDebugClient implements IDebugProtocolClient {
         clientListening = clientLauncher.startListening();
 
         InitializeRequestArguments initializeRequestArguments = new InitializeRequestArguments();
-        initializeRequestArguments.setClientID("com.boris.debug");
+        initializeRequestArguments.setClientID("com.boris.dsp");
         initializeRequestArguments.setAdapterID("adapterId");
         initializeRequestArguments.setPathFormat("path");
         initializeRequestArguments.setSupportsVariableType(true);
@@ -112,7 +114,7 @@ public class GdbDebugClient implements IDebugProtocolClient {
                 }).thenCombineAsync(initialized, (v1, v2) -> {
                     return (Void) null;
                 }).thenCompose((v) -> {
-                    dspBreakpointMgr = new DSPBreakpointMgr(getBreakpointMgr(), getDebugServer());
+                    dspBreakpointMgr = new DSPBreakpointMgr(getGlobalBreakpointMgr(), getDebugServer());
                     return dspBreakpointMgr.initialize();
                 }).thenCompose((v) -> {
                     return getDebugServer().launch(new HashMap<String, Object>());
@@ -203,8 +205,8 @@ public class GdbDebugClient implements IDebugProtocolClient {
         return debugServer;
     }
 
-    public IBreakpointMgr getBreakpointMgr() {
-        return breakpointMgr;
+    public BreakpointMgr getGlobalBreakpointMgr() {
+        return globalBreakpointMgr;
     }
 
     public DSPThread[] getThreads() {

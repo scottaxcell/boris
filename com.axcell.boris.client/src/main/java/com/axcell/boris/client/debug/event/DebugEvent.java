@@ -1,4 +1,4 @@
-package com.axcell.boris.client.event;
+package com.axcell.boris.client.debug.event;
 
 public class DebugEvent {
     public static final int STOPPED = 0;

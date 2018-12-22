@@ -1,4 +1,4 @@
-package com.axcell.boris.client.model;
+package com.axcell.boris.client.debug.model;
 
 /**
 * Represents a thread in a process.

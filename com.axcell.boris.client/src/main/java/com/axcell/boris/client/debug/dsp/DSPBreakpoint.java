@@ -1,6 +1,6 @@
-package com.axcell.boris.client;
+package com.axcell.boris.client.debug.dsp;
 
-import com.axcell.boris.client.model.Breakpoint;
+import com.axcell.boris.client.debug.model.Breakpoint;
 
 import java.nio.file.Path;
 

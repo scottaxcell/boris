@@ -1,22 +1,22 @@
-package com.axcell.boris.client.model;
+package com.axcell.boris.client.debug.model;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class BreakpointMgr implements IBreakpointMgr {
-    private static BreakpointMgr breakpointMgr;
+public class GlobalBreakpointMgr implements BreakpointMgr {
+    private static GlobalBreakpointMgr globalBreakpointMgr;
     private List<Breakpoint> breakpoints;
     private List<BreakpointListener> listeners;
 
-    private BreakpointMgr() {
+    private GlobalBreakpointMgr() {
         breakpoints = new ArrayList<>();
         listeners = new ArrayList<>();
     }
 
-    public static BreakpointMgr getInstance() {
-        if (breakpointMgr == null)
-            breakpointMgr = new BreakpointMgr();
-        return breakpointMgr;
+    public static GlobalBreakpointMgr getInstance() {
+        if (globalBreakpointMgr == null)
+            globalBreakpointMgr = new GlobalBreakpointMgr();
+        return globalBreakpointMgr;
     }
 
     @Override

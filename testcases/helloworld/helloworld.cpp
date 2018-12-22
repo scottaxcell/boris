@@ -9,6 +9,10 @@ int main()
 
   foo();
 
+  float f = 42.0;
+  double double_d = 30.11;
+  const char* c = "constant char string";
+
   for (int i = 0; i < 3; i++) {
     cout << "loop: " << i << endl;
   }

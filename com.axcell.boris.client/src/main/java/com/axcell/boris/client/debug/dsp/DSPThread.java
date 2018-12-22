@@ -1,7 +1,8 @@
-package com.axcell.boris.client;
+package com.axcell.boris.client.debug.dsp;
 
-import com.axcell.boris.client.model.StackFrame;
-import com.axcell.boris.client.model.Thread;
+import com.axcell.boris.client.GdbDebugClient;
+import com.axcell.boris.client.debug.model.StackFrame;
+import com.axcell.boris.client.debug.model.Thread;
 import org.eclipse.lsp4j.debug.StackTraceArguments;
 
 import java.util.ArrayList;

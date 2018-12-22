@@ -1,8 +1,8 @@
-package com.axcell.boris.client;
+package com.axcell.boris.client.debug.dsp;
 
-import com.axcell.boris.client.model.Breakpoint;
-import com.axcell.boris.client.model.BreakpointListener;
-import com.axcell.boris.client.model.IBreakpointMgr;
+import com.axcell.boris.client.debug.model.Breakpoint;
+import com.axcell.boris.client.debug.model.BreakpointListener;
+import com.axcell.boris.client.debug.model.BreakpointMgr;
 import org.eclipse.lsp4j.debug.SetBreakpointsArguments;
 import org.eclipse.lsp4j.debug.SetBreakpointsResponse;
 import org.eclipse.lsp4j.debug.Source;
@@ -21,9 +21,9 @@ import java.util.concurrent.CompletableFuture;
 public class DSPBreakpointMgr implements BreakpointListener {
     private Map<Source, List<SourceBreakpoint>> breakpoints = new HashMap<>();
     private IDebugProtocolServer debugProtocolServer;
-    private IBreakpointMgr breakpointMgr;
+    private BreakpointMgr breakpointMgr;
 
-    public DSPBreakpointMgr(IBreakpointMgr breakpointMgr, IDebugProtocolServer debugProtocolServer) {
+    public DSPBreakpointMgr(BreakpointMgr breakpointMgr, IDebugProtocolServer debugProtocolServer) {
         this.breakpointMgr = breakpointMgr;
         this.debugProtocolServer = debugProtocolServer;
     }

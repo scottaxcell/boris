@@ -1,19 +1,19 @@
 package com.axcell.boris.client.ui;
 
-import com.axcell.boris.client.model.Breakpoint;
-import com.axcell.boris.client.model.BreakpointListener;
-import com.axcell.boris.client.model.IBreakpointMgr;
+import com.axcell.boris.client.debug.model.Breakpoint;
+import com.axcell.boris.client.debug.model.BreakpointListener;
+import com.axcell.boris.client.debug.model.BreakpointMgr;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
 
 public class BreakpointsPanel extends JPanel implements BreakpointListener {
-    private IBreakpointMgr breakpointMgr;
+    private BreakpointMgr breakpointMgr;
     private JTable table;
     private BreakpointsTableModel model;
 
-    public BreakpointsPanel(IBreakpointMgr breakpointMgr) {
+    public BreakpointsPanel(BreakpointMgr breakpointMgr) {
         super(new BorderLayout());
         this.breakpointMgr = breakpointMgr;
         init();

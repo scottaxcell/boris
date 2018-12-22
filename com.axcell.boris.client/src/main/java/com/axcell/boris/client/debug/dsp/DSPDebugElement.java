@@ -1,4 +1,6 @@
-package com.axcell.boris.client;
+package com.axcell.boris.client.debug.dsp;
+
+import com.axcell.boris.client.GdbDebugClient;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
