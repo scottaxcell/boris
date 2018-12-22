@@ -6,6 +6,7 @@
 
     <groupId>com.axcell</groupId>
     <artifactId>boris</artifactId>
+    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
     <build>
         <plugins>
@@ -19,6 +20,11 @@
             </plugin>
         </plugins>
     </build>
+    <modules>
+        <module>com.axcell.boris.dap.gdb</module>
+        <module>com.axcell.boris.client</module>
+        <module>com.axcell.boris.utils</module>
+    </modules>
 
     <dependencies>
         <dependency>

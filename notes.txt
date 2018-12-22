@@ -1,9 +1,7 @@
 TODO:
-* break insert and delete commands are being pushed to server multiple times
 
 BACKLOG:
 * add right click in editor to add/remove breakpoint
-* refactor class names and package structure (separate server and client)
 * finish up handling of running events ^running and *running
 * track whether or not debuggee is stopped or running
 * track current thread
