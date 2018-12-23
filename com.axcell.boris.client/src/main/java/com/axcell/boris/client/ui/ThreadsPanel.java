@@ -2,7 +2,7 @@ package com.axcell.boris.client.ui;
 
 import com.axcell.boris.client.debug.dsp.DSPStackFrame;
 import com.axcell.boris.client.debug.dsp.DSPThread;
-import com.axcell.boris.client.debug.dsp.GdbDebugTarget;
+import com.axcell.boris.client.debug.dsp.GDBDebugTarget;
 import com.axcell.boris.client.debug.event.DebugEvent;
 import com.axcell.boris.client.debug.event.DebugEventListener;
 import com.axcell.boris.client.debug.model.StackFrame;
@@ -16,7 +16,7 @@ import javax.swing.tree.*;
 import java.awt.*;
 
 public class ThreadsPanel extends JPanel implements DebugEventListener {
-    private GdbDebugTarget debugTarget;
+    private GDBDebugTarget debugTarget;
     private JTree tree;
     private ThreadTreeModel model;
 
@@ -41,11 +41,11 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
         Boris.getDebugEventMgr().removeListener(this);
     }
 
-    public GdbDebugTarget getDebugTarget() {
+    public GDBDebugTarget getDebugTarget() {
         return debugTarget;
     }
 
-    public void setDebugTarget(GdbDebugTarget debugTarget) {
+    public void setDebugTarget(GDBDebugTarget debugTarget) {
         this.debugTarget = debugTarget;
     }
 
@@ -72,6 +72,15 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
         }
         else if (event.getType() == DebugEvent.CONTINUED) {
             // TODO
+        }
+        else if (event.getType() == DebugEvent.EXITED || event.getType() == DebugEvent.TERMINATED) {
+            debugTarget = null;
+            model.updateModel();
+            SwingUtilities.invokeLater(() -> {
+                tree.setModel(model);
+                for (int i = 0; i < tree.getRowCount(); i++)
+                    tree.expandRow(i);
+            });
         }
     }
 
@@ -133,7 +142,6 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
                 return;
             }
 
-            Utils.debug("ThreadsPanel: debugTarget.getThreads()");
             threads = debugTarget.getThreads();
             for (DSPThread thread : threads) {
                 ThreadTreeNode threadNode = new ThreadTreeNode(thread);

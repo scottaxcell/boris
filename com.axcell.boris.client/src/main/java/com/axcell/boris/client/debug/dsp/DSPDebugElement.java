@@ -3,14 +3,14 @@ package com.axcell.boris.client.debug.dsp;
 import com.axcell.boris.client.debug.model.DebugElement;
 
 public class DSPDebugElement implements DebugElement {
-    private GdbDebugTarget debugTarget;
+    private GDBDebugTarget debugTarget;
 
-    public DSPDebugElement(GdbDebugTarget debugTarget) {
+    public DSPDebugElement(GDBDebugTarget debugTarget) {
         this.debugTarget = debugTarget;
     }
 
     @Override
-    public GdbDebugTarget getDebugTarget() {
+    public GDBDebugTarget getDebugTarget() {
         return debugTarget;
     }
 }

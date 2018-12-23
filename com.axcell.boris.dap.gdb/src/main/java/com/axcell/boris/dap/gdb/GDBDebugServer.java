@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 /**
  * GDB Server - implements DAP interface
  */
-public class GdbDebugServer implements IDebugProtocolServer {
+public class GDBDebugServer implements IDebugProtocolServer {
     private final CommandFactory commandFactory = new CommandFactory();
     /**
      * Commands that need to be processed
@@ -36,9 +36,9 @@ public class GdbDebugServer implements IDebugProtocolServer {
      */
     private final Map<Integer, CommandWrapper> readCommands = Collections.synchronizedMap(new HashMap<>());
     private Target target;
-    private GdbBackend backend;
-    private GdbReaderThread gdbReaderThread;
-    private GdbWriterThread gdbWriterThread;
+    private GDBBackend backend;
+    private GDBReaderThread gdbReaderThread;
+    private GDBWriterThread gdbWriterThread;
     private IDebugProtocolClient client;
     private ExecutorService asyncExecutor = Executors.newCachedThreadPool();
     private ExecutorService eventExecutor = Executors.newSingleThreadExecutor();
@@ -58,15 +58,15 @@ public class GdbDebugServer implements IDebugProtocolServer {
      */
     private VariablesReferenceMap variablesReferenceMap = new VariablesReferenceMap();
 
-    private GdbDebugServer() {
+    private GDBDebugServer() {
         // not allowed
     }
 
-    public GdbDebugServer(Target target) {
+    public GDBDebugServer(Target target) {
         this.target = target;
     }
 
-    public GdbDebugServer(Target target, IDebugProtocolClient client) {
+    public GDBDebugServer(Target target, IDebugProtocolClient client) {
         this.target = target;
         this.client = client;
         eventProcessor.setClient(client);
@@ -81,13 +81,13 @@ public class GdbDebugServer implements IDebugProtocolServer {
     public CompletableFuture<Capabilities> initialize(InitializeRequestArguments args) {
         Utils.debug("initialize");
 
-        backend = new GdbBackend(target);
-        backend.startGdb();
+        backend = new GDBBackend(target);
+        backend.startGDB();
 
-        gdbReaderThread = new GdbReaderThread(backend.getInputStream());
+        gdbReaderThread = new GDBReaderThread(backend.getInputStream());
         gdbReaderThread.start();
 
-        gdbWriterThread = new GdbWriterThread(backend.getOutputStream());
+        gdbWriterThread = new GDBWriterThread(backend.getOutputStream());
         gdbWriterThread.start();
 
         Capabilities capabilities = new Capabilities();
@@ -132,8 +132,8 @@ public class GdbDebugServer implements IDebugProtocolServer {
     @Override
     public CompletableFuture<Void> terminate(TerminateArguments args) {
         if (args == null) {
-            GdbExitCommand miGdbExit = commandFactory.createGdbExit();
-            queueCommand(miGdbExit);
+            GDBExitCommand exitCommand = commandFactory.createGDBExit();
+            queueCommand(exitCommand);
         }
         return CompletableFuture.completedFuture(null);
     }
@@ -249,8 +249,8 @@ public class GdbDebugServer implements IDebugProtocolServer {
             ThreadSelectCommand threadSelectCommand = commandFactory.createThreadSelect(args.getThreadId());
             queueCommand(threadSelectCommand);
         }
-        ExecNextCommand miGdbNext = commandFactory.createExecNext();
-        queueCommand(miGdbNext);
+        ExecNextCommand nextCommand = commandFactory.createExecNext();
+        queueCommand(nextCommand);
         return CompletableFuture.completedFuture(null);
     }
 
@@ -578,10 +578,10 @@ public class GdbDebugServer implements IDebugProtocolServer {
     /**
      * Handles MI commands that are written to the GDB stream
      */
-    private class GdbWriterThread extends Thread {
+    private class GDBWriterThread extends Thread {
         private OutputStream outputStream;
 
-        GdbWriterThread(OutputStream outputStream) {
+        GDBWriterThread(OutputStream outputStream) {
             super("GDB Writer Thread");
             this.outputStream = outputStream;
         }
@@ -628,11 +628,11 @@ public class GdbDebugServer implements IDebugProtocolServer {
     /**
      * Handles MI output from the GDB stream
      */
-    private class GdbReaderThread extends Thread {
+    private class GDBReaderThread extends Thread {
         private InputStream inputStream;
         private Parser parser;
 
-        GdbReaderThread(InputStream inputStream) {
+        GDBReaderThread(InputStream inputStream) {
             super("GDB Reader Thread");
             this.inputStream = inputStream;
             parser = new Parser();
@@ -649,7 +649,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
                         handleOutput(line);
                     }
                 }
-                Utils.debug("GdbReaderThread while FINISHED");
+                Utils.debug("GDBReaderThread while FINISHED");
             }
             catch (IOException | RejectedExecutionException ignored) {
                 ignored.printStackTrace();
@@ -690,7 +690,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
                     processEvent(output);
                 }
             }
-            else if (recordType == Parser.RecordType.GdbPrompt) {
+            else if (recordType == Parser.RecordType.GDBPrompt) {
                 if (!initialized.isDone()) {
                     initialized.complete(null);
                     notifyClientOfInitialized();

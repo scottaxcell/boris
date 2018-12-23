@@ -1,6 +1,6 @@
 package com.axcell.boris.client;
 
-import com.axcell.boris.client.debug.dsp.GdbDebugTarget;
+import com.axcell.boris.client.debug.dsp.GDBDebugTarget;
 import com.axcell.boris.client.debug.model.GlobalBreakpointMgr;
 import com.axcell.boris.dap.gdb.Target;
 import org.eclipse.lsp4j.debug.Capabilities;
@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
-public class GdbDebugClientTest {
+public class GDBDebugTargetTest {
     private static final int THREE_SECONDS = 3000;
     private static final int TWO_SECONDS = 2000;
     private static final int ONE_SECOND = 1000;
@@ -47,7 +47,7 @@ public class GdbDebugClientTest {
 
     @Test
     public void initialize() throws ExecutionException, InterruptedException {
-        GdbDebugTarget client = new GdbDebugTarget(target, globalBreakpointMgr);
+        GDBDebugTarget client = new GDBDebugTarget(target, globalBreakpointMgr);
         client.initialize(42);
         Assert.assertTrue(client.isInitialized());
 

@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class GdbDebugServerTest {
+public class GDBDebugServerTest {
     private static final int THREE_SECONDS = 3000;
     private static final int TWO_SECONDS = 2000;
     private static final int ONE_SECOND = 1000;
@@ -28,7 +28,7 @@ public class GdbDebugServerTest {
     private final String SOURCE_FILENAME = this.getClass().getResource("/helloworld/helloworld.cpp").getPath();
     private final String TARGET_FILENAME = String.format("%s/helloworld", TEST_CASE_DIR);
     private Target target = new Target(TARGET_FILENAME);
-    private GdbDebugServer server;
+    private GDBDebugServer server;
     private Launcher<IDebugProtocolClient> serverLauncher;
     private Future<?> serverListening;
 
@@ -64,7 +64,7 @@ public class GdbDebugServerTest {
         inClient.connect(outServer);
         outClient.connect(inServer);
 
-        server = new GdbDebugServer(target);
+        server = new GDBDebugServer(target);
         serverLauncher = DSPLauncher.createServerLauncher(server, inServer, outServer);
         serverListening = serverLauncher.startListening();
 

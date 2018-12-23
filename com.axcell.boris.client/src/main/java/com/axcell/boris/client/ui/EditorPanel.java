@@ -1,7 +1,7 @@
 package com.axcell.boris.client.ui;
 
 import com.axcell.boris.client.debug.dsp.DSPBreakpoint;
-import com.axcell.boris.client.debug.dsp.GdbDebugTarget;
+import com.axcell.boris.client.debug.dsp.GDBDebugTarget;
 import com.axcell.boris.client.debug.event.DebugEvent;
 import com.axcell.boris.client.debug.event.DebugEventListener;
 import com.axcell.boris.client.debug.model.Breakpoint;
@@ -29,7 +29,7 @@ import java.util.List;
 public class EditorPanel extends JPanel implements DebugEventListener, GUIEventListener {
     private String[] contents;
     private JTextPane textPane;
-    private GdbDebugTarget client;
+    private GDBDebugTarget client;
     private Long currentDebugLineNumber;
 
     public EditorPanel() {
@@ -180,11 +180,11 @@ public class EditorPanel extends JPanel implements DebugEventListener, GUIEventL
         */
     }
 
-    public GdbDebugTarget getClient() {
+    public GDBDebugTarget getClient() {
         return client;
     }
 
-    public void setClient(GdbDebugTarget client) {
+    public void setClient(GDBDebugTarget client) {
         this.client = client;
     }
 

@@ -1,7 +1,7 @@
 package com.axcell.boris.dap.gdb.mi.command;
 
-public class GdbExitCommand extends Command {
-    public GdbExitCommand() {
+public class GDBExitCommand extends Command {
+    public GDBExitCommand() {
         super("-gdb-exit");
     }
 }

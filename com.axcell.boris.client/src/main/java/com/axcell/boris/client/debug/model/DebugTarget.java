@@ -1,6 +1,6 @@
 package com.axcell.boris.client.debug.model;
 
-import com.axcell.boris.dap.gdb.GdbDebugServer;
+import com.axcell.boris.dap.gdb.GDBDebugServer;
 
 public interface DebugTarget extends SuspendResume {
     String getName();
@@ -11,5 +11,5 @@ public interface DebugTarget extends SuspendResume {
 
     boolean hasThreads();
 
-    GdbDebugServer getDebugServer();
+    GDBDebugServer getDebugServer();
 }

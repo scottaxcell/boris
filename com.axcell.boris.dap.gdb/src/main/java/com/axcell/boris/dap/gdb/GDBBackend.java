@@ -9,14 +9,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class GdbBackend {
+public class GDBBackend {
     // cmd: gdb -q -nw -i mi2 target
     // -q: quiet, -nw: no windows i: interpreter (mi2 in our case)
     private static String[] baseCmdLine = {Utils.GDB_PATH, "-q", "-nw", "-i", "mi2"};
     private Process gdbProcess;
     private Target target;
 
-    public GdbBackend(Target target) {
+    public GDBBackend(Target target) {
         this.target = target;
     }
 
@@ -32,11 +32,11 @@ public class GdbBackend {
         return gdbProcess.getErrorStream();
     }
 
-    public void startGdb() {
-        gdbProcess = launchGdbProcess(getCmdLine());
+    public void startGDB() {
+        gdbProcess = launchGDBProcess(getCmdLine());
     }
 
-    private Process launchGdbProcess(String[] cmdLine) {
+    private Process launchGDBProcess(String[] cmdLine) {
         Utils.debug("starting GDB -- " + Arrays.toString(cmdLine));
         Process process = null;
         try {

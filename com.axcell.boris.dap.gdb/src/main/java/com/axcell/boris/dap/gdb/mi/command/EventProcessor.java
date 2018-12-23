@@ -113,7 +113,7 @@ public class EventProcessor {
                 // TODO
                 break;
             case EXIT:
-                notifyClientOfGdbExit();
+                notifyClientOfGDBExit();
                 break;
             case RUNNING:
                 notifyClientOfRunning();
@@ -135,7 +135,7 @@ public class EventProcessor {
         }
     }
 
-    private void notifyClientOfGdbExit() {
+    private void notifyClientOfGDBExit() {
         if (getClient() == null)
             return;
         getClient().terminated(new TerminatedEventArguments());

@@ -14,8 +14,8 @@ public class CommandFactory {
         return breakDeleteCommand;
     }
 
-    public GdbExitCommand createGdbExit() {
-        return new GdbExitCommand();
+    public GDBExitCommand createGDBExit() {
+        return new GDBExitCommand();
     }
 
     public ExecRunCommand createExecRun() {

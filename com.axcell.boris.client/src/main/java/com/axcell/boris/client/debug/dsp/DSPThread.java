@@ -1,7 +1,6 @@
 package com.axcell.boris.client.debug.dsp;
 
 import com.axcell.boris.client.debug.model.Breakpoint;
-import com.axcell.boris.client.debug.model.StackFrame;
 import com.axcell.boris.client.debug.model.Thread;
 import org.eclipse.lsp4j.debug.*;
 
@@ -21,7 +20,7 @@ public class DSPThread extends DSPDebugElement implements Thread {
     private boolean isSuspended;
     private boolean isStepping;
 
-    public DSPThread(GdbDebugTarget debugTarget, org.eclipse.lsp4j.debug.Thread thread) {
+    public DSPThread(GDBDebugTarget debugTarget, org.eclipse.lsp4j.debug.Thread thread) {
         super(debugTarget);
         this.name = thread.getName();
         this.id = thread.getId();

@@ -1,7 +1,7 @@
 package com.axcell.boris.client.debug.model;
 
-import com.axcell.boris.client.debug.dsp.GdbDebugTarget;
+import com.axcell.boris.client.debug.dsp.GDBDebugTarget;
 
 public interface DebugElement {
-    GdbDebugTarget getDebugTarget();
+    GDBDebugTarget getDebugTarget();
 }

@@ -5,7 +5,7 @@ import com.axcell.boris.client.debug.model.BreakpointMgr;
 import com.axcell.boris.client.debug.model.DebugTarget;
 import com.axcell.boris.client.debug.model.GlobalBreakpointMgr;
 import com.axcell.boris.client.ui.Boris;
-import com.axcell.boris.dap.gdb.GdbDebugServer;
+import com.axcell.boris.dap.gdb.GDBDebugServer;
 import com.axcell.boris.dap.gdb.Target;
 import com.axcell.boris.utils.Utils;
 import org.eclipse.lsp4j.debug.Thread;
@@ -23,7 +23,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Stream;
 
-public class GdbDebugTarget extends DSPDebugElement implements DebugTarget, IDebugProtocolClient {
+public class GDBDebugTarget extends DSPDebugElement implements DebugTarget, IDebugProtocolClient {
     /**
      * Synchronized cached set of current threads.
      */
@@ -34,7 +34,7 @@ public class GdbDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
      */
 
     private Target target;
-    private GdbDebugServer debugServer;
+    private GDBDebugServer debugServer;
     private Launcher<IDebugProtocolClient> serverLauncher;
     private Future<?> serverListening;
     private Launcher<IDebugProtocolServer> clientLauncher;
@@ -61,7 +61,7 @@ public class GdbDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
     private boolean isTerminated;
 
 
-    public GdbDebugTarget(Target target, GlobalBreakpointMgr globalBreakpointMgr) {
+    public GDBDebugTarget(Target target, GlobalBreakpointMgr globalBreakpointMgr) {
         super(null);
         this.target = target;
         this.globalBreakpointMgr = globalBreakpointMgr;
@@ -87,7 +87,7 @@ public class GdbDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
             e.printStackTrace();
         }
 
-        debugServer = new GdbDebugServer(target, this);
+        debugServer = new GDBDebugServer(target, this);
         serverLauncher = DSPLauncher.createServerLauncher(debugServer, inServer, outServer);
         serverListening = serverLauncher.startListening();
 
@@ -227,7 +227,7 @@ public class GdbDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
         }
     }
 
-    public GdbDebugServer getDebugServer() {
+    public GDBDebugServer getDebugServer() {
         return debugServer;
     }
 
@@ -318,7 +318,7 @@ public class GdbDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
     }
 
     @Override
-    public GdbDebugTarget getDebugTarget() {
+    public GDBDebugTarget getDebugTarget() {
         return this;
     }
 

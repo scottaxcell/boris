@@ -5,7 +5,7 @@ import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
 import com.axcell.boris.client.debug.dsp.DSPThread;
-import com.axcell.boris.client.debug.dsp.GdbDebugTarget;
+import com.axcell.boris.client.debug.dsp.GDBDebugTarget;
 import com.axcell.boris.client.debug.event.DebugEvent;
 import com.axcell.boris.client.debug.event.DebugEventListener;
 import com.axcell.boris.client.debug.event.DebugEventMgr;
@@ -53,7 +53,7 @@ public class Boris implements DebugEventListener {
     private VariablesPanel variablesPanel;
     private ConsolePanel consolePanel;
     private ThreadsPanel threadsPanel;
-    private GdbDebugTarget debugTarget;
+    private GDBDebugTarget debugTarget;
 
     /**
      * END FOR DEBUG/DEVELOPMENT
@@ -189,7 +189,7 @@ public class Boris implements DebugEventListener {
             @Override
             protected Boolean doInBackground() {
                 Target target = new Target(TARGET_FILENAME);
-                debugTarget = new GdbDebugTarget(target, getGlobalBreakpointMgr());
+                debugTarget = new GDBDebugTarget(target, getGlobalBreakpointMgr());
                 threadsPanel.setDebugTarget(debugTarget);
                 editorPanel.setClient(debugTarget);
                 debugTarget.initialize(42);

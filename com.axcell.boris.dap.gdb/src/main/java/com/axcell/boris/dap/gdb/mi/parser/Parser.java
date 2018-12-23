@@ -23,7 +23,7 @@ public class Parser {
             if (ResultRecord.RESULT_RECORD_PREFIX == line.charAt(i))
                 return RecordType.Result;
             else if (line.startsWith(GDB_PROMPT, i))
-                return RecordType.GdbPrompt;
+                return RecordType.GDBPrompt;
             else
                 return RecordType.OutOfBand;
         }
@@ -313,6 +313,6 @@ public class Parser {
         Result,
         Stream,
         Async,
-        GdbPrompt
+        GDBPrompt
     }
 }
