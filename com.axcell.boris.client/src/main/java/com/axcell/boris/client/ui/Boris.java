@@ -13,9 +13,12 @@ import com.axcell.boris.client.debug.model.BreakpointListener;
 import com.axcell.boris.client.debug.model.GlobalBreakpointMgr;
 import com.axcell.boris.client.ui.event.GUIEventMgr;
 import com.axcell.boris.dap.gdb.Target;
+import com.axcell.boris.utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public class Boris implements DebugEventListener {
     /**
@@ -210,8 +213,8 @@ public class Boris implements DebugEventListener {
     @Override
     public void handleEvent(DebugEvent event) {
         if (event.getType() == DebugEvent.EXITED || event.getType() == DebugEvent.TERMINATED) {
-//            Utils.debug("Boris killed GDB debugTarget");
-//            debugTarget = null;
+            Utils.debug("Boris killed GDB debugTarget");
+            debugTarget = null;
         }
     }
 
@@ -221,19 +224,16 @@ public class Boris implements DebugEventListener {
             return;
         }
         if (threadsPanel != null) {
-            DSPThread thread = threadsPanel.getSelectedThread();
-            if (thread != null)
-                thread.stepOver();
-            else {
-                for (DSPThread t : debugTarget.getThreads())
-                    t.stepOver();
-            }
+            Optional<DSPThread> thread = threadsPanel.getSelectedThread();
+            thread.ifPresentOrElse(DSPThread::stepOver, () -> stepOverAllThreads());
         }
-        else {
-            for (DSPThread thread : debugTarget.getThreads()) {
-                thread.stepOver();
-            }
-        }
+        else
+            stepOverAllThreads();
+    }
+
+    public void stepOverAllThreads() {
+        Stream.of(debugTarget.getThreads())
+                .forEach(DSPThread::stepOver);
     }
 
     public void resume() {
@@ -245,6 +245,7 @@ public class Boris implements DebugEventListener {
     }
 
     private void terminate() {
-        debugTarget.terminate();
+        if (debugTarget != null)
+            debugTarget.terminate();
     }
 }

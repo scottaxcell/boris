@@ -80,7 +80,6 @@ public class VariablesPanel extends JPanel implements DebugEventListener, GUIEve
 
         void updateModel(DSPStackFrame stackFrame) {
             rows.clear();
-            SwingUtilities.invokeLater(() -> fireTableDataChanged());
             DSPVariable[] variables = stackFrame.getVariables();
             for (DSPVariable variable : variables) {
                 DSPValue value = variable.getValue();
@@ -90,10 +89,10 @@ public class VariablesPanel extends JPanel implements DebugEventListener, GUIEve
                         DSPValue val = var.getValue();
                         VariablesTableRow row = new VariablesTableRow(var.getName(), val.getValueString());
                         rows.add(row);
-                        SwingUtilities.invokeLater(() -> fireTableRowsInserted(rows.size() - 1, rows.size() - 1));
                     }
                 }
             }
+            SwingUtilities.invokeLater(() -> fireTableDataChanged());
         }
 
         void updateModel(DSPThread thread) {

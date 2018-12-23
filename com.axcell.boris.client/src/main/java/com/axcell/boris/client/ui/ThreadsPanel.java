@@ -5,20 +5,21 @@ import com.axcell.boris.client.debug.dsp.DSPThread;
 import com.axcell.boris.client.debug.dsp.GDBDebugTarget;
 import com.axcell.boris.client.debug.event.DebugEvent;
 import com.axcell.boris.client.debug.event.DebugEventListener;
-import com.axcell.boris.client.debug.model.StackFrame;
 import com.axcell.boris.client.ui.event.GUIEvent;
-import com.axcell.boris.utils.Utils;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
 import java.awt.*;
+import java.util.Optional;
+import java.util.stream.Stream;
 
 public class ThreadsPanel extends JPanel implements DebugEventListener {
     private GDBDebugTarget debugTarget;
     private JTree tree;
     private ThreadTreeModel model;
+    private String targetName;
 
     ThreadsPanel() {
         super(new BorderLayout());
@@ -28,8 +29,8 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
 
     private void init() {
         setBorder(BorderFactory.createTitledBorder("Threads"));
-        String appName = getDebugTarget() != null ? getDebugTarget().getName() : "Debug Adapter Target";
-        model = new ThreadTreeModel(new ThreadTreeNode(appName));
+        targetName = getDebugTarget() != null ? getDebugTarget().getName() : "Debug Adapter Target";
+        model = new ThreadTreeModel(new ThreadTreeNode(targetName));
         tree = new JTree(model);
         tree.setCellRenderer(new ThreadTreeCellRenderer());
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
@@ -49,6 +50,11 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
         this.debugTarget = debugTarget;
     }
 
+    public void expandTree() {
+        for (int i = 0; i < tree.getRowCount(); i++)
+            tree.expandRow(i);
+    }
+
     @Override
     public void handleEvent(DebugEvent event) {
         if (event.getType() == DebugEvent.STOPPED) {
@@ -62,9 +68,8 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
                 @Override
                 protected void done() {
                     SwingUtilities.invokeLater(() -> {
-                        tree.setModel(model);
-                        for (int i = 0; i < tree.getRowCount(); i++)
-                            tree.expandRow(i);
+                        model.refreshTree();
+                        expandTree();
                     });
                 }
             };
@@ -74,32 +79,30 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
             // TODO
         }
         else if (event.getType() == DebugEvent.EXITED || event.getType() == DebugEvent.TERMINATED) {
-            debugTarget = null;
             model.updateModel();
             SwingUtilities.invokeLater(() -> {
-                tree.setModel(model);
-                for (int i = 0; i < tree.getRowCount(); i++)
-                    tree.expandRow(i);
+                model.refreshTree();
+                expandTree();
             });
         }
     }
 
-    public DSPThread getSelectedThread() {
+    public Optional<DSPThread> getSelectedThread() {
         Object leaf = tree.getLastSelectedPathComponent();
         if (leaf instanceof ThreadTreeNode) {
             Object object = ((ThreadTreeNode) leaf).getObject();
             if (object instanceof DSPThread)
-                return (DSPThread) object;
+                return Optional.ofNullable((DSPThread) object);
             else if (object instanceof DSPStackFrame) {
                 TreeNode parent = ((ThreadTreeNode) leaf).getParent();
                 if (parent instanceof ThreadTreeNode) {
                     object = ((ThreadTreeNode) parent).getObject();
                     if (object instanceof DSPThread)
-                        return (DSPThread) object;
+                        return Optional.ofNullable((DSPThread) object);
                 }
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     private static class ThreadTreeCellRenderer extends DefaultTreeCellRenderer {
@@ -135,32 +138,28 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
         }
 
         void updateModel() {
-            removeRootNodes();
+            if (debugTarget != null)
+                threads = debugTarget.getThreads();
+        }
 
-            if (debugTarget == null) {
-                reload();
-                return;
-            }
-
-            threads = debugTarget.getThreads();
-            for (DSPThread thread : threads) {
-                ThreadTreeNode threadNode = new ThreadTreeNode(thread);
-                insertNodeInto(threadNode, (MutableTreeNode) root, root.getChildCount());
-                StackFrame[] stackFrames = thread.getStackFrames();
-                if (stackFrames.length != 0) {
-                    for (StackFrame stackFrame : stackFrames) {
-                        ThreadTreeNode stackNode = new ThreadTreeNode(stackFrame);
-                        insertNodeInto(stackNode, threadNode, threadNode.getChildCount());
-                    }
-                }
-            }
+        void refreshTree() {
+            setRoot(new ThreadTreeNode(targetName));
+            Stream.of(threads)
+                    .map(this::createAndAddThread)
+                    .forEach(this::createAndAddStackFrames);
             reload();
         }
 
-        void removeRootNodes() {
-            int numChildren = root.getChildCount();
-            for (int i = 0; i < numChildren; i++)
-                removeNodeFromParent((MutableTreeNode) root.getChildAt(i));
+        ThreadTreeNode createAndAddThread(DSPThread thread) {
+            ThreadTreeNode threadTreeNode = new ThreadTreeNode(thread);
+            ((ThreadTreeNode) root).add(threadTreeNode);
+            return threadTreeNode;
+        }
+
+        void createAndAddStackFrames(ThreadTreeNode threadTreeNode) {
+            Stream.of(((DSPThread) threadTreeNode.getObject()).getStackFrames())
+                    .map(ThreadTreeNode::new)
+                    .forEach(threadTreeNode::add);
         }
     }
 
@@ -186,10 +185,6 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
                     Boris.getGuiEventMgr().fireEvent(new GUIEvent(GUIEvent.THREAD_SELECTED, ThreadsPanel.this, object));
                 else if (object instanceof DSPStackFrame)
                     Boris.getGuiEventMgr().fireEvent(new GUIEvent(GUIEvent.STACK_FRAME_SELECTED, ThreadsPanel.this, object));
-            }
-            DSPThread thread = getSelectedThread();
-            if (thread != null) {
-                Utils.debug(thread.toString());
             }
         }
     }

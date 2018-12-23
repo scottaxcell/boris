@@ -7,7 +7,6 @@ import com.axcell.boris.client.debug.model.GlobalBreakpointMgr;
 import com.axcell.boris.client.ui.Boris;
 import com.axcell.boris.dap.gdb.GDBDebugServer;
 import com.axcell.boris.dap.gdb.Target;
-import com.axcell.boris.utils.Utils;
 import org.eclipse.lsp4j.debug.Thread;
 import org.eclipse.lsp4j.debug.*;
 import org.eclipse.lsp4j.debug.launch.DSPLauncher;
@@ -21,6 +20,7 @@ import java.io.PipedOutputStream;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GDBDebugTarget extends DSPDebugElement implements DebugTarget, IDebugProtocolClient {
@@ -60,7 +60,6 @@ public class GDBDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
     private AtomicBoolean refreshThreads = new AtomicBoolean(true);
     private boolean isTerminated;
 
-
     public GDBDebugTarget(Target target, GlobalBreakpointMgr globalBreakpointMgr) {
         super(null);
         this.target = target;
@@ -95,7 +94,7 @@ public class GDBDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
         clientListening = clientLauncher.startListening();
 
         InitializeRequestArguments initializeRequestArguments = new InitializeRequestArguments();
-        initializeRequestArguments.setClientID("com.boris.dsp");
+        initializeRequestArguments.setClientID("com.axcell.boris.client");
         initializeRequestArguments.setAdapterID("adapterId");
         initializeRequestArguments.setPathFormat("path");
         initializeRequestArguments.setSupportsVariableType(true);
@@ -122,23 +121,12 @@ public class GDBDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
 
     @Override
     public void initialized() {
-        Utils.debug(this.getClass().getSimpleName() + ": initialized");
         initialized.complete(null);
-    }
-
-    private void sendSetBreakpointsRequest() {
-        // TODO
-        SetBreakpointsArguments setBreakpointsArguments = new SetBreakpointsArguments();
-        getDebugServer().setBreakpoints(setBreakpointsArguments);
-    }
-
-    private void sendConfigurationDoneRequest() {
-        ConfigurationDoneArguments configurationDoneArguments = new ConfigurationDoneArguments();
-        getDebugServer().configurationDone(configurationDoneArguments);
     }
 
     @Override
     public void exited(ExitedEventArguments args) {
+        terminate();
         DebugEvent event = new DebugEvent(DebugEvent.EXITED, this, args);
         Boris.getDebugEventMgr().fireEvent(event);
     }
@@ -157,62 +145,37 @@ public class GDBDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
             dspBreakpointMgr.cleanup();
     }
 
+    private void cleanup() {
+
+    }
+
     @Override
     public void continued(ContinuedEventArguments args) {
         DebugEvent event = new DebugEvent(DebugEvent.CONTINUED, this, args);
         Boris.getDebugEventMgr().fireEvent(event);
     }
 
-    public void continueAllThreads() {
-        for (DSPThread thread : getThreads()) {
-            ContinueArguments args = new ContinueArguments();
-            args.setThreadId(thread.getId());
-            try {
-                getDebugServer().continue_(new ContinueArguments()).get();
-            }
-            catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void stepOver(Long threadId) {
-        NextArguments args = new NextArguments();
-        if (threadId != null)
-            args.setThreadId(threadId);
-        try {
-            getDebugServer().next(args).get();
-        }
-        catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-    }
-
     @Override
     public void stopped(StoppedEventArguments args) {
         refreshThreads.set(true);
         if (args.getAllThreadsStopped()) {
-            for (DSPThread thread : getThreads()) {
-                thread.suspend();
-            }
+            Stream.of(getThreads())
+                    .forEach(DSPThread::suspend);
         }
         else {
-            DSPThread thread = getThread(args.getThreadId());
-            if (thread != null)
-                thread.suspend();
+            Optional<DSPThread> thread = getThread(args.getThreadId());
+            thread.ifPresent(DSPThread::suspend);
         }
         DebugEvent event = new DebugEvent(DebugEvent.STOPPED, this, args);
         Boris.getDebugEventMgr().fireEvent(event);
     }
 
-    public DSPThread getThread(Long threadId) {
+    private Optional<DSPThread> getThread(Long threadId) {
         if (threadId == null)
             return null;
-        for (DSPThread thread : getThreads()) {
-            if (thread.getId() == threadId)
-                return thread;
-        }
-        return null;
+        return Stream.of(getThreads())
+                .filter(threads -> threads.getId() == threadId)
+                .findFirst();
     }
 
     @Override
@@ -249,6 +212,9 @@ public class GDBDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
 
     @Override
     public DSPThread[] getThreads() {
+        if (isTerminated())
+            return new DSPThread[0];
+
         if (!refreshThreads.getAndSet(false)) {
             synchronized (threads) {
                 Collection<DSPThread> values = threads.values();
@@ -286,11 +252,9 @@ public class GDBDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
     }
 
     public DSPStackFrame[] getStackFrames() {
-        List<DSPStackFrame> stackFrames = new ArrayList<>();
-        DSPThread[] threads = getThreads();
-        for (DSPThread thread : threads)
-            stackFrames.addAll(Arrays.asList(getStackFrames(thread)));
-        return stackFrames.toArray(new DSPStackFrame[stackFrames.size()]);
+        return Stream.of(getThreads())
+                .map(thread -> getStackFrames(thread))
+                .toArray(DSPStackFrame[]::new);
     }
 
     public DSPStackFrame[] getStackFrames(DSPThread thread) {
@@ -338,23 +302,20 @@ public class GDBDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
 
     @Override
     public boolean isSuspended() {
-        DSPThread[] dspThreads = getThreads();
-        return Stream.of(dspThreads)
+        return Stream.of(getThreads())
                 .anyMatch(DSPThread::isSuspended);
     }
 
     @Override
     public void resume() {
-        for (DSPThread thread : getThreads()) {
-            thread.resume();
-        }
+        Stream.of(getThreads())
+                .forEach(DSPThread::resume);
     }
 
     @Override
     public void suspend() {
-        for (DSPThread thread : getThreads()) {
-            thread.suspend();
-        }
+        Stream.of(getThreads())
+                .forEach(DSPThread::suspend);
     }
 
     public void terminate() {
