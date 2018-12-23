@@ -93,6 +93,31 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
         return null;
     }
 
+    private static class ThreadTreeCellRenderer extends DefaultTreeCellRenderer {
+        @Override
+        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+            super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+            if (value instanceof ThreadTreeNode) {
+                JLabel label = new JLabel();
+                Object object = ((ThreadTreeNode) value).getObject();
+                if (object instanceof String) {
+                    this.setText(String.valueOf(object));
+                }
+                else if (object instanceof DSPThread) {
+                    DSPThread thread = (DSPThread) object;
+                    String s = String.format("Thread [%s] %s", thread.getId(), thread.getName());
+                    this.setText(s);
+                }
+                else if (object instanceof DSPStackFrame) {
+                    DSPStackFrame stackFrame = (DSPStackFrame) object;
+                    String s = String.format("%s %s", stackFrame.getDepth(), stackFrame.getName());
+                    this.setText(s);
+                }
+            }
+            return this;
+        }
+    }
+
     private class ThreadTreeModel extends DefaultTreeModel {
         private DSPThread[] threads;
 
@@ -140,31 +165,6 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
 
         Object getObject() {
             return object;
-        }
-    }
-
-    private static class ThreadTreeCellRenderer extends DefaultTreeCellRenderer {
-        @Override
-        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
-            super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
-            if (value instanceof ThreadTreeNode) {
-                JLabel label = new JLabel();
-                Object object = ((ThreadTreeNode) value).getObject();
-                if (object instanceof String) {
-                    this.setText(String.valueOf(object));
-                }
-                else if (object instanceof DSPThread) {
-                    DSPThread thread = (DSPThread) object;
-                    String s = String.format("Thread [%s] %s", thread.getId(), thread.getName());
-                    this.setText(s);
-                }
-                else if (object instanceof DSPStackFrame) {
-                    DSPStackFrame stackFrame = (DSPStackFrame) object;
-                    String s = String.format("%s %s", stackFrame.getDepth(), stackFrame.getName());
-                    this.setText(s);
-                }
-            }
-            return this;
         }
     }
 

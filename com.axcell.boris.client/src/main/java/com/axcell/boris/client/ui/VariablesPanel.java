@@ -1,9 +1,11 @@
 package com.axcell.boris.client.ui;
 
-import com.axcell.boris.client.debug.dsp.*;
+import com.axcell.boris.client.debug.dsp.DSPStackFrame;
+import com.axcell.boris.client.debug.dsp.DSPThread;
+import com.axcell.boris.client.debug.dsp.DSPVariable;
+import com.axcell.boris.client.debug.dsp.GdbDebugTarget;
 import com.axcell.boris.client.debug.event.DebugEvent;
 import com.axcell.boris.client.debug.event.DebugEventListener;
-import com.axcell.boris.client.debug.model.Variable;
 import com.axcell.boris.client.ui.event.GUIEvent;
 import com.axcell.boris.client.ui.event.GUIEventListener;
 import com.axcell.boris.utils.Utils;

@@ -1,9 +1,9 @@
 # GDB Debug Adapter and GUI Client
-GDB implementation of Debug Adapter Protocol as a proof of concept. This includes the GDB DAP server and a GDB Debugger GUI debugTarget.
+GDB implementation of Debug Adapter Protocol as a proof of concept. This includes the GDB DAP server and a GDB Debugger GUI client.
 
 ### TODO
 * (in-progress) align debugTarget debug model with eclipse cdt model better
-* BUG - variables panel is not always updating, looks like threads panel is interferring with it's calls to the debugTarget/server
+* BUG - variables panel is not always updating, looks like threads panel is interferring with it's calls to the client/server
 * next should key off selected thread in threads panel
 
 ### BACKLOG

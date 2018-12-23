@@ -1,6 +1,7 @@
 package com.axcell.boris.client.ui;
 
-import com.axcell.boris.client.debug.dsp.*;
+import com.axcell.boris.client.debug.dsp.DSPBreakpoint;
+import com.axcell.boris.client.debug.dsp.GdbDebugTarget;
 import com.axcell.boris.client.debug.event.DebugEvent;
 import com.axcell.boris.client.debug.event.DebugEventListener;
 import com.axcell.boris.client.debug.model.Breakpoint;
@@ -26,17 +27,16 @@ import java.util.List;
  * remove bold when debugger terminates
  */
 public class EditorPanel extends JPanel implements DebugEventListener, GUIEventListener {
-    private String[] contents;
-    private JTextPane textPane;
-    private GdbDebugTarget client;
-    private Long currentDebugLineNumber;
-
     /**
      * FOR DEBUG/DEVELOPMENT
      */
     private static final String TEST_CASE_DIR = "/home/saxcell/dev/boris/testcases/threadexample";
     private static final String SOURCE_FILENAME = String.format("%s/threadexample.cpp", TEST_CASE_DIR);
     private static final String TARGET_FILENAME = String.format("%s/threadexample", TEST_CASE_DIR);
+    private String[] contents;
+    private JTextPane textPane;
+    private GdbDebugTarget client;
+    private Long currentDebugLineNumber;
 
     /**
      * END FOR DEBUG/DEVELOPMENT

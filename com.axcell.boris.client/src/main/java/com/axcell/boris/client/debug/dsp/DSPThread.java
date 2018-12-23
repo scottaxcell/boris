@@ -14,9 +14,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DSPThread extends DSPDebugElement implements Thread {
+    private final List<DSPStackFrame> stackFrames = Collections.synchronizedList(new ArrayList<>());
     private Long id;
     private String name;
-    private final List<DSPStackFrame> stackFrames = Collections.synchronizedList(new ArrayList<>());
     private AtomicBoolean refreshFrames = new AtomicBoolean(true);
     private boolean isSuspended;
     private boolean isStepping;

@@ -22,18 +22,7 @@ import java.util.function.Supplier;
  * GDB Server - implements DAP interface
  */
 public class GdbDebugServer implements IDebugProtocolServer {
-    private Target target;
-    private GdbBackend backend;
-    private GdbReaderThread gdbReaderThread;
-    private GdbWriterThread gdbWriterThread;
     private final CommandFactory commandFactory = new CommandFactory();
-    private IDebugProtocolClient client;
-    private ExecutorService executor = Executors.newCachedThreadPool();
-    private EventProcessor eventProcessor = new EventProcessor();
-    /**
-     * The initialized event will mark this as complete
-     */
-    private CompletableFuture<Void> initialized = new CompletableFuture<>();
     /**
      * Commands that need to be processed
      */
@@ -46,6 +35,18 @@ public class GdbDebugServer implements IDebugProtocolServer {
      * Commands that have been read from the GDB stream
      */
     private final Map<Integer, CommandWrapper> readCommands = Collections.synchronizedMap(new HashMap<>());
+    private Target target;
+    private GdbBackend backend;
+    private GdbReaderThread gdbReaderThread;
+    private GdbWriterThread gdbWriterThread;
+    private IDebugProtocolClient client;
+    private ExecutorService executor = Executors.newCachedThreadPool();
+    private ExecutorService eventExecutor = Executors.newSingleThreadExecutor();
+    private EventProcessor eventProcessor = new EventProcessor();
+    /**
+     * The initialized event will mark this as complete
+     */
+    private CompletableFuture<Void> initialized = new CompletableFuture<>();
     /**
      * Aligns commandWrapper requests with commandWrapper responses
      */
@@ -501,7 +502,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
     private void notifyClientOfInitialized() {
         if (!initialized.isDone() || eventProcessor == null)
             return;
-        eventProcessor.notifyClientOfInitialized();
+        eventExecutor.execute(() -> eventProcessor.notifyClientOfInitialized());
     }
 
     private int processNextQueuedCommand() {
@@ -525,8 +526,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
         // do not send events until initialized event has been sent to client
         if (!initialized.isDone())
             return;
-//        executor.execute(() -> eventProcessor.eventReceived(output));
-        eventProcessor.eventReceived(output);
+        eventExecutor.execute(() -> eventProcessor.eventReceived(output));
     }
 
     private CommandWrapper getWrittenCommand(int token) {
@@ -537,6 +537,30 @@ public class GdbDebugServer implements IDebugProtocolServer {
             }
         }
         return null;
+    }
+
+    /**
+     * Track variablesReference
+     */
+    private static class VariablesReferenceMap {
+        private final Long START_VARIABLES_REFERENCE = Long.valueOf(100);
+        private Map<Long, String> map = new HashMap<>();
+        private Long nextVariablesReference = START_VARIABLES_REFERENCE;
+
+        public Long create(String variablesReference) {
+            Long next = nextVariablesReference++;
+            map.put(next, variablesReference);
+            return next;
+        }
+
+        public String get(Long variablesReference) {
+            return map.get(variablesReference);
+        }
+
+        public void reset() {
+            map = new HashMap<>();
+            nextVariablesReference = START_VARIABLES_REFERENCE;
+        }
     }
 
     /**
@@ -749,30 +773,6 @@ public class GdbDebugServer implements IDebugProtocolServer {
                 Logger.getInstance().warning(msg);
                 throw new RuntimeException(msg);
             }
-        }
-    }
-
-    /**
-     * Track variablesReference
-     */
-    private static class VariablesReferenceMap {
-        private final Long START_VARIABLES_REFERENCE = Long.valueOf(100);
-        private Map<Long, String> map = new HashMap<>();
-        private Long nextVariablesReference = START_VARIABLES_REFERENCE;
-
-        public Long create(String variablesReference) {
-            Long next = nextVariablesReference++;
-            map.put(next, variablesReference);
-            return next;
-        }
-
-        public String get(Long variablesReference) {
-            return map.get(variablesReference);
-        }
-
-        public void reset() {
-            map = new HashMap<>();
-            nextVariablesReference = START_VARIABLES_REFERENCE;
         }
     }
 }

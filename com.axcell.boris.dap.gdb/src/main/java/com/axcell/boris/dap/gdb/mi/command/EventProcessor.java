@@ -32,7 +32,6 @@ public class EventProcessor {
     }
 
     private void processOutOfBandResponseEvent(OutOfBandRecord outOfBandRecord) {
-//        Utils.debug("processing out-of-band record event " + outOfBandRecord.toString());
         if (outOfBandRecord instanceof ExecAsyncOutput) {
             processExecAsyncOutput((ExecAsyncOutput) outOfBandRecord);
         }
@@ -103,7 +102,6 @@ public class EventProcessor {
     }
 
     private void processResultRecordEvent(ResultRecord resultRecord) {
-//        Utils.debug("processing result record event " + resultRecord.toString());
         ResultRecord.ResultClass resultClass = resultRecord.getResultClass();
         switch (resultClass) {
             case CONNECTED:
@@ -138,42 +136,36 @@ public class EventProcessor {
     }
 
     private void notifyClientOfGdbExit() {
-//        Utils.debug("notifying client of gdb exit");
         if (getClient() == null)
             return;
         getClient().terminated(new TerminatedEventArguments());
     }
 
     private void notifyClientOfExitOutOfBandRecord(ExitedEvent event) {
-//        Utils.debug("notifying client of exit with code = " + event.getArgs().getExitCode());
         if (getClient() == null)
             return;
         getClient().exited(event.getArgs());
     }
 
     private void notifyClientOfBreakpointHit(BreakpointHitEvent event) {
-//        Utils.debug("notifying client of breakpoint hit");
         if (getClient() == null)
             return;
         getClient().stopped(event.getArgs());
     }
 
     private void notifyClientOfStopped(StoppedEvent event) {
-//        Utils.debug("notifying client of stopped event");
         if (getClient() == null)
             return;
         getClient().stopped(event.getArgs());
     }
 
     private void notifyClientOfRunningOutOfBandRecord(RunningEvent event) {
-//        Utils.debug("notifying client of running");
         if (getClient() == null)
             return;
         getClient().continued(event.getArgs());
     }
 
     private void notifyClientOfRunning() {
-//        Utils.debug("notifying client of running");
         if (getClient() == null)
             return;
         getClient().continued(new ContinuedEventArguments());

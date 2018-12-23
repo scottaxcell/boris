@@ -25,6 +25,10 @@ import java.util.stream.Stream;
 
 public class GdbDebugTarget extends DSPDebugElement implements DebugTarget, IDebugProtocolClient {
     /**
+     * Synchronized cached set of current threads.
+     */
+    private final Map<Long, DSPThread> threads = Collections.synchronizedMap(new TreeMap<>());
+    /**
      * lsp4e DSPDebugTarget for reference:
      * https://github.com/vladdu/lsp4e/blob/6f48292b40bb66593790e8c11415722cdeb9c4e3/org.eclipse.lsp4e.debug/src/org/eclipse/lsp4e/debug/debugmodel/DSPDebugTarget.java
      */
@@ -39,7 +43,6 @@ public class GdbDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
     private PipedOutputStream outClient = new PipedOutputStream();
     private PipedInputStream inServer = new PipedInputStream();
     private PipedOutputStream outServer = new PipedOutputStream();
-
     private ExecutorService threadPool = Executors.newCachedThreadPool();
     private Capabilities capabilities;
     /**
@@ -51,10 +54,6 @@ public class GdbDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
      * The initialized event will mark this as complete
      */
     private CompletableFuture<Void> initialized = new CompletableFuture<>();
-    /**
-     * Synchronized cached set of current threads.
-     */
-    private final Map<Long, DSPThread> threads = Collections.synchronizedMap(new TreeMap<>());
     /**
      * Update the threads list from the dsp adapter
      */

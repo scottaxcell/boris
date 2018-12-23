@@ -14,10 +14,6 @@ public class StoppedEvent extends Event {
         args.setReason(StoppedEventArgumentsReason.STEP);
     }
 
-    public StoppedEventArguments getArgs() {
-        return args;
-    }
-
     public static StoppedEvent parse(Result[] results) {
         StoppedEvent event = new StoppedEvent();
 
@@ -39,5 +35,9 @@ public class StoppedEvent extends Event {
             }
         }
         return event;
+    }
+
+    public StoppedEventArguments getArgs() {
+        return args;
     }
 }

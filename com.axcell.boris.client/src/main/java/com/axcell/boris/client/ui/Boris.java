@@ -21,6 +21,15 @@ import java.awt.event.ActionListener;
 
 public class Boris implements DebugEventListener {
     /**
+     * FOR DEBUG/DEVELOPMENT
+     */
+    private static final String TEST_CASE_DIR = "/home/saxcell/dev/boris/testcases/threadexample";
+    private static final String SOURCE_FILENAME = String.format("%s/threadexample.cpp", TEST_CASE_DIR);
+    private static final String TARGET_FILENAME = String.format("%s/threadexample", TEST_CASE_DIR);
+    private static GlobalBreakpointMgr globalBreakpointMgr;
+    private static GUIEventMgr guiEventMgr;
+    private static DebugEventMgr debugEventMgr;
+    /**
      * COMPONENTS
      * menubar (open file, run exe, dsp exe, exit)
      * editor
@@ -46,19 +55,7 @@ public class Boris implements DebugEventListener {
     private VariablesPanel variablesPanel;
     private ConsolePanel consolePanel;
     private ThreadsPanel threadsPanel;
-
-    private static GlobalBreakpointMgr globalBreakpointMgr;
-    private static GUIEventMgr guiEventMgr;
-    private static DebugEventMgr debugEventMgr;
-
     private GdbDebugTarget debugTarget;
-
-    /**
-     * FOR DEBUG/DEVELOPMENT
-     */
-    private static final String TEST_CASE_DIR = "/home/saxcell/dev/boris/testcases/threadexample";
-    private static final String SOURCE_FILENAME = String.format("%s/threadexample.cpp", TEST_CASE_DIR);
-    private static final String TARGET_FILENAME = String.format("%s/threadexample", TEST_CASE_DIR);
 
     /**
      * END FOR DEBUG/DEVELOPMENT
@@ -67,6 +64,18 @@ public class Boris implements DebugEventListener {
     public Boris() {
         DebugEventMgr.getInstance().addListener(this);
         SwingUtilities.invokeLater(() -> initDockableGui());
+    }
+
+    public static GlobalBreakpointMgr getGlobalBreakpointMgr() {
+        return globalBreakpointMgr.getInstance();
+    }
+
+    public static DebugEventMgr getDebugEventMgr() {
+        return debugEventMgr.getInstance();
+    }
+
+    public static GUIEventMgr getGuiEventMgr() {
+        return guiEventMgr.getInstance();
     }
 
     private void initMenuBar() {
@@ -230,24 +239,12 @@ public class Boris implements DebugEventListener {
         worker.execute();
     }
 
-    public static GlobalBreakpointMgr getGlobalBreakpointMgr() {
-        return globalBreakpointMgr.getInstance();
-    }
-
     public void addBreakpointListener(BreakpointListener listener) {
         getGlobalBreakpointMgr().addBreakpointListener(listener);
     }
 
     public void removeBreakpointListener(BreakpointListener listener) {
         getGlobalBreakpointMgr().removeBreakpointListener(listener);
-    }
-
-    public static DebugEventMgr getDebugEventMgr() {
-        return debugEventMgr.getInstance();
-    }
-
-    public static GUIEventMgr getGuiEventMgr() {
-        return guiEventMgr.getInstance();
     }
 
     @Override

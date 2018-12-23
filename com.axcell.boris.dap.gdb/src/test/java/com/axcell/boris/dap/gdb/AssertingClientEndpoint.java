@@ -15,6 +15,10 @@ import java.util.concurrent.CompletableFuture;
 public class AssertingClientEndpoint implements Endpoint, IDebugProtocolClient {
     public Map<String, Pair<Object, Object>> expectedRequests = new LinkedHashMap<>();
     public Map<String, Object> expectedNotifications = new LinkedHashMap<>();
+    private boolean initializedExercised = false;
+    private long exitReturnCode = Long.MAX_VALUE;
+    private boolean stopped = false;
+    private StoppedEventArguments stoppedEventArguments;
 
     @Override
     public CompletableFuture<?> request(String method, Object parameter) {
@@ -56,8 +60,6 @@ public class AssertingClientEndpoint implements Endpoint, IDebugProtocolClient {
         Assert.fail("expectations were not cleared out " + toString());
     }
 
-    private boolean initializedExercised = false;
-
     boolean isInitializedExercised() {
         return initializedExercised;
     }
@@ -66,8 +68,6 @@ public class AssertingClientEndpoint implements Endpoint, IDebugProtocolClient {
     public void initialized() {
         initializedExercised = true;
     }
-
-    private long exitReturnCode = Long.MAX_VALUE;
 
     long exitedCleanly() {
         return exitReturnCode;
@@ -78,13 +78,9 @@ public class AssertingClientEndpoint implements Endpoint, IDebugProtocolClient {
         exitReturnCode = args.getExitCode();
     }
 
-    private boolean stopped = false;
-
     boolean isStopped() {
         return stopped;
     }
-
-    private StoppedEventArguments stoppedEventArguments;
 
     StoppedEventArguments getStoppedEventArguments() {
         return stoppedEventArguments;

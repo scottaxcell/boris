@@ -16,14 +16,6 @@ public class MIArg {
         this.value = value;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
     /**
      * Parsing a DsfMIList of the form:
      * [{name="xxx",value="yyy"},{name="xxx",value="yyy"},..]
@@ -114,6 +106,14 @@ public class MIArg {
             arg = new MIArg(aName, aValue);
         }
         return arg;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getValue() {
+        return value;
     }
 
     @Override

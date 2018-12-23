@@ -23,14 +23,11 @@ public class GdbDebugServerTest {
     private static final int TWO_SECONDS = 2000;
     private static final int ONE_SECOND = 1000;
     private static final int HALF_SECOND = 500;
-
+    private static final String[] makeCmdLine = {"make", "-f", "makefile"};
     private final String TEST_CASE_DIR = this.getClass().getResource("/helloworld").getPath();
     private final String SOURCE_FILENAME = this.getClass().getResource("/helloworld/helloworld.cpp").getPath();
     private final String TARGET_FILENAME = String.format("%s/helloworld", TEST_CASE_DIR);
     private Target target = new Target(TARGET_FILENAME);
-
-    private static final String[] makeCmdLine = {"make", "-f", "makefile"};
-
     private GdbDebugServer server;
     private Launcher<IDebugProtocolClient> serverLauncher;
     private Future<?> serverListening;

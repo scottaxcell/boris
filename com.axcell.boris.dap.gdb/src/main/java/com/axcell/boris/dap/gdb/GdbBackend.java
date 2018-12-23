@@ -10,17 +10,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class GdbBackend {
-    // TODO track state of affairs
-    public enum State {
-        NOT_INITIALIZED, STARTED, TERMINATED
-    }
-
-    private Process gdbProcess;
-    private Target target;
-
     // cmd: gdb -q -nw -i mi2 target
     // -q: quiet, -nw: no windows i: interpreter (mi2 in our case)
     private static String[] baseCmdLine = {Utils.GDB_PATH, "-q", "-nw", "-i", "mi2"};
+    private Process gdbProcess;
+    private Target target;
 
     public GdbBackend(Target target) {
         this.target = target;
@@ -59,5 +53,10 @@ public class GdbBackend {
         cmdLine.addAll(Arrays.asList(baseCmdLine));
         cmdLine.add(target.getPath().toString());
         return cmdLine.toArray(new String[cmdLine.size()]);
+    }
+
+    // TODO track state of affairs
+    public enum State {
+        NOT_INITIALIZED, STARTED, TERMINATED
     }
 }

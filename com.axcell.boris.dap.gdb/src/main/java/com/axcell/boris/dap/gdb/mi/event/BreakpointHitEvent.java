@@ -14,10 +14,6 @@ public class BreakpointHitEvent extends Event {
         args.setReason(StoppedEventArgumentsReason.BREAKPOINT);
     }
 
-    public StoppedEventArguments getArgs() {
-        return args;
-    }
-
     public static BreakpointHitEvent parse(Result[] results) {
         BreakpointHitEvent event = new BreakpointHitEvent();
 
@@ -43,5 +39,9 @@ public class BreakpointHitEvent extends Event {
             }
         }
         return event;
+    }
+
+    public StoppedEventArguments getArgs() {
+        return args;
     }
 }

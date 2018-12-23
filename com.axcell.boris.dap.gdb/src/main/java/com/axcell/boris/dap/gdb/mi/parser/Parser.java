@@ -5,21 +5,12 @@ import com.axcell.boris.dap.gdb.mi.record.AsyncRecord;
 import com.axcell.boris.dap.gdb.mi.record.OutOfBandRecord;
 import com.axcell.boris.dap.gdb.mi.record.ResultRecord;
 import com.axcell.boris.dap.gdb.mi.record.StreamRecord;
-import com.axcell.boris.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Parser {
     private static final String GDB_PROMPT = "(gdb)";
-
-    public enum RecordType {
-        OutOfBand,
-        Result,
-        Stream,
-        Async,
-        GdbPrompt
-    }
 
     public RecordType getRecordType(String line) {
         int i = 0;
@@ -315,5 +306,13 @@ public class Parser {
         }
         buffer.delete(0, i);
         return stringBuffer.toString();
+    }
+
+    public enum RecordType {
+        OutOfBand,
+        Result,
+        Stream,
+        Async,
+        GdbPrompt
     }
 }

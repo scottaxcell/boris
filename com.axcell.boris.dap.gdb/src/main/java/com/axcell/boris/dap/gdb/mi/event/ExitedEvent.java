@@ -13,10 +13,6 @@ public class ExitedEvent extends Event {
         args.setExitCode(exitCode);
     }
 
-    public ExitedEventArguments getArgs() {
-        return args;
-    }
-
     public static ExitedEvent parse(Result[] results) {
         long code = 0;
         if (results == null)
@@ -35,5 +31,9 @@ public class ExitedEvent extends Event {
             }
         }
         return new ExitedEvent(code);
+    }
+
+    public ExitedEventArguments getArgs() {
+        return args;
     }
 }
