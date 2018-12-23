@@ -256,6 +256,12 @@ public class GDBDebugServer implements IDebugProtocolServer {
 
     @Override
     public CompletableFuture<Void> stepIn(StepInArguments args) {
+        if (args.getThreadId() != null) {
+            ThreadSelectCommand threadSelectCommand = commandFactory.createThreadSelect(args.getThreadId());
+            queueCommand(threadSelectCommand);
+        }
+        ExecStepCommand stepCommand = commandFactory.createExecStep();
+        queueCommand(stepCommand);
         return CompletableFuture.completedFuture(null);
     }
 

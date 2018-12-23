@@ -36,6 +36,12 @@ public class CommandFactory {
         return execNextCommand;
     }
 
+    public ExecStepCommand createExecStep() {
+        ExecStepCommand execStepCommand = new ExecStepCommand();
+        execStepCommand.setIgnoreResponse(true);
+        return execStepCommand;
+    }
+
     public ThreadsInfoCommand createThreadsInfo() {
         ThreadsInfoCommand threadsInfoCommand = new ThreadsInfoCommand();
         threadsInfoCommand.setRequiresResponse(true);

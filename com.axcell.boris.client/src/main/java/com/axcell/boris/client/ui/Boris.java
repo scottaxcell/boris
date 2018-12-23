@@ -126,6 +126,10 @@ public class Boris implements DebugEventListener {
         nextButton.addActionListener(e -> stepOver());
         toolBar.add(nextButton);
 
+        JButton stepInButton = new JButton("Step Into");
+        nextButton.addActionListener(e -> stepInto());
+        toolBar.add(stepInButton);
+
         JButton continueTargetButton = new JButton("Resume");
         continueTargetButton.addActionListener(e -> resume());
         toolBar.add(continueTargetButton);
@@ -247,5 +251,16 @@ public class Boris implements DebugEventListener {
     private void terminate() {
         if (debugTarget != null)
             debugTarget.terminate();
+    }
+
+    public void stepInto() {
+        if (debugTarget == null || !debugTarget.isSuspended()) {
+            JOptionPane.showMessageDialog(frame, "Debugger is not suspended or running..");
+            return;
+        }
+        if (threadsPanel != null) {
+            Optional<DSPThread> thread = threadsPanel.getSelectedThread();
+            thread.ifPresent(DSPThread::stepInto);
+        }
     }
 }

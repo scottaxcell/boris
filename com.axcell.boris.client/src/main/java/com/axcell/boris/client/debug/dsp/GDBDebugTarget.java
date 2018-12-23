@@ -170,7 +170,7 @@ public class GDBDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
         Boris.getDebugEventMgr().fireEvent(event);
     }
 
-    private Optional<DSPThread> getThread(Long threadId) {
+    public Optional<DSPThread> getThread(Long threadId) {
         if (threadId == null)
             return null;
         return Stream.of(getThreads())

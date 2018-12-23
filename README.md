@@ -5,8 +5,7 @@ GDB implementation of Debug Adapter Protocol as a proof of concept. This include
 * implement editor features: line select on thread or stackframe select and on breakpoint
 
 ### BACKLOG
-* editor panel should not scroll to bottom each time it updates
-* continue should key off selected thread in threads panel
+* BUG - editor panel should not scroll to bottom each time it updates
 * add visible label? to denote where in the source code debugger has stopped
 * when program is running variables and threads panel need to update accordingly
 * when program ends variables and threads panel need to update accordingly
