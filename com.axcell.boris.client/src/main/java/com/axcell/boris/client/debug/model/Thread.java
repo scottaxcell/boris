@@ -1,12 +1,16 @@
 package com.axcell.boris.client.debug.model;
 
 /**
-* Represents a thread in a process.
+ * Represents a thread in a process.
  */
-public interface Thread {
+public interface Thread extends SuspendResume, Step {
+    Breakpoint[] getBreakpoints();
+
     String getName();
 
     StackFrame[] getStackFrames();
 
     StackFrame getTopStackFrame();
+
+    boolean hasStackFrames();
 }

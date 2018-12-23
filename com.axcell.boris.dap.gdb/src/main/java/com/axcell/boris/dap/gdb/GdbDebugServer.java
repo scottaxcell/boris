@@ -241,7 +241,10 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
     @Override
     public CompletableFuture<Void> next(NextArguments args) {
-        // TODO add support handling threadId in args
+        if (args.getThreadId() != null) {
+            ThreadSelectCommand threadSelectCommand = commandFactory.createThreadSelect(args.getThreadId());
+            queueCommand(threadSelectCommand);
+        }
         ExecNextCommand miGdbNext = commandFactory.createExecNext();
         queueCommand(miGdbNext);
         return CompletableFuture.completedFuture(null);

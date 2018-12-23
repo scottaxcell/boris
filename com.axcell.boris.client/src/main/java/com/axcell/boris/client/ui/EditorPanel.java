@@ -1,10 +1,11 @@
 package com.axcell.boris.client.ui;
 
-import com.axcell.boris.client.GdbDebugClient;
-import com.axcell.boris.client.debug.dsp.DSPBreakpoint;
+import com.axcell.boris.client.debug.dsp.*;
 import com.axcell.boris.client.debug.event.DebugEvent;
 import com.axcell.boris.client.debug.event.DebugEventListener;
 import com.axcell.boris.client.debug.model.Breakpoint;
+import com.axcell.boris.client.ui.event.GUIEvent;
+import com.axcell.boris.client.ui.event.GUIEventListener;
 import com.google.common.base.Strings;
 
 import javax.swing.*;
@@ -24,10 +25,10 @@ import java.util.List;
  * update textpane each time debugger stops
  * remove bold when debugger terminates
  */
-public class EditorPanel extends JPanel implements DebugEventListener {
+public class EditorPanel extends JPanel implements DebugEventListener, GUIEventListener {
     private String[] contents;
     private JTextPane textPane;
-    private GdbDebugClient client;
+    private GdbDebugTarget client;
     private Long currentDebugLineNumber;
 
     /**
@@ -114,7 +115,6 @@ public class EditorPanel extends JPanel implements DebugEventListener {
                         Breakpoint[] breakpoints = Boris.getGlobalBreakpointMgr().getBreakpoints();
                         for (Breakpoint breakpoint : breakpoints) {
                             if (newBreakpoint.equals(breakpoint)) {
-//                                Boris.getGlobalBreakpointMgr().setBreakpointEnabled(breakpoint, !breakpoint.isEnabled());
                                 Boris.getGlobalBreakpointMgr().removeBreakpoint(breakpoint);
                                 return;
                             }
@@ -159,6 +159,7 @@ public class EditorPanel extends JPanel implements DebugEventListener {
 
     @Override
     public void handleEvent(DebugEvent event) {
+        /* TODO turn on when ready
         if (event.getType() == DebugEvent.STOPPED) {
             SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
                 @Override
@@ -186,13 +187,40 @@ public class EditorPanel extends JPanel implements DebugEventListener {
                 updateText(currentDebugLineNumber);
             });
         }
+        */
     }
 
-    public GdbDebugClient getClient() {
+    public GdbDebugTarget getClient() {
         return client;
     }
 
-    public void setClient(GdbDebugClient client) {
+    public void setClient(GdbDebugTarget client) {
         this.client = client;
+    }
+
+    @Override
+    public void handleEvent(GUIEvent event) {
+        /* TODO turn on when ready
+        if (event.getType() == GUIEvent.THREAD_SELECTED) {
+            if (event.getObject() instanceof DSPThread) {
+                DSPThread thread = (DSPThread) event.getObject();
+                Long lineNumber = thread.getTopStackFrame().getLineNumber();
+                currentDebugLineNumber = lineNumber;
+                SwingUtilities.invokeLater(() -> {
+                    updateText(currentDebugLineNumber);
+                });
+            }
+        }
+        else if (event.getType() == GUIEvent.STACK_FRAME_SELECTED) {
+            if (event.getObject() instanceof DSPStackFrame) {
+                DSPStackFrame stackFrame = (DSPStackFrame) event.getObject();
+                Long lineNumber = stackFrame.getLineNumber();
+                currentDebugLineNumber = lineNumber;
+                SwingUtilities.invokeLater(() -> {
+                    updateText(currentDebugLineNumber);
+                });
+            }
+        }
+        */
     }
 }

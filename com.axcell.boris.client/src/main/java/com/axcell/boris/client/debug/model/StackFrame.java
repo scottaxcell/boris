@@ -11,4 +11,6 @@ public interface StackFrame {
     Thread getThread();
 
     Long getLineNumber();
+
+    boolean hasVariables();
 }

@@ -1,6 +1,8 @@
 package com.axcell.boris.client.ui.event;
 
 public class GUIEvent {
+    public static final int THREAD_SELECTED = 0;
+    public static final int STACK_FRAME_SELECTED = 1;
 
     private int type;
     private Object source;

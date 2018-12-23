@@ -4,24 +4,22 @@ import bibliothek.gui.DockController;
 import bibliothek.gui.dock.DefaultDockable;
 import bibliothek.gui.dock.SplitDockStation;
 import bibliothek.gui.dock.station.split.SplitDockGrid;
-import com.axcell.boris.client.debug.dsp.DSPBreakpoint;
 import com.axcell.boris.client.debug.dsp.DSPThread;
-import com.axcell.boris.client.GdbDebugClient;
+import com.axcell.boris.client.debug.dsp.GdbDebugTarget;
+import com.axcell.boris.client.debug.event.DebugEvent;
+import com.axcell.boris.client.debug.event.DebugEventListener;
 import com.axcell.boris.client.debug.event.DebugEventMgr;
 import com.axcell.boris.client.debug.model.BreakpointListener;
 import com.axcell.boris.client.debug.model.GlobalBreakpointMgr;
-import com.axcell.boris.client.debug.model.StackFrame;
 import com.axcell.boris.client.ui.event.GUIEventMgr;
 import com.axcell.boris.dap.gdb.Target;
-import com.axcell.boris.utils.Utils;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.nio.file.Paths;
 
-public class Boris {
+public class Boris implements DebugEventListener {
     /**
      * COMPONENTS
      * menubar (open file, run exe, dsp exe, exit)
@@ -33,7 +31,7 @@ public class Boris {
      * <p>
      * TODO
      * launch dsp process somehow, maybe a DebugSession holds a gdbdebugclient
-     * - client should take target
+     * - debugTarget should take target
      * - initialize
      * - setBreakpoints
      * - launch
@@ -53,7 +51,7 @@ public class Boris {
     private static GUIEventMgr guiEventMgr;
     private static DebugEventMgr debugEventMgr;
 
-    private GdbDebugClient client;
+    private GdbDebugTarget debugTarget;
 
     /**
      * FOR DEBUG/DEVELOPMENT
@@ -61,11 +59,13 @@ public class Boris {
     private static final String TEST_CASE_DIR = "/home/saxcell/dev/boris/testcases/threadexample";
     private static final String SOURCE_FILENAME = String.format("%s/threadexample.cpp", TEST_CASE_DIR);
     private static final String TARGET_FILENAME = String.format("%s/threadexample", TEST_CASE_DIR);
+
     /**
      * END FOR DEBUG/DEVELOPMENT
      */
 
     public Boris() {
+        DebugEventMgr.getInstance().addListener(this);
         SwingUtilities.invokeLater(() -> initDockableGui());
     }
 
@@ -124,7 +124,7 @@ public class Boris {
     private void initToolBar() {
         toolBar = new JToolBar();
 
-        JButton runAppButton = new JButton("Run App");
+        JButton runAppButton = new JButton("Run Target");
         runAppButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -134,7 +134,7 @@ public class Boris {
         });
         toolBar.add(runAppButton);
 
-        JButton debugAppButton = new JButton("Debug App");
+        JButton debugAppButton = new JButton("Debug Target");
         debugAppButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -143,24 +143,20 @@ public class Boris {
         });
         toolBar.add(debugAppButton);
 
-        JButton nextButton = new JButton("Next");
+        JButton nextButton = new JButton("Step Over");
         nextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (client != null) {
-                    client.next();
-                }
+                stepOver();
             }
         });
         toolBar.add(nextButton);
 
-        JButton continueAppButton = new JButton("Continue");
+        JButton continueAppButton = new JButton("Resume");
         continueAppButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (client != null) {
-                    client.continueAllThreads();
-                }
+                resume();
             }
         });
         toolBar.add(continueAppButton);
@@ -183,7 +179,7 @@ public class Boris {
         controller.add(station);
         SplitDockGrid grid = new SplitDockGrid();
 
-        threadsPanel = new ThreadsPanel(client);
+        threadsPanel = new ThreadsPanel();
         DefaultDockable threadsDockable = new DefaultDockable();
         threadsDockable.add(threadsPanel);
         grid.addDockable(0, 0, 1, 2, threadsDockable);
@@ -193,10 +189,10 @@ public class Boris {
         editorDockable.add(editorPanel);
         grid.addDockable(1, 0, 1, 2, editorDockable);
 
-        variablesPanel = new VariablesPanel();
-        DefaultDockable variablesDockable = new DefaultDockable();
-        variablesDockable.add(variablesPanel);
-        grid.addDockable(2, 0, 1, 1, variablesDockable);
+//        variablesPanel = new VariablesPanel();
+//        DefaultDockable variablesDockable = new DefaultDockable();
+//        variablesDockable.add(variablesPanel);
+//        grid.addDockable(2, 0, 1, 1, variablesDockable);
 
         breakpointsPanel = new BreakpointsPanel(getGlobalBreakpointMgr());
         addBreakpointListener(breakpointsPanel);
@@ -223,11 +219,11 @@ public class Boris {
             @Override
             protected Boolean doInBackground() throws Exception {
                 Target target = new Target(TARGET_FILENAME);
-                client = new GdbDebugClient(target, getGlobalBreakpointMgr());
-                threadsPanel.setClient(client);
-                variablesPanel.setClient(client);
-                editorPanel.setClient(client);
-                client.initialize(42);
+                debugTarget = new GdbDebugTarget(target, getGlobalBreakpointMgr());
+                threadsPanel.setDebugTarget(debugTarget);
+//                variablesPanel.setDebugTarget(debugTarget);
+                editorPanel.setClient(debugTarget);
+                debugTarget.initialize(42);
                 return true;
             }
         };
@@ -252,5 +248,39 @@ public class Boris {
 
     public static GUIEventMgr getGuiEventMgr() {
         return guiEventMgr.getInstance();
+    }
+
+    @Override
+    public void handleEvent(DebugEvent event) {
+        if (event.getType() == DebugEvent.EXITED || event.getType() == DebugEvent.TERMINATED) {
+//            Utils.debug("Boris killed GDB debugTarget");
+//            debugTarget = null;
+        }
+    }
+
+    public void stepOver() {
+        if (debugTarget == null || !debugTarget.isSuspended()) {
+            JOptionPane.showMessageDialog(frame, "Debugger is not suspended or running..");
+            return;
+        }
+        if (threadsPanel != null) {
+            DSPThread thread = threadsPanel.getSelectedThread();
+            if (thread != null) {
+                thread.stepOver();
+            }
+        }
+        else {
+            for (DSPThread thread : debugTarget.getThreads()) {
+                thread.stepOver();
+            }
+        }
+    }
+
+    public void resume() {
+        if (debugTarget == null || !debugTarget.isSuspended()) {
+            JOptionPane.showMessageDialog(frame, "Debugger is not suspended or running..");
+            return;
+        }
+        debugTarget.resume();
     }
 }

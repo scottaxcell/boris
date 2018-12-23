@@ -1,5 +1,6 @@
 package com.axcell.boris.client;
 
+import com.axcell.boris.client.debug.dsp.GdbDebugTarget;
 import com.axcell.boris.client.debug.model.GlobalBreakpointMgr;
 import com.axcell.boris.dap.gdb.Target;
 import org.eclipse.lsp4j.debug.Capabilities;
@@ -46,7 +47,7 @@ public class GdbDebugClientTest {
 
     @Test
     public void initialize() throws ExecutionException, InterruptedException {
-        GdbDebugClient client = new GdbDebugClient(target, globalBreakpointMgr);
+        GdbDebugTarget client = new GdbDebugTarget(target, globalBreakpointMgr);
         client.initialize(42);
         Assert.assertTrue(client.isInitialized());
 

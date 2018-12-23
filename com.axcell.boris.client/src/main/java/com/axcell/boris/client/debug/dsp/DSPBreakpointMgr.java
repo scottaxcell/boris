@@ -34,29 +34,26 @@ public class DSPBreakpointMgr implements BreakpointListener {
     }
 
     private void addBreakpoint(Breakpoint breakpoint) {
-        if (breakpoint instanceof DSPBreakpoint) {
-            Source source = new Source();
-            source.setName(String.valueOf(breakpoint.getPath().getFileName()));
-            source.setPath(breakpoint.getPath().toString());
-
-            SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
-            sourceBreakpoint.setLine(breakpoint.getLineNumber());
-
-            addBreakpoint(source, sourceBreakpoint);
-        }
+        if (breakpoint instanceof DSPBreakpoint)
+            addBreakpoint(createSource(breakpoint), createSourceBreakpoint(breakpoint));
     }
 
     private void removeBreakpoint(Breakpoint breakpoint) {
-        if (breakpoint instanceof DSPBreakpoint) {
-            Source source = new Source();
-            source.setName(String.valueOf(breakpoint.getPath().getFileName()));
-            source.setPath(breakpoint.getPath().toString());
+        if (breakpoint instanceof DSPBreakpoint)
+            removeBreakpoint(createSource(breakpoint), createSourceBreakpoint(breakpoint));
+    }
 
-            SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
-            sourceBreakpoint.setLine(breakpoint.getLineNumber());
+    private SourceBreakpoint createSourceBreakpoint(Breakpoint breakpoint) {
+        SourceBreakpoint sourceBreakpoint = new SourceBreakpoint();
+        sourceBreakpoint.setLine(breakpoint.getLineNumber());
+        return sourceBreakpoint;
+    }
 
-            removeBreakpoint(source, sourceBreakpoint);
-        }
+    private Source createSource(Breakpoint breakpoint) {
+        Source source = new Source();
+        source.setName(String.valueOf(breakpoint.getPath().getFileName()));
+        source.setPath(breakpoint.getPath().toString());
+        return source;
     }
 
     private void addBreakpoint(Source source, SourceBreakpoint sourceBreakpoint) {
@@ -125,5 +122,10 @@ public class DSPBreakpointMgr implements BreakpointListener {
     public void breakpointRemoved(Breakpoint breakpoint) {
         removeBreakpoint(breakpoint);
         sendBreakpoints();
+    }
+
+    public void cleanup() {
+        if (breakpointMgr != null)
+            breakpointMgr.removeBreakpointListener(this);
     }
 }

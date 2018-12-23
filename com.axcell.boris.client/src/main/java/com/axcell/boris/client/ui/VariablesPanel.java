@@ -1,9 +1,11 @@
 package com.axcell.boris.client.ui;
 
-import com.axcell.boris.client.GdbDebugClient;
-import com.axcell.boris.client.debug.dsp.DSPVariable;
+import com.axcell.boris.client.debug.dsp.*;
 import com.axcell.boris.client.debug.event.DebugEvent;
 import com.axcell.boris.client.debug.event.DebugEventListener;
+import com.axcell.boris.client.debug.model.Variable;
+import com.axcell.boris.client.ui.event.GUIEvent;
+import com.axcell.boris.client.ui.event.GUIEventListener;
 import com.axcell.boris.utils.Utils;
 
 import javax.swing.*;
@@ -12,10 +14,10 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VariablesPanel extends JPanel implements DebugEventListener {
+public class VariablesPanel extends JPanel implements DebugEventListener, GUIEventListener {
     private JTable table;
     private VariablesTableModel model;
-    private GdbDebugClient client;
+    private GdbDebugTarget client;
 
     public VariablesPanel() {
         super(new BorderLayout());
@@ -31,11 +33,11 @@ public class VariablesPanel extends JPanel implements DebugEventListener {
         add(new JScrollPane(table), BorderLayout.CENTER);
     }
 
-    public GdbDebugClient getClient() {
+    public GdbDebugTarget getClient() {
         return client;
     }
 
-    public void setClient(GdbDebugClient client) {
+    public void setClient(GdbDebugTarget client) {
         this.client = client;
     }
 
@@ -52,17 +54,36 @@ public class VariablesPanel extends JPanel implements DebugEventListener {
                 @Override
                 protected void done() {
                     SwingUtilities.invokeLater(() -> {
-                        StringBuilder sb = new StringBuilder("UPDATING variables panel..");
-                        for (DSPVariable v : model.variables) {
-                            sb.append(" Variable {" + v.getName() + " : " + v.getValue() + "}");
-                        }
-                        Utils.debug("SGA -- " + sb.toString());
-
                         model.fireTableDataChanged();
                     });
                 }
             };
             worker.execute();
+        }
+    }
+
+    @Override
+    public void handleEvent(GUIEvent event) {
+        if (event.getType() == GUIEvent.THREAD_SELECTED) {
+            if (event.getObject() instanceof DSPThread) {
+                DSPThread thread = (DSPThread) event.getObject();
+                DSPVariable[] variables = (DSPVariable[]) thread.getTopStackFrame().getVariables();
+                model.updateModel(variables);
+                SwingUtilities.invokeLater(() -> {
+                    model.fireTableDataChanged();
+                });
+            }
+        }
+        else if (event.getType() == GUIEvent.STACK_FRAME_SELECTED) {
+            if (event.getObject() instanceof DSPStackFrame) {
+                DSPStackFrame stackFrame = (DSPStackFrame) event.getObject();
+                DSPThread thread = (DSPThread) stackFrame.getThread();
+                DSPVariable[] variables = (DSPVariable[]) thread.getTopStackFrame().getVariables();
+                model.updateModel(variables);
+                SwingUtilities.invokeLater(() -> {
+                    model.fireTableDataChanged();
+                });
+            }
         }
     }
 
@@ -109,6 +130,11 @@ public class VariablesPanel extends JPanel implements DebugEventListener {
                 DSPVariable[] vars = client.getVariables();
                 addVariables(vars);
             }
+        }
+
+        void updateModel(DSPVariable[] variables) {
+            this.variables.clear();
+            addVariables(variables);
         }
     }
 }
