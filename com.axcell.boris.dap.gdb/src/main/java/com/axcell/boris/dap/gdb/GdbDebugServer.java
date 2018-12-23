@@ -40,7 +40,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
     private GdbReaderThread gdbReaderThread;
     private GdbWriterThread gdbWriterThread;
     private IDebugProtocolClient client;
-    private ExecutorService executor = Executors.newCachedThreadPool();
+    private ExecutorService asyncExecutor = Executors.newCachedThreadPool();
     private ExecutorService eventExecutor = Executors.newSingleThreadExecutor();
     private EventProcessor eventProcessor = new EventProcessor();
     /**
@@ -51,9 +51,10 @@ public class GdbDebugServer implements IDebugProtocolServer {
      * Aligns commandWrapper requests with commandWrapper responses
      */
     private int tokenCounter = 0;
-
     /**
-     * TODO need to track scope variablesReference number for each frame
+     * Maps variablesReference to a Long
+     * where variablesReference = SCOPE_NAME concatonated with CANTOR_PAIR_NUMBER
+     * where CANTOR_PAIR_NUMBER = cantor pair of threadId and frameId (See {@link com.axcell.boris.dap.gdb.Cantor})
      */
     private VariablesReferenceMap variablesReferenceMap = new VariablesReferenceMap();
 
@@ -123,6 +124,8 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
     @Override
     public CompletableFuture<Void> disconnect(DisconnectArguments args) {
+        // TODO disconnect from debuggee
+        // TODO kill debug adapter
         return CompletableFuture.completedFuture(null);
     }
 
@@ -153,7 +156,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
         }
 
         Supplier<SetBreakpointsResponse> supplier = setBreakpointsResponseSupplier(tokens, args);
-        return CompletableFuture.supplyAsync(supplier, executor);
+        return CompletableFuture.supplyAsync(supplier, asyncExecutor);
     }
 
     private Supplier<SetBreakpointsResponse> setBreakpointsResponseSupplier(List<Integer> tokens, SetBreakpointsArguments args) {
@@ -212,7 +215,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
         ExecContinueCommand execContinue = commandFactory.createExecContinue();
         final int token = queueCommand(execContinue);
         Supplier<ContinueResponse> supplier = continueResponseSupplier(token);
-        return CompletableFuture.supplyAsync(supplier, executor);
+        return CompletableFuture.supplyAsync(supplier, asyncExecutor);
     }
 
     private Supplier<ContinueResponse> continueResponseSupplier(int token) {
@@ -293,17 +296,17 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
         StackListFramesCommand stackListFramesCommand = commandFactory.createStackListFrames();
         final int token = queueCommand(stackListFramesCommand);
-        Supplier<StackTraceResponse> supplier = setStackTraceResponseSupplier(token);
-        return CompletableFuture.supplyAsync(supplier, executor);
+        Supplier<StackTraceResponse> supplier = setStackTraceResponseSupplier(token, args.getThreadId());
+        return CompletableFuture.supplyAsync(supplier, asyncExecutor);
     }
 
-    private Supplier<StackTraceResponse> setStackTraceResponseSupplier(int token) {
+    private Supplier<StackTraceResponse> setStackTraceResponseSupplier(int token, Long threadId) {
         return () -> {
             // TODO start timer to flag any commandWrapper that doesn't get a response
             while (true) {
                 if (readCommands.containsKey(token)) {
                     CommandWrapper commandWrapper = readCommands.remove(token);
-                    return getStackTraceResponse(commandWrapper);
+                    return getStackTraceResponse(commandWrapper, threadId);
                 }
                 try {
                     Thread.sleep(200);
@@ -314,22 +317,25 @@ public class GdbDebugServer implements IDebugProtocolServer {
         };
     }
 
-    private StackTraceResponse getStackTraceResponse(CommandWrapper commandWrapper) {
+    private StackTraceResponse getStackTraceResponse(CommandWrapper commandWrapper, Long threadId) {
         CommandResponse commandResponse = commandWrapper.getCommandResponse();
         Output output = commandResponse.getOutput();
         StackTraceResponse response = OutputParser.parseStackListFramesResponse(output);
+        for (StackFrame stackFrame : response.getStackFrames()) {
+            Long stackFrameId = stackFrame.getId();
+            Long pair = Cantor.pair(threadId, stackFrameId);
+            stackFrame.setId(pair);
+        }
         return response;
     }
 
     @Override
     public CompletableFuture<ScopesResponse> scopes(ScopesArguments args) {
         ScopesResponse response = new ScopesResponse();
-
         List<Scope> scopes = new ArrayList<>();
         scopes.add(createScope("Locals", args.getFrameId()));
-        scopes.add(createScope("Arguments", args.getFrameId()));
+//        scopes.add(createScope("Arguments", args.getFrameId())); // TODO turn on one day
         response.setScopes(scopes.toArray(new Scope[scopes.size()]));
-
         return CompletableFuture.completedFuture(response);
     }
 
@@ -342,11 +348,16 @@ public class GdbDebugServer implements IDebugProtocolServer {
 
     @Override
     public CompletableFuture<VariablesResponse> variables(VariablesArguments args) {
-        // TODO define the variablesReference flow better
         String variablesReference = variablesReferenceMap.get(args.getVariablesReference());
         String[] tmp = variablesReference.split("_");
         String type = tmp[0];
-        Long frameId = Long.valueOf(tmp[1]);
+        Long cantorPair = Long.valueOf(tmp[1]);
+        long[] cantorDepair = Cantor.depair(cantorPair);
+        Long threadId = cantorDepair[0];
+        Long frameId = cantorDepair[1];
+
+        ThreadSelectCommand threadSelectCommand = commandFactory.createThreadSelect(threadId);
+        queueCommand(threadSelectCommand);
 
         StackSelectFrameCommand stackSelectFrameCommand = commandFactory.createStackSelectFrame(frameId);
         queueCommand(stackSelectFrameCommand);
@@ -354,23 +365,22 @@ public class GdbDebugServer implements IDebugProtocolServer {
         if ("Locals".equals(type)) {
             StackListLocalsCommand stackListLocalsCommand = commandFactory.createStackListLocals();
             final int token = queueCommand(stackListLocalsCommand);
-            Supplier<VariablesResponse> supplier = setVariablesResponseSupplier(token);
-            return CompletableFuture.supplyAsync(supplier, executor);
+            Supplier<VariablesResponse> supplier = setVariablesResponseSupplier(token, args.getVariablesReference());
+            return CompletableFuture.supplyAsync(supplier, asyncExecutor);
         }
         else if ("Arguments".equals(type)) {
             // TODO
         }
         throw new IllegalStateException("naughty naughty");
-//        return CompletableFuture.completedFuture(null);
     }
 
-    private Supplier<VariablesResponse> setVariablesResponseSupplier(int token) {
+    private Supplier<VariablesResponse> setVariablesResponseSupplier(int token, Long variablesReference) {
         return () -> {
             // TODO start timer to flag any commandWrapper that doesn't get a response
             while (true) {
                 if (readCommands.containsKey(token)) {
                     CommandWrapper commandWrapper = readCommands.remove(token);
-                    return getVariablesResponse(commandWrapper);
+                    return getVariablesResponse(commandWrapper, variablesReference);
                 }
                 try {
                     Thread.sleep(200);
@@ -381,10 +391,12 @@ public class GdbDebugServer implements IDebugProtocolServer {
         };
     }
 
-    private VariablesResponse getVariablesResponse(CommandWrapper commandWrapper) {
+    private VariablesResponse getVariablesResponse(CommandWrapper commandWrapper, Long variablesReference) {
         CommandResponse commandResponse = commandWrapper.getCommandResponse();
         Output output = commandResponse.getOutput();
         VariablesResponse response = OutputParser.parseVariablesResponse(output);
+        for (Variable variable : response.getVariables())
+            variable.setVariablesReference(variablesReference);
         return response;
     }
 
@@ -403,7 +415,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
         ThreadsInfoCommand threadsInfoCommand = commandFactory.createThreadsInfo();
         final int token = queueCommand(threadsInfoCommand);
         Supplier<ThreadsResponse> supplier = setThreadsResponseSupplier(token);
-        return CompletableFuture.supplyAsync(supplier, executor);
+        return CompletableFuture.supplyAsync(supplier, asyncExecutor);
     }
 
     private Supplier<ThreadsResponse> setThreadsResponseSupplier(int token) {
@@ -543,11 +555,11 @@ public class GdbDebugServer implements IDebugProtocolServer {
      * Track variablesReference
      */
     private static class VariablesReferenceMap {
-        private final Long START_VARIABLES_REFERENCE = Long.valueOf(100);
+        private static final Long START_VARIABLES_REFERENCE = 100L;
         private Map<Long, String> map = new HashMap<>();
         private Long nextVariablesReference = START_VARIABLES_REFERENCE;
 
-        public Long create(String variablesReference) {
+        Long create(String variablesReference) {
             Long next = nextVariablesReference++;
             map.put(next, variablesReference);
             return next;
@@ -633,7 +645,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     if (line.length() != 0) {
-//                        Utils.debug("reading line: " + line);
+                        Utils.debug("reading line: " + line);
                         handleOutput(line);
                     }
                 }
@@ -702,7 +714,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
         private int token;
         private int hashCode;
 
-        public CommandWrapper(Command command) {
+        CommandWrapper(Command command) {
             this.command = command;
             token = -1;
         }
@@ -715,7 +727,7 @@ public class GdbDebugServer implements IDebugProtocolServer {
             this.command = command;
         }
 
-        public int getToken() {
+        int getToken() {
             return token;
         }
 
@@ -723,15 +735,15 @@ public class GdbDebugServer implements IDebugProtocolServer {
             this.token = token;
         }
 
-        public void generateToken() {
+        void generateToken() {
             token = getNewToken();
         }
 
-        public CommandResponse getCommandResponse() {
+        CommandResponse getCommandResponse() {
             return commandResponse;
         }
 
-        public void setCommandResponse(CommandResponse commandResponse) {
+        void setCommandResponse(CommandResponse commandResponse) {
             this.commandResponse = commandResponse;
         }
 

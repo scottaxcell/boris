@@ -57,8 +57,7 @@ public class OutputParser {
             }
         }
 
-        if (!threads.isEmpty())
-            response.setThreads(threads.toArray(new org.eclipse.lsp4j.debug.Thread[threads.size()]));
+        response.setThreads(threads.toArray(new org.eclipse.lsp4j.debug.Thread[threads.size()]));
 
         return response;
     }
@@ -96,8 +95,7 @@ public class OutputParser {
             }
         }
 
-        if (!stackFrames.isEmpty())
-            response.setStackFrames(stackFrames.toArray(new StackFrame[stackFrames.size()]));
+        response.setStackFrames(stackFrames.toArray(new StackFrame[stackFrames.size()]));
 
         return response;
     }
@@ -178,8 +176,7 @@ public class OutputParser {
             variables.add(v);
         }
 
-        if (!variables.isEmpty())
-            response.setVariables(variables.toArray(new Variable[variables.size()]));
+        response.setVariables(variables.toArray(new Variable[variables.size()]));
 
         return response;
     }

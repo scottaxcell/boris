@@ -13,14 +13,14 @@
     <artifactId>com.axcell.boris.client</artifactId>
     <dependencies>
         <dependency>
-            <groupId>com.axcell.boris.dap.gdb</groupId>
-            <artifactId>com.axcell.boris.dap.gdb</artifactId>
+            <groupId>com.axcell.boris.utils</groupId>
+            <artifactId>com.axcell.boris.utils</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.axcell.boris.utils</groupId>
-            <artifactId>com.axcell.boris.utils</artifactId>
+            <groupId>com.axcell.boris.dap.gdb</groupId>
+            <artifactId>com.axcell.boris.dap.gdb</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>

@@ -4,7 +4,6 @@ GDB implementation of Debug Adapter Protocol as a proof of concept. This include
 ### TODO
 * (in-progress) align debugTarget debug model with eclipse cdt model better
 * BUG - variables panel is not always updating, looks like threads panel is interferring with it's calls to the client/server
-* next should key off selected thread in threads panel
 
 ### BACKLOG
 * editor panel should not scroll to bottom each time it updates

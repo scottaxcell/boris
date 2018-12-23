@@ -27,20 +27,10 @@ import java.util.List;
  * remove bold when debugger terminates
  */
 public class EditorPanel extends JPanel implements DebugEventListener, GUIEventListener {
-    /**
-     * FOR DEBUG/DEVELOPMENT
-     */
-    private static final String TEST_CASE_DIR = "/home/saxcell/dev/boris/testcases/threadexample";
-    private static final String SOURCE_FILENAME = String.format("%s/threadexample.cpp", TEST_CASE_DIR);
-    private static final String TARGET_FILENAME = String.format("%s/threadexample", TEST_CASE_DIR);
     private String[] contents;
     private JTextPane textPane;
     private GdbDebugTarget client;
     private Long currentDebugLineNumber;
-
-    /**
-     * END FOR DEBUG/DEVELOPMENT
-     */
 
     public EditorPanel() {
         super(new BorderLayout());
@@ -50,7 +40,7 @@ public class EditorPanel extends JPanel implements DebugEventListener, GUIEventL
     }
 
     private void initContents() {
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(SOURCE_FILENAME))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(Boris.SOURCE_FILENAME))) {
             List<String> lines = new ArrayList<>();
             String line = null;
             while ((line = bufferedReader.readLine()) != null) {
@@ -110,7 +100,7 @@ public class EditorPanel extends JPanel implements DebugEventListener, GUIEventL
                             return;
 
                         Long lineNumber = Long.valueOf(doc.getDefaultRootElement().getElementIndex(pos) + 1);
-                        DSPBreakpoint newBreakpoint = new DSPBreakpoint(Paths.get(SOURCE_FILENAME), lineNumber, true);
+                        DSPBreakpoint newBreakpoint = new DSPBreakpoint(Paths.get(Boris.SOURCE_FILENAME), lineNumber, true);
 
                         Breakpoint[] breakpoints = Boris.getGlobalBreakpointMgr().getBreakpoints();
                         for (Breakpoint breakpoint : breakpoints) {

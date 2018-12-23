@@ -43,7 +43,7 @@ public class DSPThread extends DSPDebugElement implements Thread {
     }
 
     @Override
-    public StackFrame[] getStackFrames() {
+    public DSPStackFrame[] getStackFrames() {
         if (!refreshFrames.getAndSet(false)) {
             synchronized (stackFrames) {
                 return stackFrames.toArray(new DSPStackFrame[stackFrames.size()]);
@@ -77,8 +77,8 @@ public class DSPThread extends DSPDebugElement implements Thread {
     }
 
     @Override
-    public StackFrame getTopStackFrame() {
-        StackFrame[] stackFrames = getStackFrames();
+    public DSPStackFrame getTopStackFrame() {
+        DSPStackFrame[] stackFrames = getStackFrames();
         if (stackFrames.length > 0)
             return stackFrames[0];
         else

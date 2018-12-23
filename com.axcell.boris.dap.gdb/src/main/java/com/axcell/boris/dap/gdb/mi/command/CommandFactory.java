@@ -10,7 +10,7 @@ public class CommandFactory {
 
     public BreakDeleteCommand createBreakDelete() {
         BreakDeleteCommand breakDeleteCommand = new BreakDeleteCommand();
-        breakDeleteCommand.setRequiresResponse(true);
+        breakDeleteCommand.setIgnoreResponse(true);
         return breakDeleteCommand;
     }
 

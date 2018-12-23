@@ -30,7 +30,7 @@ public class DSPStackFrame extends DSPDebugElement implements StackFrame {
     }
 
     @Override
-    public Variable[] getVariables() {
+    public DSPVariable[] getVariables() {
         try {
             ScopesArguments args = new ScopesArguments();
             args.setFrameId(stackFrame.getId());

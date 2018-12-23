@@ -21,7 +21,7 @@ public class DSPVariable extends DSPDebugElement implements Variable {
     }
 
     @Override
-    public Value getValue() {
+    public DSPValue getValue() {
         return new DSPValue(this, variablesReference, name, value);
     }
 

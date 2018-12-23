@@ -16,16 +16,14 @@ import com.axcell.boris.dap.gdb.Target;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Boris implements DebugEventListener {
     /**
      * FOR DEBUG/DEVELOPMENT
      */
-    private static final String TEST_CASE_DIR = "/home/saxcell/dev/boris/testcases/threadexample";
-    private static final String SOURCE_FILENAME = String.format("%s/threadexample.cpp", TEST_CASE_DIR);
-    private static final String TARGET_FILENAME = String.format("%s/threadexample", TEST_CASE_DIR);
+    public static final String TEST_CASE_DIR = "/home/saxcell/dev/boris/testcases/threadexample";
+    public static final String SOURCE_FILENAME = String.format("%s/threadexample.cpp", TEST_CASE_DIR);
+    public static final String TARGET_FILENAME = String.format("%s/threadexample", TEST_CASE_DIR);
     private static GlobalBreakpointMgr globalBreakpointMgr;
     private static GUIEventMgr guiEventMgr;
     private static DebugEventMgr debugEventMgr;
@@ -84,46 +82,26 @@ public class Boris implements DebugEventListener {
         JMenu fileMenu = new JMenu("File");
 
         JMenuItem openFileMenuItem = new JMenuItem("Open Source..");
-        openFileMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(frame, "IMPLEMENT ME");
-            }
-        });
+        openFileMenuItem.addActionListener(e -> JOptionPane.showMessageDialog(frame, "IMPLEMENT ME"));
         fileMenu.add(openFileMenuItem);
 
         fileMenu.addSeparator();
 
         JMenuItem exitMenuItem = new JMenuItem("Exit..");
-        exitMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.exit(0);
-            }
-        });
+        exitMenuItem.addActionListener(e -> System.exit(0));
         fileMenu.add(exitMenuItem);
 
         menuBar.add(fileMenu);
 
         JMenu runMenu = new JMenu("Run");
 
-        JMenuItem runAppMenuItem = new JMenuItem("Run App..");
-        runAppMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(frame, "IMPLEMENT ME");
-            }
-        });
-        runMenu.add(runAppMenuItem);
+        JMenuItem runTargetMenuItem = new JMenuItem("Run Target..");
+        runTargetMenuItem.addActionListener(e -> JOptionPane.showMessageDialog(frame, "IMPLEMENT ME"));
+        runMenu.add(runTargetMenuItem);
 
-        JMenuItem debugAppMenuItem = new JMenuItem("Debug App..");
-        debugAppMenuItem.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                debugTarget();
-            }
-        });
-        runMenu.add(debugAppMenuItem);
+        JMenuItem debugTargetMenuItem = new JMenuItem("Debug Target..");
+        debugTargetMenuItem.addActionListener(e -> debugTarget());
+        runMenu.add(debugTargetMenuItem);
 
         menuBar.add(runMenu);
 
@@ -133,42 +111,25 @@ public class Boris implements DebugEventListener {
     private void initToolBar() {
         toolBar = new JToolBar();
 
-        JButton runAppButton = new JButton("Run Target");
-        runAppButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(frame, "IMPLEMENT ME");
+        JButton runTargetButton = new JButton("Run Target");
+        runTargetButton.addActionListener(e -> JOptionPane.showMessageDialog(frame, "IMPLEMENT ME"));
+        toolBar.add(runTargetButton);
 
-            }
-        });
-        toolBar.add(runAppButton);
-
-        JButton debugAppButton = new JButton("Debug Target");
-        debugAppButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                debugTarget();
-            }
-        });
-        toolBar.add(debugAppButton);
+        JButton debugTargetButton = new JButton("Debug Target");
+        debugTargetButton.addActionListener(e -> debugTarget());
+        toolBar.add(debugTargetButton);
 
         JButton nextButton = new JButton("Step Over");
-        nextButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                stepOver();
-            }
-        });
+        nextButton.addActionListener(e -> stepOver());
         toolBar.add(nextButton);
 
-        JButton continueAppButton = new JButton("Resume");
-        continueAppButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                resume();
-            }
-        });
-        toolBar.add(continueAppButton);
+        JButton continueTargetButton = new JButton("Resume");
+        continueTargetButton.addActionListener(e -> resume());
+        toolBar.add(continueTargetButton);
+
+        JButton terminateTargetButton = new JButton("Terminate");
+        terminateTargetButton.addActionListener(e -> terminate());
+        toolBar.add(terminateTargetButton);
 
         contentPane.add(toolBar);
     }
@@ -198,10 +159,10 @@ public class Boris implements DebugEventListener {
         editorDockable.add(editorPanel);
         grid.addDockable(1, 0, 1, 2, editorDockable);
 
-//        variablesPanel = new VariablesPanel();
-//        DefaultDockable variablesDockable = new DefaultDockable();
-//        variablesDockable.add(variablesPanel);
-//        grid.addDockable(2, 0, 1, 1, variablesDockable);
+        variablesPanel = new VariablesPanel();
+        DefaultDockable variablesDockable = new DefaultDockable();
+        variablesDockable.add(variablesPanel);
+        grid.addDockable(2, 0, 1, 1, variablesDockable);
 
         breakpointsPanel = new BreakpointsPanel(getGlobalBreakpointMgr());
         addBreakpointListener(breakpointsPanel);
@@ -226,11 +187,11 @@ public class Boris implements DebugEventListener {
     private void debugTarget() {
         SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
             @Override
-            protected Boolean doInBackground() throws Exception {
+            protected Boolean doInBackground() {
                 Target target = new Target(TARGET_FILENAME);
                 debugTarget = new GdbDebugTarget(target, getGlobalBreakpointMgr());
                 threadsPanel.setDebugTarget(debugTarget);
-//                variablesPanel.setDebugTarget(debugTarget);
+                variablesPanel.setDebugTarget(debugTarget);
                 editorPanel.setClient(debugTarget);
                 debugTarget.initialize(42);
                 return true;
@@ -262,8 +223,11 @@ public class Boris implements DebugEventListener {
         }
         if (threadsPanel != null) {
             DSPThread thread = threadsPanel.getSelectedThread();
-            if (thread != null) {
+            if (thread != null)
                 thread.stepOver();
+            else {
+                for (DSPThread t : debugTarget.getThreads())
+                    t.stepOver();
             }
         }
         else {
@@ -279,5 +243,9 @@ public class Boris implements DebugEventListener {
             return;
         }
         debugTarget.resume();
+    }
+
+    private void terminate() {
+        debugTarget.terminate();
     }
 }

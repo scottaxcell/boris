@@ -247,6 +247,7 @@ public class GdbDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
         return null;
     }
 
+    @Override
     public DSPThread[] getThreads() {
         if (!refreshThreads.getAndSet(false)) {
             synchronized (threads) {
@@ -354,5 +355,11 @@ public class GdbDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
         for (DSPThread thread : getThreads()) {
             thread.suspend();
         }
+    }
+
+    public void terminate() {
+        DisconnectArguments args = new DisconnectArguments();
+        args.setTerminateDebuggee(true);
+        getDebugServer().disconnect(args).thenRun(this::terminated);
     }
 }

@@ -19,7 +19,7 @@ public class GUIEventMgr {
     }
 
     public void addListener(GUIEventListener listener) {
-        if (listeners.contains(listener))
+        if (!listeners.contains(listener))
             listeners.add(listener);
     }
 

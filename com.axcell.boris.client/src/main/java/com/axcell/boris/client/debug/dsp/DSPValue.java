@@ -1,7 +1,7 @@
 package com.axcell.boris.client.debug.dsp;
 
 import com.axcell.boris.client.debug.model.Value;
-import com.axcell.boris.client.debug.model.Variable;
+import org.eclipse.lsp4j.debug.Variable;
 import org.eclipse.lsp4j.debug.VariablesArguments;
 
 import java.util.ArrayList;
@@ -10,7 +10,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 public class DSPValue extends DSPDebugElement implements Value {
-
     private Long variablesReference;
     private String name;
     private String value;
@@ -34,9 +33,9 @@ public class DSPValue extends DSPDebugElement implements Value {
     }
 
     @Override
-    public Variable[] getVariables() {
+    public DSPVariable[] getVariables() {
         if (!hasVariables())
-            return new Variable[0];
+            return new DSPVariable[0];
 
         VariablesArguments args = new VariablesArguments();
         args.setVariablesReference(variablesReference);
@@ -53,12 +52,12 @@ public class DSPValue extends DSPDebugElement implements Value {
         }
         catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-            return new Variable[0];
+            return new DSPVariable[0];
         }
     }
 
     @Override
     public boolean hasVariables() {
-        return variablesReference != null;
+        return variablesReference != null && variablesReference > -1L;
     }
 }

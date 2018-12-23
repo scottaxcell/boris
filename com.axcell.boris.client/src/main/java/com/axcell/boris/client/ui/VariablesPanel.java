@@ -1,9 +1,6 @@
 package com.axcell.boris.client.ui;
 
-import com.axcell.boris.client.debug.dsp.DSPStackFrame;
-import com.axcell.boris.client.debug.dsp.DSPThread;
-import com.axcell.boris.client.debug.dsp.DSPVariable;
-import com.axcell.boris.client.debug.dsp.GdbDebugTarget;
+import com.axcell.boris.client.debug.dsp.*;
 import com.axcell.boris.client.debug.event.DebugEvent;
 import com.axcell.boris.client.debug.event.DebugEventListener;
 import com.axcell.boris.client.ui.event.GUIEvent;
@@ -19,11 +16,12 @@ import java.util.List;
 public class VariablesPanel extends JPanel implements DebugEventListener, GUIEventListener {
     private JTable table;
     private VariablesTableModel model;
-    private GdbDebugTarget client;
+    private GdbDebugTarget debugTarget;
 
     public VariablesPanel() {
         super(new BorderLayout());
         Boris.getDebugEventMgr().addListener(this);
+        Boris.getGuiEventMgr().addListener(this);
         init();
     }
 
@@ -35,12 +33,12 @@ public class VariablesPanel extends JPanel implements DebugEventListener, GUIEve
         add(new JScrollPane(table), BorderLayout.CENTER);
     }
 
-    public GdbDebugTarget getClient() {
-        return client;
+    public GdbDebugTarget getDebugTarget() {
+        return debugTarget;
     }
 
-    public void setClient(GdbDebugTarget client) {
-        this.client = client;
+    public void setDebugTarget(GdbDebugTarget debugTarget) {
+        this.debugTarget = debugTarget;
     }
 
     @Override
@@ -67,25 +65,27 @@ public class VariablesPanel extends JPanel implements DebugEventListener, GUIEve
     @Override
     public void handleEvent(GUIEvent event) {
         if (event.getType() == GUIEvent.THREAD_SELECTED) {
-            if (event.getObject() instanceof DSPThread) {
-                DSPThread thread = (DSPThread) event.getObject();
-                DSPVariable[] variables = (DSPVariable[]) thread.getTopStackFrame().getVariables();
-                model.updateModel(variables);
-                SwingUtilities.invokeLater(() -> {
-                    model.fireTableDataChanged();
-                });
-            }
+//            if (event.getObject() instanceof DSPThread) {
+//                DSPThread thread = (DSPThread) event.getObject();
+//                DSPVariable[] variables = (DSPVariable[]) thread.getTopStackFrame().getVariables();
+//                model.updateModel(variables);
+//                SwingUtilities.invokeLater(() -> {
+//                    model.fireTableDataChanged();
+//                });
+//            }
+            model.testThings();
         }
         else if (event.getType() == GUIEvent.STACK_FRAME_SELECTED) {
-            if (event.getObject() instanceof DSPStackFrame) {
-                DSPStackFrame stackFrame = (DSPStackFrame) event.getObject();
-                DSPThread thread = (DSPThread) stackFrame.getThread();
-                DSPVariable[] variables = (DSPVariable[]) thread.getTopStackFrame().getVariables();
-                model.updateModel(variables);
-                SwingUtilities.invokeLater(() -> {
-                    model.fireTableDataChanged();
-                });
-            }
+//            if (event.getObject() instanceof DSPStackFrame) {
+//                DSPStackFrame stackFrame = (DSPStackFrame) event.getObject();
+//                DSPThread thread = (DSPThread) stackFrame.getThread();
+//                DSPVariable[] variables = (DSPVariable[]) thread.getTopStackFrame().getVariables();
+//                model.updateModel(variables);
+//                SwingUtilities.invokeLater(() -> {
+//                    model.fireTableDataChanged();
+//                });
+//            }
+            model.testThings();
         }
     }
 
@@ -126,10 +126,10 @@ public class VariablesPanel extends JPanel implements DebugEventListener, GUIEve
         }
 
         void updateModel() {
-            if (client != null) {
+            if (debugTarget != null) {
                 variables.clear();
-                Utils.debug("VariablesPanel: client.getVariables()");
-                DSPVariable[] vars = client.getVariables();
+                Utils.debug("VariablesPanel: debugTarget.getVariables()");
+                DSPVariable[] vars = debugTarget.getVariables();
                 addVariables(vars);
             }
         }
@@ -138,5 +138,28 @@ public class VariablesPanel extends JPanel implements DebugEventListener, GUIEve
             this.variables.clear();
             addVariables(variables);
         }
+
+        void testThings() {
+            DSPThread[] threads = debugTarget.getThreads();
+            for (DSPThread thread : threads) {
+                DSPStackFrame stackFrame = thread.getTopStackFrame();
+                DSPVariable[] variables = stackFrame.getVariables();
+                for (DSPVariable variable : variables) {
+                    DSPValue value = variable.getValue();
+                    Utils.debug("getValueString: " + value.getValueString());
+                    Utils.debug("hasVariables: " + value.hasVariables());
+                    if (value.hasVariables()) {
+                        DSPVariable[] vs = value.getVariables();
+                        for (DSPVariable v : vs) {
+                            Utils.debug("v.getName: " + v.getName());
+                            Utils.debug("v.geValue: " + v.getValue());
+                            DSPValue val = v.getValue();
+                            Utils.debug("val.getValueString: " + val.getValueString());
+                        }
+                    }
+                }
+            }
+        }
+
     }
 }
