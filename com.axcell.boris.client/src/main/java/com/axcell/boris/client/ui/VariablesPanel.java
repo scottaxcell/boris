@@ -1,11 +1,13 @@
 package com.axcell.boris.client.ui;
 
-import com.axcell.boris.client.debug.dsp.*;
+import com.axcell.boris.client.debug.dsp.DSPStackFrame;
+import com.axcell.boris.client.debug.dsp.DSPThread;
+import com.axcell.boris.client.debug.dsp.DSPValue;
+import com.axcell.boris.client.debug.dsp.DSPVariable;
 import com.axcell.boris.client.debug.event.DebugEvent;
 import com.axcell.boris.client.debug.event.DebugEventListener;
 import com.axcell.boris.client.ui.event.GUIEvent;
 import com.axcell.boris.client.ui.event.GUIEventListener;
-import com.axcell.boris.utils.Utils;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -16,7 +18,6 @@ import java.util.List;
 public class VariablesPanel extends JPanel implements DebugEventListener, GUIEventListener {
     private JTable table;
     private VariablesTableModel model;
-    private GdbDebugTarget debugTarget;
 
     public VariablesPanel() {
         super(new BorderLayout());
@@ -33,78 +34,81 @@ public class VariablesPanel extends JPanel implements DebugEventListener, GUIEve
         add(new JScrollPane(table), BorderLayout.CENTER);
     }
 
-    public GdbDebugTarget getDebugTarget() {
-        return debugTarget;
-    }
-
-    public void setDebugTarget(GdbDebugTarget debugTarget) {
-        this.debugTarget = debugTarget;
-    }
-
-    @Override
     public void handleEvent(DebugEvent event) {
-        if (event.getType() == DebugEvent.STOPPED) {
-            SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
-                @Override
-                protected Boolean doInBackground() {
-                    model.updateModel();
-                    return true;
-                }
-
-                @Override
-                protected void done() {
-                    SwingUtilities.invokeLater(() -> {
-                        model.fireTableDataChanged();
-                    });
-                }
-            };
-            worker.execute();
+        if (event.getType() == DebugEvent.EXITED || event.getType() == DebugEvent.TERMINATED) {
+            model.cleanModel();
         }
     }
 
     @Override
     public void handleEvent(GUIEvent event) {
         if (event.getType() == GUIEvent.THREAD_SELECTED) {
-//            if (event.getObject() instanceof DSPThread) {
-//                DSPThread thread = (DSPThread) event.getObject();
-//                DSPVariable[] variables = (DSPVariable[]) thread.getTopStackFrame().getVariables();
-//                model.updateModel(variables);
-//                SwingUtilities.invokeLater(() -> {
-//                    model.fireTableDataChanged();
-//                });
-//            }
-            model.testThings();
+            if (event.getObject() instanceof DSPThread) {
+                DSPThread thread = (DSPThread) event.getObject();
+                model.updateModel(thread);
+            }
         }
         else if (event.getType() == GUIEvent.STACK_FRAME_SELECTED) {
-//            if (event.getObject() instanceof DSPStackFrame) {
-//                DSPStackFrame stackFrame = (DSPStackFrame) event.getObject();
-//                DSPThread thread = (DSPThread) stackFrame.getThread();
-//                DSPVariable[] variables = (DSPVariable[]) thread.getTopStackFrame().getVariables();
-//                model.updateModel(variables);
-//                SwingUtilities.invokeLater(() -> {
-//                    model.fireTableDataChanged();
-//                });
-//            }
-            model.testThings();
+            if (event.getObject() instanceof DSPStackFrame) {
+                DSPStackFrame stackFrame = (DSPStackFrame) event.getObject();
+                model.updateModel(stackFrame);
+            }
+        }
+    }
+
+    private static class VariablesTableRow {
+        private String name;
+        private String value;
+
+        public VariablesTableRow(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getValue() {
+            return value;
         }
     }
 
     private class VariablesTableModel extends AbstractTableModel {
         private String[] columnNames = new String[]{"Name", "Value"};
-        private List<DSPVariable> variables = new ArrayList<>();
+        private List<VariablesTableRow> rows = new ArrayList();
 
-        void addVariables(DSPVariable[] variables) {
-            for (DSPVariable variable : variables)
-                addVariable(variable);
+        void updateModel(DSPStackFrame stackFrame) {
+            rows.clear();
+            SwingUtilities.invokeLater(() -> fireTableDataChanged());
+            DSPVariable[] variables = stackFrame.getVariables();
+            for (DSPVariable variable : variables) {
+                DSPValue value = variable.getValue();
+                if (value.hasVariables()) {
+                    DSPVariable[] vars = value.getVariables();
+                    for (DSPVariable var : vars) {
+                        DSPValue val = var.getValue();
+                        VariablesTableRow row = new VariablesTableRow(var.getName(), val.getValueString());
+                        rows.add(row);
+                        SwingUtilities.invokeLater(() -> fireTableRowsInserted(rows.size() - 1, rows.size() - 1));
+                    }
+                }
+            }
         }
 
-        void addVariable(DSPVariable variable) {
-            variables.add(variable);
+        void updateModel(DSPThread thread) {
+            DSPStackFrame stackFrame = thread.getTopStackFrame();
+            updateModel(stackFrame);
+        }
+
+        void cleanModel() {
+            rows.clear();
+            SwingUtilities.invokeLater(() -> fireTableDataChanged());
         }
 
         @Override
         public int getRowCount() {
-            return variables.size();
+            return rows.size();
         }
 
         @Override
@@ -120,46 +124,9 @@ public class VariablesPanel extends JPanel implements DebugEventListener, GUIEve
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
             if (columnIndex == 0)
-                return variables.get(rowIndex).getName();
+                return rows.get(rowIndex).getName();
             else
-                return variables.get(rowIndex).getValue();
+                return rows.get(rowIndex).getValue();
         }
-
-        void updateModel() {
-            if (debugTarget != null) {
-                variables.clear();
-                Utils.debug("VariablesPanel: debugTarget.getVariables()");
-                DSPVariable[] vars = debugTarget.getVariables();
-                addVariables(vars);
-            }
-        }
-
-        void updateModel(DSPVariable[] variables) {
-            this.variables.clear();
-            addVariables(variables);
-        }
-
-        void testThings() {
-            DSPThread[] threads = debugTarget.getThreads();
-            for (DSPThread thread : threads) {
-                DSPStackFrame stackFrame = thread.getTopStackFrame();
-                DSPVariable[] variables = stackFrame.getVariables();
-                for (DSPVariable variable : variables) {
-                    DSPValue value = variable.getValue();
-                    Utils.debug("getValueString: " + value.getValueString());
-                    Utils.debug("hasVariables: " + value.hasVariables());
-                    if (value.hasVariables()) {
-                        DSPVariable[] vs = value.getVariables();
-                        for (DSPVariable v : vs) {
-                            Utils.debug("v.getName: " + v.getName());
-                            Utils.debug("v.geValue: " + v.getValue());
-                            DSPValue val = v.getValue();
-                            Utils.debug("val.getValueString: " + val.getValueString());
-                        }
-                    }
-                }
-            }
-        }
-
     }
 }

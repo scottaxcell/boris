@@ -191,7 +191,6 @@ public class Boris implements DebugEventListener {
                 Target target = new Target(TARGET_FILENAME);
                 debugTarget = new GdbDebugTarget(target, getGlobalBreakpointMgr());
                 threadsPanel.setDebugTarget(debugTarget);
-                variablesPanel.setDebugTarget(debugTarget);
                 editorPanel.setClient(debugTarget);
                 debugTarget.initialize(42);
                 return true;
