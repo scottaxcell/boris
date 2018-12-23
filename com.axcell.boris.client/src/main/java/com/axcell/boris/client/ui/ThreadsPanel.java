@@ -6,13 +6,14 @@ import com.axcell.boris.client.debug.dsp.GDBDebugTarget;
 import com.axcell.boris.client.debug.event.DebugEvent;
 import com.axcell.boris.client.debug.event.DebugEventListener;
 import com.axcell.boris.client.ui.event.GUIEvent;
+import org.eclipse.lsp4j.debug.StoppedEventArguments;
 
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
 import java.awt.*;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class ThreadsPanel extends JPanel implements DebugEventListener {
@@ -70,6 +71,7 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
                     SwingUtilities.invokeLater(() -> {
                         model.refreshTree();
                         expandTree();
+                        selectTopStackFrame(((StoppedEventArguments) event.getObject()).getThreadId());
                     });
                 }
             };
@@ -82,8 +84,35 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
             model.updateModel();
             SwingUtilities.invokeLater(() -> {
                 model.refreshTree();
-                expandTree();
             });
+        }
+    }
+
+    private void selectTopStackFrame(Long threadId) {
+        Stream.of(model.getThreads())
+                .filter(thread -> thread.getId() == threadId)
+                .findFirst()
+                .ifPresent(thread -> selectTopStackFrame(thread));
+    }
+
+    private void selectTopStackFrame(DSPThread thread) {
+        if (tree != null) {
+            ThreadTreeNode threadNode = new ThreadTreeNode(thread);
+            if (model.getTreeNodes().contains(threadNode)) {
+                for (ThreadTreeNode node : model.getTreeNodes()) {
+                    if (node.getObject() instanceof DSPThread) {
+                        if (((DSPThread) node.getObject()).getId() == thread.getId()) {
+                            if (node.getChildCount() > 0) {
+                                TreeNode childAt = node.getChildAt(0);
+                                TreeNode[] pathToRoot = model.getPathToRoot(childAt);
+                                TreePath treePath = new TreePath(pathToRoot);
+                                tree.setSelectionPath(treePath);
+                                tree.scrollPathToVisible(treePath);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -132,6 +161,7 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
 
     private class ThreadTreeModel extends DefaultTreeModel {
         private DSPThread[] threads;
+        private Set<ThreadTreeNode> treeNodes = new LinkedHashSet<>();
 
         ThreadTreeModel(ThreadTreeNode root) {
             super(root);
@@ -143,23 +173,41 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
         }
 
         void refreshTree() {
-            setRoot(new ThreadTreeNode(targetName));
-            Stream.of(threads)
-                    .map(this::createAndAddThread)
-                    .forEach(this::createAndAddStackFrames);
+            treeNodes.clear();
+
+            ThreadTreeNode root = new ThreadTreeNode(targetName);
+            setRoot(root);
+            treeNodes.add(root);
+
+            for (DSPThread thread : threads) {
+                ThreadTreeNode threadNode = createAndAddThread(thread);
+                createAndAddStackFrames(threadNode);
+            }
+
             reload();
         }
 
         ThreadTreeNode createAndAddThread(DSPThread thread) {
             ThreadTreeNode threadTreeNode = new ThreadTreeNode(thread);
+            treeNodes.add(threadTreeNode);
             ((ThreadTreeNode) root).add(threadTreeNode);
             return threadTreeNode;
         }
 
         void createAndAddStackFrames(ThreadTreeNode threadTreeNode) {
-            Stream.of(((DSPThread) threadTreeNode.getObject()).getStackFrames())
-                    .map(ThreadTreeNode::new)
-                    .forEach(threadTreeNode::add);
+            for (DSPStackFrame stackFrame : ((DSPThread) threadTreeNode.getObject()).getStackFrames()) {
+                ThreadTreeNode stackFrameNode = new ThreadTreeNode(stackFrame);
+                threadTreeNode.add(stackFrameNode);
+                treeNodes.add(stackFrameNode);
+            }
+        }
+
+        public DSPThread[] getThreads() {
+            return threads;
+        }
+
+        public Set<ThreadTreeNode> getTreeNodes() {
+            return treeNodes;
         }
     }
 
@@ -172,6 +220,19 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
 
         Object getObject() {
             return object;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ThreadTreeNode that = (ThreadTreeNode) o;
+            return Objects.equals(object, that.object);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(object);
         }
     }
 

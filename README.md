@@ -2,8 +2,6 @@
 GDB implementation of Debug Adapter Protocol as a proof of concept. This includes the GDB DAP server and a GDB Debugger GUI client.
 
 ### TODO
-* BUG - threads panel is doing swing work in non-swing thread, cleanup model and this bug
-* threads panel should select active thread/frame on breakpoint
 * implement editor features: line select on thread or stackframe select and on breakpoint
 
 ### BACKLOG
