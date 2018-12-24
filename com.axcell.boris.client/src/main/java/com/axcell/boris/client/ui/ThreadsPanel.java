@@ -13,7 +13,10 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.*;
 import java.awt.*;
-import java.util.*;
+import java.util.LinkedHashSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class ThreadsPanel extends JPanel implements DebugEventListener {
@@ -174,6 +177,12 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
 
         void refreshTree() {
             treeNodes.clear();
+
+            if (threads.length == 0) {
+                setRoot(null);
+                reload();
+                return;
+            }
 
             ThreadTreeNode root = new ThreadTreeNode(targetName);
             setRoot(root);
