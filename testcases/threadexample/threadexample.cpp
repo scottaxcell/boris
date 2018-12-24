@@ -7,8 +7,9 @@ using namespace std;
 class MyClass {
   public:
   int dataMember;
-  void printDataMember() {
-   cout << "MyClass dataMember is: " << dataMember << endl;
+
+  void printAndIncrDataMember() {
+   cout << "MyClass dataMember is: " << dataMember++ << endl;
   }
 };
 
@@ -27,12 +28,18 @@ void doSomethingElse() {
 
   MyClass* myClass = new MyClass();
   myClass->dataMember = 30;
-  myClass->printDataMember();
+  myClass->printAndIncrDataMember();
 
   for (int qwerty = 0; qwerty < 10; qwerty++) {
     double some_double = 42.31;
     double another_double = 13.5243;
   }
+}
+
+void doSomethingWithArgs(int intArg, float floatArg) {
+  float localFloat = floatArg;
+  int localInt = intArg;
+  return;
 }
 
 void doSomething() {
@@ -48,8 +55,10 @@ void foo() {
     int x = i * 3;
     int y = i + 1;
     int z = x + y;
-    doSomething();
+    doSomethingWithArgs(x, f);
   }
+
+  cout << "foo completed" << endl;
 }
 
 void fubar() {
@@ -59,6 +68,8 @@ void fubar() {
     int z = x + y;
     doSomething();
   }
+
+  cout << "fubar completed" << endl;
 }
 
 int main() 
