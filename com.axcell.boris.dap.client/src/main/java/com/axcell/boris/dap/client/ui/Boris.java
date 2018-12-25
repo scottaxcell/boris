@@ -286,10 +286,12 @@ public class Boris implements DebugEventListener {
     }
 
     private void pause() {
-        if (debugTarget == null || !debugTarget.isSuspended()) {
-            JOptionPane.showMessageDialog(frame, "Debugger is not suspended or running..");
-            return;
-        }
+        JOptionPane.showMessageDialog(frame, "IMPLEMENT ME");
+        return;
+//        if (debugTarget == null || !debugTarget.isSuspended()) {
+//            JOptionPane.showMessageDialog(frame, "Debugger is not suspended or running..");
+//            return;
+//        }
 //        if (threadsPanel != null) {
 //            Optional<DSPThread> thread = threadsPanel.getSelectedThread();
 //            thread.ifPresent(DSPThread::stepRe);

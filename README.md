@@ -2,7 +2,10 @@
 GDB implementation of Debug Adapter Protocol as a proof of concept. This includes the GDB DAP server and a GDB Debugger GUI client.
 
 ## TODO
-* scroll editor to selected stackframe
+* rework commandqueue, writtenCommands, readCommands more inline with CDT way
+* add support for --thread/--frame to commands rather than using legacy thread-select -stack-select
+* add support for method arguments to variables flow
+* add debugger console for GDB output 
 
 ## BACKLOG
 * pause flow
