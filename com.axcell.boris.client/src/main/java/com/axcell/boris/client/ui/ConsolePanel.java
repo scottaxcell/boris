@@ -28,22 +28,12 @@ public class ConsolePanel extends JPanel implements DebugEventListener {
 
     @Override
     public void handleEvent(DebugEvent event) {
-        if (event.getObject() instanceof String) {
-            String prefix = null;
-            String postFix = "";
-            if (event.getType() == DebugEvent.CONSOLE_OUTPUT) {
-                prefix = "GDB: ";
-                postFix = "\n";
-            }
-            else if (event.getType() == DebugEvent.TARGET_OUTPUT) {
-                prefix = "TARGET: ";
-            }
-            String finalPrefix = prefix;
-            String finalPostFix = postFix;
-            SwingUtilities.invokeLater(() -> {
-                textArea.append(finalPrefix + (String) event.getObject() + finalPostFix);
-                textArea.revalidate();
-            });
-        }
+        if (event.getObject() instanceof String && event.getType() == DebugEvent.TARGET_OUTPUT)
+            SwingUtilities.invokeLater(() -> appendString((String) event.getObject()));
+    }
+
+    private void appendString(String string) {
+        textArea.append(string);
+        textArea.revalidate();
     }
 }
