@@ -6,6 +6,7 @@ import com.axcell.boris.client.debug.dsp.GDBDebugTarget;
 import com.axcell.boris.client.debug.event.DebugEvent;
 import com.axcell.boris.client.debug.event.DebugEventListener;
 import com.axcell.boris.client.ui.event.GUIEvent;
+import org.eclipse.lsp4j.debug.Source;
 import org.eclipse.lsp4j.debug.StoppedEventArguments;
 
 import javax.swing.*;
@@ -153,12 +154,23 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
                     this.setText(s);
                 }
                 else if (object instanceof DSPStackFrame) {
-                    DSPStackFrame stackFrame = (DSPStackFrame) object;
-                    String s = String.format("%s %s", stackFrame.getDepth(), stackFrame.getName());
-                    this.setText(s);
+                    this.setText(getStackFrameText((DSPStackFrame) object));
                 }
             }
             return this;
+        }
+
+        private String getStackFrameText(DSPStackFrame stackFrame) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(stackFrame.getDepth() + " " + stackFrame.getName());
+
+            if (stackFrame.getSource() == null)
+                return sb.toString();
+
+            if (stackFrame.getSource().getName() != null && stackFrame.getLineNumber() != null)
+                sb.append(" at " + stackFrame.getSource().getName() + ":" + stackFrame.getLineNumber());
+
+            return sb.toString();
         }
     }
 
