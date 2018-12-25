@@ -2,6 +2,7 @@
 GDB implementation of Debug Adapter Protocol as a proof of concept. This includes the GDB DAP server and a GDB Debugger GUI client.
 
 ## TODO
+* scroll editor to selected stackframe
 
 ## BACKLOG
 * pause flow

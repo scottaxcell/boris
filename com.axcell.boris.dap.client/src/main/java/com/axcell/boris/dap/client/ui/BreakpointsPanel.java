@@ -3,6 +3,7 @@ package com.axcell.boris.dap.client.ui;
 import com.axcell.boris.dap.client.debug.model.Breakpoint;
 import com.axcell.boris.dap.client.debug.model.BreakpointListener;
 import com.axcell.boris.dap.client.debug.model.BreakpointMgr;
+import com.axcell.boris.dap.client.ui.event.GUIEvent;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
@@ -106,6 +107,7 @@ public class BreakpointsPanel extends JPanel implements BreakpointListener {
                 int rowIndex = table.rowAtPoint(point);
                 Breakpoint breakpoint = getBreakpoints()[rowIndex];
                 breakpointMgr.removeBreakpoint(breakpoint);
+                Boris.getGuiEventMgr().fireEvent(new GUIEvent(GUIEvent.BREAKPOINT_REMOVED, BreakpointsPanel.this));
             }
         }
 
