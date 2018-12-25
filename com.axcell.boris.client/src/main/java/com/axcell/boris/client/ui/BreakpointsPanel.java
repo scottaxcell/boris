@@ -7,6 +7,8 @@ import com.axcell.boris.client.debug.model.BreakpointMgr;
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 public class BreakpointsPanel extends JPanel implements BreakpointListener {
     private BreakpointMgr breakpointMgr;
@@ -23,6 +25,7 @@ public class BreakpointsPanel extends JPanel implements BreakpointListener {
         setBorder(BorderFactory.createTitledBorder("Breakpoints"));
         model = new BreakpointsTableModel();
         table = new JTable(model);
+        table.addMouseListener(new BreakpointsTableListener());
         add(new JScrollPane(table), BorderLayout.CENTER);
     }
 
@@ -92,6 +95,38 @@ public class BreakpointsPanel extends JPanel implements BreakpointListener {
         @Override
         public boolean isCellEditable(int rowIndex, int columnIndex) {
             return columnIndex == 0;
+        }
+    }
+
+    private class BreakpointsTableListener implements MouseListener {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (SwingUtilities.isRightMouseButton(e)) {
+                Point point = e.getPoint();
+                int rowIndex = table.rowAtPoint(point);
+                Breakpoint breakpoint = getBreakpoints()[rowIndex];
+                breakpointMgr.removeBreakpoint(breakpoint);
+            }
+        }
+
+        @Override
+        public void mousePressed(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseEntered(MouseEvent e) {
+
+        }
+
+        @Override
+        public void mouseExited(MouseEvent e) {
+
         }
     }
 }
