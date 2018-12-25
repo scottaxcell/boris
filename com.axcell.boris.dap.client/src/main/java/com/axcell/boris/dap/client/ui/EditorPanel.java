@@ -35,6 +35,7 @@ public class EditorPanel extends JPanel implements DebugEventListener, GUIEventL
     private JEditorPane editor;
     private GDBDebugTarget debugTarget;
     private Optional<Long> debuggerLineNumber = Optional.empty();
+    private int paintedStackFrameHighlight = -1;
 
     public EditorPanel() {
         super(new BorderLayout());
@@ -57,6 +58,7 @@ public class EditorPanel extends JPanel implements DebugEventListener, GUIEventL
     }
 
     private void init() {
+        setBorder(BorderFactory.createTitledBorder("threadexample.cpp"));
         editor = new JTextPane();
         editor.setEditable(false);
         editor.addMouseListener(new EditorMouseListener());
@@ -154,9 +156,13 @@ public class EditorPanel extends JPanel implements DebugEventListener, GUIEventL
         }
     }
 
+    private boolean isSameSourceFile(DSPStackFrame stackFrame) {
+        return Boris.SOURCE_FILENAME.equals(stackFrame.getSource().getPath());
+    }
+
     private void scrollToSelectedStackFrame(DSPStackFrame stackFrame) {
-        // TODO check source matches!
-        // TODO highlight line very lightly
+        if (!isSameSourceFile(stackFrame))
+            return;
         Long stackFrameLineNumber = stackFrame.getLineNumber();
         Position startPosition = editor.getDocument().getStartPosition();
         Position endPostion = editor.getDocument().getEndPosition();
@@ -167,6 +173,9 @@ public class EditorPanel extends JPanel implements DebugEventListener, GUIEventL
                 Optional<Long> lineNumber = getLineNumber(startOffset);
                 if (lineNumber.isPresent() && lineNumber.get().equals(stackFrameLineNumber)) {
                     editor.scrollRectToVisible(editor.modelToView(startOffset));
+//                    int rowStart = Utilities.getRowStart(editor, startOffset);
+//                    paintSelectedStackFrameLine(rowStart);
+//                    paintedStackFrameHighlight = rowStart;
                     break;
                 }
                 startOffset = Utilities.getRowEnd(editor, startOffset) + 1;
@@ -175,6 +184,34 @@ public class EditorPanel extends JPanel implements DebugEventListener, GUIEventL
                 e.printStackTrace();
             }
         }
+    }
+
+    private void paintSelectedStackFrameLine(int offset) throws BadLocationException {
+        removeExistingSelectedStackFrameHighlight(paintedStackFrameHighlight);
+        Graphics graphics = editor.getGraphics();
+        Color previousColor = graphics.getColor();
+        Rectangle r = editor.modelToView(offset);
+        graphics.setColor(createLighterColor(Color.GREEN));
+        graphics.fillRect(0, r.y, editor.getWidth(), r.height);
+        graphics.setColor(previousColor);
+    }
+
+    private void removeExistingSelectedStackFrameHighlight(int offset) throws BadLocationException {
+        if (offset == -1)
+            return;
+        Graphics graphics = editor.getGraphics();
+//        Color previousColor = graphics.getColor();
+        Rectangle r = editor.modelToView(offset);
+//        graphics.setColor(createLighterColor(Color.GREEN));
+        graphics.fillRect(0, r.y, editor.getWidth(), r.height);
+//        graphics.setColor(previousColor)
+    }
+
+    private Color createLighterColor(Color color) {
+        int red = Math.min(255, (int) (color.getRed() * 1.2));
+        int green = Math.min(255, (int) (color.getGreen() * 1.2));
+        int blue = Math.min(255, (int) (color.getBlue() * 1.2));
+        return new Color(red, green, blue);
     }
 
     private class EditorMouseListener implements MouseListener {
@@ -264,7 +301,7 @@ public class EditorPanel extends JPanel implements DebugEventListener, GUIEventL
             Optional<Breakpoint> breakpoint = Stream.of(Boris.getGlobalBreakpointMgr().getBreakpoints())
                     .filter(b -> lineNumber.equals(b.getLineNumber()))
                     .findFirst();
-            return breakpoint.isPresent() ? Color.RED : Color.BLACK;
+            return breakpoint.isPresent() ? Color.BLUE : Color.BLACK;
         }
 
         @Override
@@ -274,7 +311,7 @@ public class EditorPanel extends JPanel implements DebugEventListener, GUIEventL
             Rectangle clip = g.getClipBounds();
             int startOffset = editor.viewToModel(new Point(0, clip.y));
             int endOffset = editor.viewToModel(new Point((0), clip.y + clip.height));
-            while (startOffset <= endOffset) {
+            while (startOffset < endOffset) {
                 try {
                     Optional<Long> lineNumber = getLineNumber(startOffset);
                     if (lineNumber.isPresent()) {
