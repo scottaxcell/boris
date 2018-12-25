@@ -2,9 +2,9 @@ package com.axcell.boris.client.debug.dsp;
 
 import com.axcell.boris.client.debug.model.StackFrame;
 import com.axcell.boris.client.debug.model.Thread;
-import com.axcell.boris.client.debug.model.Variable;
 import org.eclipse.lsp4j.debug.Scope;
 import org.eclipse.lsp4j.debug.ScopesArguments;
+import org.eclipse.lsp4j.debug.Source;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,5 +76,9 @@ public class DSPStackFrame extends DSPDebugElement implements StackFrame {
 
     public int getDepth() {
         return depth;
+    }
+
+    public Source getSource() {
+        return stackFrame.getSource();
     }
 }
