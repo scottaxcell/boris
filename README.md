@@ -7,6 +7,7 @@ GDB implementation of Debug Adapter Protocol as a proof of concept. This include
 * pause flow
 * step into flow
 * step return flow
+* stop flow
 * debug target and server cleanup when debugging has finished
 * implement editor features: line select on thread or stackframe select and on breakpoint
 * when program is running variables panel needs to be cleared
