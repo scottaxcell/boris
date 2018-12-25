@@ -21,8 +21,8 @@
         </plugins>
     </build>
     <modules>
+        <module>com.axcell.boris.dap.client</module>
         <module>com.axcell.boris.dap.gdb</module>
-        <module>com.axcell.boris.client</module>
         <module>com.axcell.boris.utils</module>
     </modules>
 

@@ -29,6 +29,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class EditorPanel extends JPanel implements DebugEventListener {
     private static final String EMPTY_STR = "";
@@ -92,12 +93,14 @@ public class EditorPanel extends JPanel implements DebugEventListener {
             Long threadId = ((StoppedEventArguments) event.getObject()).getThreadId();
             Optional<DSPThread> thread = debugTarget.getThread(threadId);
             thread.ifPresentOrElse(this::setDebuggerLineNumber, () -> debuggerLineNumber = EMPTY_STR);
+            highlightCurrentInstructionLine();
             SwingUtilities.invokeLater(this::repaint);
             // TODO scroll to breakpoint line
         }
         else if (event.getType() == DebugEvent.EXITED
                 || event.getType() == DebugEvent.TERMINATED) {
             debuggerLineNumber = EMPTY_STR;
+            highlightCurrentInstructionLine();
             SwingUtilities.invokeLater(this::repaint);
         }
     }
@@ -105,6 +108,60 @@ public class EditorPanel extends JPanel implements DebugEventListener {
     private void setDebuggerLineNumber(DSPThread thread) {
         StackFrame stackFrame = thread.getTopStackFrame();
         debuggerLineNumber = stackFrame != null ? String.valueOf(stackFrame.getLineNumber()) : EMPTY_STR;
+    }
+
+    private void highlightCurrentInstructionLine() {
+        removeExistingHighlights();
+
+        Position startPosition = editor.getDocument().getStartPosition();
+        Position endPostion = editor.getDocument().getEndPosition();
+        int startOffset = startPosition.getOffset();
+        int endOffset = endPostion.getOffset();
+        while (startOffset < endOffset) {
+            try {
+                String lineNumber = getLineNumber(startOffset);
+                if (lineNumber != null && isCurrentDebuggerLine(lineNumber)) {
+                    int rowStart = Utilities.getRowStart(editor, startOffset);
+                    int rowEnd = Utilities.getRowEnd(editor, startOffset);
+                    String lineText = editor.getDocument().getText(startOffset, rowEnd - rowStart);
+                    if (!Strings.isNullOrEmpty(lineText)) {
+                        Highlighter highlighter = editor.getHighlighter();
+                        CurrentInstructionPointerHighlighter currentInstructionPointerHighlighter = new CurrentInstructionPointerHighlighter(Color.GREEN);
+                        highlighter.addHighlight(rowStart, rowEnd, currentInstructionPointerHighlighter);
+                    }
+                }
+                startOffset = Utilities.getRowEnd(editor, startOffset) + 1;
+            }
+            catch (BadLocationException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void removeExistingHighlights() {
+        Highlighter highlighter = editor.getHighlighter();
+        Stream.of(editor.getHighlighter().getHighlights())
+                .filter(highlight -> highlight.getPainter() instanceof CurrentInstructionPointerHighlighter)
+                .forEach(highlight -> highlighter.removeHighlight(highlight));
+    }
+
+    private int getOffsetY(int offset) throws BadLocationException {
+        FontMetrics fontMetrics = editor.getFontMetrics(editor.getFont());
+        int descent = fontMetrics.getDescent();
+        Rectangle r = editor.modelToView(offset);
+        int y = r.y + r.height - descent;
+        return y;
+    }
+
+    private String getLineNumber(int offset) {
+        Element root = editor.getDocument().getDefaultRootElement();
+        int index = root.getElementIndex(offset);
+        Element line = root.getElement(index);
+        return line.getStartOffset() == offset ? String.format("%3d", index + 1) : null;
+    }
+
+    private boolean isCurrentDebuggerLine(String lineNumber) {
+        return debuggerLineNumber.equals(lineNumber.trim());
     }
 
     private class EditorMouseListener implements MouseListener {
@@ -193,10 +250,6 @@ public class EditorPanel extends JPanel implements DebugEventListener {
             return line.getStartOffset() == offset ? String.format("%3d", index + 1) : null;
         }
 
-        private boolean isCurrentDebuggerLine(String lineNumber) {
-            return debuggerLineNumber.equals(lineNumber.trim());
-        }
-
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
@@ -212,7 +265,9 @@ public class EditorPanel extends JPanel implements DebugEventListener {
                         int y = getOffsetY(startOffset);
                         font = font != null ? font : new Font(Font.MONOSPACED, Font.BOLD, editor.getFont().getSize());
                         g.setFont(font);
-                        g.setColor(isCurrentDebuggerLine(lineNumber) ? Color.BLUE : Color.BLACK);
+//                        g.setColor(isCurrentDebuggerLine(lineNumber) ? Color.BLUE : Color.BLACK);
+                        // TODO paint breakpoint lines RED
+                        g.setColor(Color.BLACK);
                         g.drawString(lineNumber, x, y);
                     }
                     startOffset = Utilities.getRowEnd(editor, startOffset) + 1;
