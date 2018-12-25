@@ -126,16 +126,24 @@ public class Boris implements DebugEventListener {
         nextButton.addActionListener(e -> stepOver());
         toolBar.add(nextButton);
 
-        JButton stepInButton = new JButton("Step Into");
-        nextButton.addActionListener(e -> stepInto());
+        JButton stepInButton = new JButton("Step In");
+        stepInButton.addActionListener(e -> stepInto());
         toolBar.add(stepInButton);
+
+        JButton stepReturnButton = new JButton("Step Out");
+        stepReturnButton.addActionListener(e -> stepReturn());
+        toolBar.add(stepReturnButton);
 
         JButton continueTargetButton = new JButton("Resume");
         continueTargetButton.addActionListener(e -> resume());
         toolBar.add(continueTargetButton);
 
-        JButton terminateTargetButton = new JButton("Terminate");
-        terminateTargetButton.addActionListener(e -> terminate());
+        JButton pauseButton = new JButton("Pause");
+        pauseButton.addActionListener(e -> pause());
+        toolBar.add(pauseButton);
+
+        JButton terminateTargetButton = new JButton("Stop");
+        terminateTargetButton.addActionListener(e -> stopTarget());
         toolBar.add(terminateTargetButton);
 
         contentPane.add(toolBar);
@@ -192,13 +200,13 @@ public class Boris implements DebugEventListener {
     }
 
     private void debugTarget() {
-        SwingWorker<Boolean, Void> worker = new SwingWorker<Boolean, Void>() {
+        SwingWorker<Boolean, Void> worker = new SwingWorker<>() {
             @Override
             protected Boolean doInBackground() {
                 Target target = new Target(TARGET_FILENAME);
                 debugTarget = new GDBDebugTarget(target, getGlobalBreakpointMgr());
                 threadsPanel.setDebugTarget(debugTarget);
-                editorPanel.setClient(debugTarget);
+                editorPanel.setDebugTarget(debugTarget);
                 debugTarget.initialize(42);
                 return true;
             }
@@ -248,9 +256,11 @@ public class Boris implements DebugEventListener {
         debugTarget.resume();
     }
 
-    private void terminate() {
-        if (debugTarget != null)
-            debugTarget.terminate();
+    private void stopTarget() {
+        JOptionPane.showMessageDialog(frame, "IMPLEMENT ME");
+        return;
+//        if (debugTarget != null)
+//            debugTarget.disconnect();
     }
 
     public void stepInto() {
@@ -262,5 +272,27 @@ public class Boris implements DebugEventListener {
             Optional<DSPThread> thread = threadsPanel.getSelectedThread();
             thread.ifPresent(DSPThread::stepInto);
         }
+    }
+
+    public void stepReturn() {
+        if (debugTarget == null || !debugTarget.isSuspended()) {
+            JOptionPane.showMessageDialog(frame, "Debugger is not suspended or running..");
+            return;
+        }
+        if (threadsPanel != null) {
+            Optional<DSPThread> thread = threadsPanel.getSelectedThread();
+            thread.ifPresent(DSPThread::stepReturn);
+        }
+    }
+
+    private void pause() {
+        if (debugTarget == null || !debugTarget.isSuspended()) {
+            JOptionPane.showMessageDialog(frame, "Debugger is not suspended or running..");
+            return;
+        }
+//        if (threadsPanel != null) {
+//            Optional<DSPThread> thread = threadsPanel.getSelectedThread();
+//            thread.ifPresent(DSPThread::stepRe);
+//        }
     }
 }

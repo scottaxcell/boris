@@ -20,7 +20,6 @@ import java.io.PipedOutputStream;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class GDBDebugTarget extends DSPDebugElement implements DebugTarget, IDebugProtocolClient {
@@ -126,27 +125,23 @@ public class GDBDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
 
     @Override
     public void exited(ExitedEventArguments args) {
-        terminate();
+        cleanup();
         DebugEvent event = new DebugEvent(DebugEvent.EXITED, this, args);
         Boris.getDebugEventMgr().fireEvent(event);
     }
 
     @Override
     public void terminated(TerminatedEventArguments args) {
-        terminated();
+        cleanup();
         DebugEvent event = new DebugEvent(DebugEvent.TERMINATED, this, args);
         Boris.getDebugEventMgr().fireEvent(event);
     }
 
-    private void terminated() {
+    private void cleanup() {
         isTerminated = true;
         clientListening.cancel(true);
         if (dspBreakpointMgr != null)
             dspBreakpointMgr.cleanup();
-    }
-
-    private void cleanup() {
-
     }
 
     @Override
@@ -318,9 +313,9 @@ public class GDBDebugTarget extends DSPDebugElement implements DebugTarget, IDeb
                 .forEach(DSPThread::suspend);
     }
 
-    public void terminate() {
+    public void disconnect() {
         DisconnectArguments args = new DisconnectArguments();
         args.setTerminateDebuggee(true);
-        getDebugServer().disconnect(args).thenRun(this::terminated);
+        getDebugServer().disconnect(args).thenRun(this::cleanup);
     }
 }

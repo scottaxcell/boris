@@ -188,10 +188,9 @@ public class ThreadsPanel extends JPanel implements DebugEventListener {
             setRoot(root);
             treeNodes.add(root);
 
-            for (DSPThread thread : threads) {
-                ThreadTreeNode threadNode = createAndAddThread(thread);
-                createAndAddStackFrames(threadNode);
-            }
+            Stream.of(threads)
+                    .map(this::createAndAddThread)
+                    .forEach(this::createAndAddStackFrames);
 
             reload();
         }
