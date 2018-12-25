@@ -130,7 +130,7 @@ public class OutputParser {
             }
             else if (var.equals("func")) { //$NON-NLS-1$
                 if (str != null) {
-                    stackFrame.setName(str.trim());
+                    stackFrame.setName(str.trim() + "()");
                 }
             }
             else if (var.equals("file")) { //$NON-NLS-1$
