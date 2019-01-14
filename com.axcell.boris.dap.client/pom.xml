@@ -9,8 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.axcell.boris.dap.client</groupId>
-    <artifactId>com.axcell.boris.dap.client</artifactId>
+    <groupId>com.axcell.boris.client</groupId>
+    <artifactId>com.axcell.boris.client</artifactId>
     <build>
         <plugins>
             <plugin>
@@ -35,22 +35,6 @@
             <artifactId>com.axcell.boris.dap.gdb</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.dockingframes</groupId>
-            <artifactId>docking-frames-common</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.lsp4j</groupId>
-            <artifactId>org.eclipse.lsp4j.debug</artifactId>
-            <version>0.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>RELEASE</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 
